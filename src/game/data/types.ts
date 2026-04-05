@@ -19,7 +19,6 @@ export interface TestFeedback {
 export interface Case {
     id: string;
     title: string;
-    isTutorial: boolean;
     functionCode: string; // Displayed in the case file function box, this is the function on trial
     description: string; // What the function should do
     evidencePool: UnitTest[]; // All the tests that the player can choose from
