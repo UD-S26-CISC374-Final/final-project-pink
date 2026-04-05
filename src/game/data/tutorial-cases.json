@@ -1,6 +1,7 @@
 [
     {
-        "id": "case-0",
+        "id": "case-1",
+        "difficulty": "easy",
         "title": "The Case of Absolute Value",
         "functionCode": "def absolute_value(n):\n if n < 0:\n  return -n\n return n",
         "description": "This function claims to return the non-negative absolute value of any number.",
@@ -8,7 +9,7 @@
         "correctVerdict": "not guilty",
         "evidencePool": [
             {
-                "id": "test-0",
+                "id": "c1-t1",
                 "label": "AbsoluteValue(5) -> 5",
                 "input": "5",
                 "expectedOutput": "5",
@@ -17,7 +18,7 @@
                 "showResult": true
             },
             {
-                "id": "test-1",
+                "id": "c1-t2",
                 "label": "AbsoluteValue(-3) -> 3",
                 "input": "-3",
                 "expectedOutput": "3",
@@ -26,7 +27,7 @@
                 "showResult": true
             },
             {
-                "id": "test-2",
+                "id": "c1-t3",
                 "label": "AbsoluteValue(10) -> 10",
                 "input": "10",
                 "expectedOutput": "10",
@@ -37,19 +38,19 @@
         ],
         "testFeedback": [
             {
-                "testId": "test-0",
+                "testId": "c1-t1",
                 "quality": "essential",
                 "feedback": "This test covers the case where the input is a positive number"
             },
             {
-                "testId": "test-1",
+                "testId": "c1-t2",
                 "quality": "essential",
                 "feedback": "This test covers the case where the input is a negative number"
             },
             {
-                "testId": "test-2",
+                "testId": "c1-t3",
                 "quality": "redundant",
-                "feedback": "This test is redundant because it tests the same case as test-0 (positive number)"
+                "feedback": "This test is redundant because it tests the same case as test 1 (positive number)"
             }
         ],
         "missedEvidenceExplanation": "We never tested for n=0, which is an important edge case for this function",
