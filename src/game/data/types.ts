@@ -1,6 +1,5 @@
 export type Verdict = "guilty" | "not guilty";
 
-
 export interface UnitTest {
     id: string;
     label: string; // e.g. "AbsoluteValue(5) -> 5"
