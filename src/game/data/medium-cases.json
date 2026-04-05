@@ -1,0 +1,1493 @@
+[
+    {
+        "id": "case-1",
+        "difficulty": "medium",
+        "title": "The Spacey Security",
+        "functionCode": "def check_passwords(pass1:str, pass2:str):\n   if pass1 == \" \" or pass2 == \" \":\n      return \"Passwords cannot be empty!\"\n   elif pass1 != pass2:\n\treturn \"Passwords do not match!\"\n   else:\n\treturn \"Passwords match!\"",
+        "description": "I ensure security by checking if two passwords match and are not empty!",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c1-t1",
+                "label": "check('', '')",
+                "input": "'', ''",
+                "expectedOutput": "Passwords cannot be empty!",
+                "actualOutput": "Passwords match!",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c1-t2",
+                "label": "check('secret', '')",
+                "input": "'secret', ''",
+                "expectedOutput": "Passwords cannot be empty!",
+                "actualOutput": "Passwords do not match!",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c1-t3",
+                "label": "check('pass', 'pass')",
+                "input": "'pass', 'pass'",
+                "expectedOutput": "Passwords match!",
+                "actualOutput": "Passwords match!",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c1-t4",
+                "label": "check(' ', 'any')",
+                "input": "' ', 'any'",
+                "expectedOutput": "Passwords cannot be empty!",
+                "actualOutput": "Passwords cannot be empty!",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c1-t1",
+                "quality": "essential",
+                "feedback": "Exposes that the function incorrectly matches two empty strings as valid."
+            },
+            {
+                "testId": "c1-t2",
+                "quality": "essential",
+                "feedback": "Shows the empty check is broken for the second parameter."
+            },
+            {
+                "testId": "c1-t3",
+                "quality": "misleading",
+                "feedback": "Makes the function look innocent by testing a standard match."
+            },
+            {
+                "testId": "c1-t4",
+                "quality": "redundant",
+                "feedback": "This tests the only specific case the bug doesn't hit (a space string)."
+            }
+        ],
+        "missedEvidenceExplanation": "You need to test an empty string ('') rather than a space (' ') to see the validation failure.",
+        "closingStatement": "Justice is served! You proved the defendant doesn't know the difference between a space and an empty string."
+    },
+    {
+        "id": "case-2",
+        "difficulty": "medium",
+        "title": "The Divisible Outlaw",
+        "functionCode": "def get_divisible_by_five(nums:list[int]):\n    res = []\n    for n in nums:\n        if n % 5: res.append(n)\n    return res",
+        "description": "I return ONLY the ones perfectly divisible by 5.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c2-t1",
+                "label": "filter([5, 10, 3]) -> [5, 10]",
+                "input": "[5, 10, 3]",
+                "expectedOutput": "[5, 10]",
+                "actualOutput": "[3]",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c2-t2",
+                "label": "filter([1, 2]) -> []",
+                "input": "[1, 2]",
+                "expectedOutput": "[]",
+                "actualOutput": "[1, 2]",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c2-t3",
+                "label": "filter([15, 20]) -> [15, 20]",
+                "input": "[15, 20]",
+                "expectedOutput": "[15, 20]",
+                "actualOutput": "[]",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c2-t4",
+                "label": "filter([0]) -> [0]",
+                "input": "[0]",
+                "expectedOutput": "[0]",
+                "actualOutput": "[]",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c2-t1",
+                "quality": "essential",
+                "feedback": "Shows it returns numbers NOT divisible by 5 instead of the ones that are."
+            },
+            {
+                "testId": "c2-t2",
+                "quality": "essential",
+                "feedback": "Exposes the truthiness bug where a remainder of 1 or 2 evaluates to True."
+            },
+            {
+                "testId": "c2-t3",
+                "quality": "essential",
+                "feedback": "Proves multiples of 5 are completely ignored."
+            },
+            {
+                "testId": "c2-t4",
+                "quality": "essential",
+                "feedback": "Math fails on zero as well."
+            }
+        ],
+        "missedEvidenceExplanation": "In Python, 'if n % 5' is true if there is a remainder. It should be 'if n % 5 == 0'.",
+        "closingStatement": "Guilty! You collected the remainders and threw away the clean divisions. Backward logic!"
+    },
+    {
+        "id": "case-3",
+        "difficulty": "medium",
+        "title": "List Merger",
+        "functionCode": "def list_merger(list1:list[int], list2:list[int]):\n    list1_len = len(list1)\n    merged_list = []\n    if list1_len == 0 or len(list2) == 0: return merged_list\n    for i in range(list1_len): merged_list.append(list1[i])\n    for i in range(list1_len): merged_list.append(list2[i])\n    return merged_list",
+        "description": "I merge two lists correctly while removing duplicates.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c3-t1",
+                "label": "merge([1], [2, 3])",
+                "input": "[1], [2, 3]",
+                "expectedOutput": "[1, 2, 3]",
+                "actualOutput": "[1, 2]",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c3-t2",
+                "label": "merge([1, 2], [3])",
+                "input": "[1, 2], [3]",
+                "expectedOutput": "[1, 2, 3]",
+                "actualOutput": "IndexError",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c3-t3",
+                "label": "merge([1], [])",
+                "input": "[1], []",
+                "expectedOutput": "[1]",
+                "actualOutput": "[]",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c3-t4",
+                "label": "merge([1], [1])",
+                "input": "[1], [1]",
+                "expectedOutput": "[1]",
+                "actualOutput": "[1, 1]",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c3-t1",
+                "quality": "essential",
+                "feedback": "Exposes that it skips items in list 2 if list 1 is shorter."
+            },
+            {
+                "testId": "c3-t2",
+                "quality": "essential",
+                "feedback": "Causes an index crash because it tries to use list 1's length on a shorter list 2."
+            },
+            {
+                "testId": "c3-t3",
+                "quality": "essential",
+                "feedback": "Shows the safety check returns an empty list even if one has data."
+            },
+            {
+                "testId": "c3-t4",
+                "quality": "essential",
+                "feedback": "Proves the 'removing duplicates' claim was a lie."
+            }
+        ],
+        "missedEvidenceExplanation": "The code uses list1_len to iterate through list2 and lacks any duplicate checking logic.",
+        "closingStatement": "Guilty! Using one list's length to measure another is a fundamental violation of list law."
+    },
+    {
+        "id": "case-4",
+        "difficulty": "medium",
+        "title": "The Even-Handed Arbiter",
+        "functionCode": "def odd_even_sorter(nums:list[int]):\n    even = []; odd = []\n    if len(nums) == 0: return []\n    for num in nums:\n        if num % 2 == 0: even.append(num)\n        else: odd.append(num)\n    return f\"Even: {even} \\n Odd: {odd}\"",
+        "description": "Sort numbers into Even and Odd groups.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "evidencePool": [
+            {
+                "id": "c4-t1",
+                "label": "sort([1, 2, 0])",
+                "input": "[1, 2, 0]",
+                "expectedOutput": "Even: [2, 0] \\n Odd: [1]",
+                "actualOutput": "Even: [2, 0] \\n Odd: [1]",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c4-t2",
+                "label": "sort([0, 0])",
+                "input": "[0, 0]",
+                "expectedOutput": "Even: [0, 0] \\n Odd: []",
+                "actualOutput": "Even: [0, 0] \\n Odd: []",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c4-t3",
+                "label": "sort([]) -> []",
+                "input": "[]",
+                "expectedOutput": "[]",
+                "actualOutput": "[]",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c4-t4",
+                "label": "sort([2, 4, 6])",
+                "input": "[2, 4, 6]",
+                "expectedOutput": "Even: [2, 4, 6] \\n Odd: []",
+                "actualOutput": "Even: [2, 4, 6] \\n Odd: []",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c4-t1",
+                "quality": "essential",
+                "feedback": "Confirms both branches work correctly."
+            },
+            {
+                "testId": "c4-t2",
+                "quality": "essential",
+                "feedback": "Verifies that zero is correctly identified as even."
+            },
+            {
+                "testId": "c4-t3",
+                "quality": "essential",
+                "feedback": "Correct empty list behavior."
+            },
+            {
+                "testId": "c4-t4",
+                "quality": "redundant",
+                "feedback": "Reinforces even logic."
+            }
+        ],
+        "missedEvidenceExplanation": "Testing mixed types, zeros, and empty lists shows the sorting logic is robust.",
+        "closingStatement": "The Arbiter is fair. It sorts exactly as promised. Not guilty."
+    },
+    {
+        "id": "case-5",
+        "difficulty": "medium",
+        "title": "The Mission Control",
+        "functionCode": "def rocket_launch(starting:int):\n    countdown = starting\n    while countdown:\n        countdown -= 1\n    return \"Launched\"",
+        "description": "I count down to zero and launch the rocket reliably!",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c5-t1",
+                "label": "launch(3) -> Launched",
+                "input": "3",
+                "expectedOutput": "Launched",
+                "actualOutput": "Launched",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c5-t2",
+                "label": "launch(-1) -> Launched",
+                "input": "-1",
+                "expectedOutput": "Launched",
+                "actualOutput": "Infinite Loop",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c5-t3",
+                "label": "launch(0) -> Launched",
+                "input": "0",
+                "expectedOutput": "Launched",
+                "actualOutput": "Launched",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c5-t4",
+                "label": "launch(-10) -> Launched",
+                "input": "-10",
+                "expectedOutput": "Launched",
+                "actualOutput": "Infinite Loop",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c5-t1",
+                "quality": "misleading",
+                "feedback": "Hides the bug because positive numbers eventually hit 0."
+            },
+            {
+                "testId": "c5-t2",
+                "quality": "essential",
+                "feedback": "CRITICAL! Exposes the infinite loop for negative numbers."
+            },
+            {
+                "testId": "c5-t3",
+                "quality": "redundant",
+                "feedback": "0 is falsy, so it skips the loop and launches instantly."
+            },
+            {
+                "testId": "c5-t4",
+                "quality": "essential",
+                "feedback": "Further proof that negative starts never terminate."
+            }
+        ],
+        "missedEvidenceExplanation": "In Python, while x runs as long as x is not zero. If you start negative and subtract, you never reach zero.",
+        "closingStatement": "Guilty! You've doomed the astronauts to an eternity of counting into the negative void."
+    },
+    {
+        "id": "case-6",
+        "difficulty": "medium",
+        "title": "The Factorial Factory",
+        "functionCode": "def get_factorial(num:int):\n    starting = num\n    factorial = 1\n    while starting > 0:\n        factorial = factorial * starting\n        starting -= 1\n    return factorial",
+        "description": "I calculate factorials with mathematical precision.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "evidencePool": [
+            {
+                "id": "c6-t1",
+                "label": "fact(0) -> 1",
+                "input": "0",
+                "expectedOutput": "1",
+                "actualOutput": "1",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c6-t2",
+                "label": "fact(5) -> 120",
+                "input": "5",
+                "expectedOutput": "120",
+                "actualOutput": "120",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c6-t3",
+                "label": "fact(1) -> 1",
+                "input": "1",
+                "expectedOutput": "1",
+                "actualOutput": "1",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c6-t4",
+                "label": "fact(3) -> 6",
+                "input": "3",
+                "expectedOutput": "6",
+                "actualOutput": "6",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c6-t1",
+                "quality": "essential",
+                "feedback": "Confirms the mathematical identity 0! = 1."
+            },
+            {
+                "testId": "c6-t2",
+                "quality": "essential",
+                "feedback": "Confirms correctly handled loop for larger numbers."
+            },
+            {
+                "testId": "c6-t3",
+                "quality": "redundant",
+                "feedback": "Simple case."
+            },
+            {
+                "testId": "c6-t4",
+                "quality": "redundant",
+                "feedback": "Standard pass."
+            }
+        ],
+        "missedEvidenceExplanation": "Handles both the base case and recursive logic perfectly.",
+        "closingStatement": "The Factory is robust. It respects math and logic. Not guilty."
+    },
+    {
+        "id": "case-7",
+        "difficulty": "medium",
+        "title": "Package Sorter",
+        "functionCode": "def sort_package(weight:int):\n    if weight % 3 == 0 and weight % 5 == 0: print(\"Priority\")\n    if weight % 3 == 0: print(\"Air\")\n    if weight % 5 == 0: print(\"Ground\")\n    else: print(\"Standard\")",
+        "description": "Categorizes packages by weight; exactly one label per package!",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c7-t1",
+                "label": "sort(15)",
+                "input": "15",
+                "expectedOutput": "Priority",
+                "actualOutput": "Priority\\nAir\\nGround",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c7-t2",
+                "label": "sort(3)",
+                "input": "3",
+                "expectedOutput": "Air",
+                "actualOutput": "Air\\nStandard",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c7-t3",
+                "label": "sort(5)",
+                "input": "5",
+                "expectedOutput": "Ground",
+                "actualOutput": "Ground",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c7-t4",
+                "label": "sort(7)",
+                "input": "7",
+                "expectedOutput": "Standard",
+                "actualOutput": "Standard",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c7-t1",
+                "quality": "essential",
+                "feedback": "Exposes the fall-through bug where multiple labels are printed."
+            },
+            {
+                "testId": "c7-t2",
+                "quality": "essential",
+                "feedback": "Shows that even a simple 'Air' package gets a 'Standard' label too."
+            },
+            {
+                "testId": "c7-t3",
+                "quality": "misleading",
+                "feedback": "The bug is hidden here because 'Ground' is the final check before the 'else'."
+            },
+            {
+                "testId": "c7-t4",
+                "quality": "redundant",
+                "feedback": "Standard case that works only because no other conditions match."
+            }
+        ],
+        "missedEvidenceExplanation": "Without 'elif', every 'if' statement is checked independently, leading to overlapping results.",
+        "closingStatement": "Guilty! Your lack of 'elif' has created a labeling chaos. To the refactoring bin!"
+    },
+    {
+        "id": "case-8",
+        "difficulty": "medium",
+        "title": "The Circular Sentinel",
+        "functionCode": "def find_area_and_circumference(radius:int):\n    PI = 3.14159\n    area = PI * radius ** 2\n    circumference = 2 * PI * radius\n    return f\"Area: ≈{round(area, 2)} \\nCircumference: ≈{round(circumference, 2)}\"",
+        "description": "I provide precise circle stats to two decimal places.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "evidencePool": [
+            {
+                "id": "c8-t1",
+                "label": "circle(5)",
+                "input": "5",
+                "expectedOutput": "Area: ≈78.54 \\nCircumference: ≈31.42",
+                "actualOutput": "Area: ≈78.54 \\nCircumference: ≈31.42",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c8-t2",
+                "label": "circle(1)",
+                "input": "1",
+                "expectedOutput": "Area: ≈3.14 \\nCircumference: ≈6.28",
+                "actualOutput": "Area: ≈3.14 \\nCircumference: ≈6.28",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c8-t3",
+                "label": "circle(0)",
+                "input": "0",
+                "expectedOutput": "Area: ≈0.0 \\nCircumference: ≈0.0",
+                "actualOutput": "Area: ≈0.0 \\nCircumference: ≈0.0",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c8-t4",
+                "label": "circle(10)",
+                "input": "10",
+                "expectedOutput": "Area: ≈314.16 \\nCircumference: ≈62.83",
+                "actualOutput": "Area: ≈314.16 \\nCircumference: ≈62.83",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c8-t1",
+                "quality": "essential",
+                "feedback": "Standard check passes."
+            },
+            {
+                "testId": "c8-t2",
+                "quality": "essential",
+                "feedback": "Verifies correct power and multiplication logic."
+            },
+            {
+                "testId": "c8-t3",
+                "quality": "redundant",
+                "feedback": "Zero radius works correctly."
+            },
+            {
+                "testId": "c8-t4",
+                "quality": "redundant",
+                "feedback": "Large radius works correctly."
+            }
+        ],
+        "missedEvidenceExplanation": "Correct use of PI and rounding ensures mathematical accuracy.",
+        "closingStatement": "Innocent! The Sentinel is precise and respects the laws of geometry."
+    },
+    {
+        "id": "case-9",
+        "difficulty": "medium",
+        "title": "The Gap Finder",
+        "functionCode": "def find_missing_nums(nums:list[int]):\n    if len(nums) == 0: return []\n    missing_nums = []\n    for i in range(nums[-1]):\n        current = i + 1\n        if current not in nums:\n            missing_nums.append(current)\n    return missing_nums",
+        "description": "Identifies missing numbers from 1 to the maximum list value.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "evidencePool": [
+            {
+                "id": "c9-t1",
+                "label": "gap([1, 4, 6])",
+                "input": "[1, 4, 6]",
+                "expectedOutput": "[2, 3, 5]",
+                "actualOutput": "[2, 3, 5]",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c9-t2",
+                "label": "gap([1, 2, 3])",
+                "input": "[1, 2, 3]",
+                "expectedOutput": "[]",
+                "actualOutput": "[]",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c9-t3",
+                "label": "gap([5])",
+                "input": "[5]",
+                "expectedOutput": "[1, 2, 3, 4]",
+                "actualOutput": "[1, 2, 3, 4]",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c9-t4",
+                "label": "gap([])",
+                "input": "[]",
+                "expectedOutput": "[]",
+                "actualOutput": "[]",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c9-t1",
+                "quality": "essential",
+                "feedback": "Standard gap check works."
+            },
+            {
+                "testId": "c9-t2",
+                "quality": "essential",
+                "feedback": "Verifies no-gap case correctly."
+            },
+            {
+                "testId": "c9-t3",
+                "quality": "essential",
+                "feedback": "Checks that it finds numbers missing before the first list element."
+            },
+            {
+                "testId": "c9-t4",
+                "quality": "redundant",
+                "feedback": "Safety check confirmed."
+            }
+        ],
+        "missedEvidenceExplanation": "Testing single elements and gaps shows the iteration from 1 to nums[-1] is flawless.",
+        "closingStatement": "The Finder is thorough. It correctly identifies every missing piece. Not guilty."
+    },
+    {
+        "id": "case-10",
+        "difficulty": "medium",
+        "title": "Inclusion Illusion",
+        "functionCode": "def generate_nums_list(size:int, include_zero:bool):\n    nums = []\n    if size <= 100:\n        for i in range(size + 1):\n            if not include_zero:\n                nums.append(i) \n            else:\n                nums.append(i)\n    return nums",
+        "description": "Only includes 0 if requested; size must be 100 or less.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c10-t1",
+                "label": "gen(5, False)",
+                "input": "5, False",
+                "expectedOutput": "[1, 2, 3, 4, 5]",
+                "actualOutput": "[0, 1, 2, 3, 4, 5]",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c10-t2",
+                "label": "gen(5, True)",
+                "input": "5, True",
+                "expectedOutput": "[0, 1, 2, 3, 4, 5]",
+                "actualOutput": "[0, 1, 2, 3, 4, 5]",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c10-t3",
+                "label": "gen(101, True)",
+                "input": "101, True",
+                "expectedOutput": "[]",
+                "actualOutput": "[]",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c10-t4",
+                "label": "gen(3, False)",
+                "input": "3, False",
+                "expectedOutput": "[1, 2, 3]",
+                "actualOutput": "[0, 1, 2, 3]",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c10-t1",
+                "quality": "essential",
+                "feedback": "Exposes that zero is included even when the toggle is False."
+            },
+            {
+                "testId": "c10-t2",
+                "quality": "misleading",
+                "feedback": "Accidentally works when the user wants zero."
+            },
+            {
+                "testId": "c10-t3",
+                "quality": "redundant",
+                "feedback": "Safety check works but hides the main logic bug."
+            },
+            {
+                "testId": "c10-t4",
+                "quality": "essential",
+                "feedback": "Further proof that the toggle is ignored."
+            }
+        ],
+        "missedEvidenceExplanation": "The if/else does exactly the same thing. range(size+1) always starts at 0.",
+        "closingStatement": "Guilty! Your inclusion toggle is a lie; you've forced zero on every list regardless of preference."
+    },
+    {
+        "id": "case-11",
+        "difficulty": "medium",
+        "title": "Divide All",
+        "functionCode": "def divide_all(nums:list[int]):\n    divisor = nums[0]\n    if len(nums) == 0: return divisor\n    for num in nums:\n        if num != divisor:\n            divisor = divisor / num\n    return divisor",
+        "description": "Divide the first number by every subsequent number.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c11-t1",
+                "label": "div([]) -> IndexError",
+                "input": "[]",
+                "expectedOutput": "0",
+                "actualOutput": "IndexError",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c11-t2",
+                "label": "div([10, 10, 2]) -> 0.05",
+                "input": "[10, 10, 2]",
+                "expectedOutput": "0.05",
+                "actualOutput": "5.0",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c11-t3",
+                "label": "div([10, 2, 5]) -> 1.0",
+                "input": "[10, 2, 5]",
+                "expectedOutput": "1.0",
+                "actualOutput": "1.0",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c11-t4",
+                "label": "div([10, 0]) -> ZeroDivision",
+                "input": "[10, 0]",
+                "expectedOutput": "Error",
+                "actualOutput": "ZeroDivisionError",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c11-t1",
+                "quality": "essential",
+                "feedback": "Exposes the crash because index 0 is accessed before checking length."
+            },
+            {
+                "testId": "c11-t2",
+                "quality": "essential",
+                "feedback": "Shows it skips any number that matches the divisor, ruining the math."
+            },
+            {
+                "testId": "c11-t3",
+                "quality": "misleading",
+                "feedback": "Works only because the items are unique."
+            },
+            {
+                "testId": "c11-t4",
+                "quality": "essential",
+                "feedback": "Standard math crash check."
+            }
+        ],
+        "missedEvidenceExplanation": "The code fails on empty lists and selectively ignores numbers identical to the start value.",
+        "closingStatement": "Guilty! You access indices recklessly and pick which numbers to divide by like a picky eater."
+    },
+    {
+        "id": "case-12",
+        "difficulty": "medium",
+        "title": "Find Middle",
+        "functionCode": "def find_middle(nums):\n    nums_len = len(nums)\n    if nums_len == 0: return -1\n    return nums[int((nums_len - 1) / 2)]",
+        "description": "I find the exact middle element of any list.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c12-t1",
+                "label": "mid([10, 20, 30, 40]) -> 25",
+                "input": "[10, 20, 30, 40]",
+                "expectedOutput": "25",
+                "actualOutput": "20",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c12-t2",
+                "label": "mid([1, 2, 3]) -> 2",
+                "input": "[1, 2, 3]",
+                "expectedOutput": "2",
+                "actualOutput": "2",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c12-t3",
+                "label": "mid([1, 2, 3, 4, 5, 6]) -> 3.5",
+                "input": "[1, 2, 3, 4, 5, 6]",
+                "expectedOutput": "3.5",
+                "actualOutput": "3",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c12-t4",
+                "label": "mid([]) -> -1",
+                "input": "[]",
+                "expectedOutput": "-1",
+                "actualOutput": "-1",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c12-t1",
+                "quality": "essential",
+                "feedback": "Exposes that even lengths are truncated to a single left-side number."
+            },
+            {
+                "testId": "c12-t2",
+                "quality": "misleading",
+                "feedback": "Hides the bug on odd lengths."
+            },
+            {
+                "testId": "c12-t3",
+                "quality": "essential",
+                "feedback": "Further proof of even-length bias."
+            },
+            {
+                "testId": "c12-t4",
+                "quality": "redundant",
+                "feedback": "Safety check confirmed."
+            }
+        ],
+        "missedEvidenceExplanation": "Even length lists require a median calculation (average of two middles) or returning a pair.",
+        "closingStatement": "Guilty! You find the center only when it's convenient; otherwise, you just pick the left side."
+    },
+    {
+        "id": "case-13",
+        "difficulty": "medium",
+        "title": "Traffic Light",
+        "functionCode": "def traffic_light(cycles):\n    current_light = 'red'\n    current_cycle = cycles\n    while current_cycle <= cycles:\n        if current_light == 'red': current_light = 'green'\n        elif current_light == 'green': current_light = 'yellow'\n        else: current_light = 'red'\n        current_cycle -= 1",
+        "description": "Rotate lights from Red to Green to Yellow safely.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c13-t1",
+                "label": "light(3) -> Done",
+                "input": "3",
+                "expectedOutput": "Done",
+                "actualOutput": "Infinite Loop",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c13-t2",
+                "label": "light(0) -> Done",
+                "input": "0",
+                "expectedOutput": "Done",
+                "actualOutput": "Infinite Loop",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c13-t3",
+                "label": "light(-1) -> Done",
+                "input": "-1",
+                "expectedOutput": "Done",
+                "actualOutput": "Done",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c13-t4",
+                "label": "light(1) -> Done",
+                "input": "1",
+                "expectedOutput": "Done",
+                "actualOutput": "Infinite Loop",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c13-t1",
+                "quality": "essential",
+                "feedback": "Subtracting from 3 while checking if it is <= 3 is an infinite trap."
+            },
+            {
+                "testId": "c13-t2",
+                "quality": "essential",
+                "feedback": "Zero start fails immediately."
+            },
+            {
+                "testId": "c13-t3",
+                "quality": "misleading",
+                "feedback": "Only 'works' by skipping the loop entirely."
+            },
+            {
+                "testId": "c13-t4",
+                "quality": "essential",
+                "feedback": "Every positive cycle enters a loop that never ends."
+            }
+        ],
+        "missedEvidenceExplanation": "The loop condition 'current_cycle <= cycles' remains true as the counter decreases.",
+        "closingStatement": "Guilty! You've created an eternal light show of traffic chaos. City gridlock confirmed!"
+    },
+    {
+        "id": "case-14",
+        "difficulty": "medium",
+        "title": "String Trimmer",
+        "functionCode": "def trim_string(word:str, start:int, end:int):\n    word_len = len(word)\n    if start > word_len or end > word_len: return \"Starting or ending index cannot exceed string length\"\n    return word[start:end]",
+        "description": "Neatly snip out sections of a string with safety checks.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c14-t1",
+                "label": "trim('hello', 2, 4) -> 'll'",
+                "input": "'hello', 2, 4",
+                "expectedOutput": "'ll'",
+                "actualOutput": "'ll'",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c14-t2",
+                "label": "trim('hello', 2, 1) -> Error",
+                "input": "'hello', 2, 1",
+                "expectedOutput": "Error",
+                "actualOutput": "''",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c14-t3",
+                "label": "trim('world', 10, 2) -> Error",
+                "input": "'world', 10, 2",
+                "expectedOutput": "Error",
+                "actualOutput": "Error",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c14-t4",
+                "label": "trim('coding', 4, 2) -> Error",
+                "input": "'coding', 4, 2",
+                "expectedOutput": "Error",
+                "actualOutput": "''",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c14-t1",
+                "quality": "misleading",
+                "feedback": "Correct indices mask the lack of relational validation."
+            },
+            {
+                "testId": "c14-t2",
+                "quality": "essential",
+                "feedback": "Exposes the silent failure where backwards indices return nothing."
+            },
+            {
+                "testId": "c14-t3",
+                "quality": "redundant",
+                "feedback": "Bounds check confirmed."
+            },
+            {
+                "testId": "c14-t4",
+                "quality": "essential",
+                "feedback": "Further proof that reverse sniping is not handled."
+            }
+        ],
+        "missedEvidenceExplanation": "The function fails to check if the start index is less than the end index.",
+        "closingStatement": "Guilty of silent failure! You let data vanish into thin air without a trace."
+    },
+    {
+        "id": "case-15",
+        "difficulty": "medium",
+        "title": "Security Filter",
+        "functionCode": "def check_username(username:str):\n    if '@' in username or '-' in username: return \"invalid symbols\"\n    if not any(c.isupper() for c in username): return 'need capital'\n    if not any(c.isdigit() for c in username): return 'need digit'\n    if len(username) < 10: return 'too short'\n    return 'username is valid!'",
+        "description": "Ensures 10 chars, uppercase, digit, and a symbol (_ or .).",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c15-t1",
+                "label": "check('heLloawrad1')",
+                "input": "'heLloawrad1'",
+                "expectedOutput": "need symbol",
+                "actualOutput": "username is valid!",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c15-t2",
+                "label": "check('User@Name123')",
+                "input": "'User@Name123'",
+                "expectedOutput": "invalid symbols",
+                "actualOutput": "invalid symbols",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c15-t3",
+                "label": "check('User.Name123')",
+                "input": "'User.Name123'",
+                "expectedOutput": "username is valid!",
+                "actualOutput": "username is valid!",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c15-t4",
+                "label": "check('hello123456')",
+                "input": "'hello123456'",
+                "expectedOutput": "need capital",
+                "actualOutput": "need capital",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c15-t1",
+                "quality": "essential",
+                "feedback": "CRITICAL! Proves the required symbol check is totally missing."
+            },
+            {
+                "testId": "c15-t2",
+                "quality": "misleading",
+                "feedback": "Hides the bug by triggering a blacklist check."
+            },
+            {
+                "testId": "c15-t3",
+                "quality": "redundant",
+                "feedback": "Accidentally passes a valid name."
+            },
+            {
+                "testId": "c15-t4",
+                "quality": "redundant",
+                "feedback": "Confirms other validation logic."
+            }
+        ],
+        "missedEvidenceExplanation": "The function blacklists @ and - but never actually whitelists . and _ as required.",
+        "closingStatement": "Guilty! You check for what's forbidden but forgot to check for what's required."
+    },
+    {
+        "id": "case-16",
+        "difficulty": "medium",
+        "title": "The ATM",
+        "functionCode": "def ATM(account_number:str, request:str, amount:float):\n    account_info = account.get(account_number)\n    if account_info is None: return \"Account not found\"\n    balance = account_info['balance']\n    if request == \"withdraw\":\n        if balance >= amount:\n            account_info['balance'] -= amount\n            return f\"Success: ${account_info['balance']}\"\n        else: return \"Insufficient funds\"\n    elif request == \"deposit\":\n        account_info['balance'] += amount\n        return f\"Success: ${account_info['balance']}\"\n    else: return \"Invalid request\"",
+        "description": "Secure ATM interface with 100% accuracy.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "evidencePool": [
+            {
+                "id": "c16-t1",
+                "label": "withdraw('205...', 'withdraw', 100)",
+                "input": "'2051438697', 'withdraw', 100",
+                "expectedOutput": "Success: $2088.99",
+                "actualOutput": "Success: $2088.99",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c16-t2",
+                "label": "overdraw('136...', 'withdraw', 500)",
+                "input": "'1362408795', 'withdraw', 500",
+                "expectedOutput": "Insufficient funds",
+                "actualOutput": "Insufficient funds",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c16-t3",
+                "label": "missing('999...', 'deposit', 10)",
+                "input": "'999', 'deposit', 10",
+                "expectedOutput": "Account not found",
+                "actualOutput": "Account not found",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c16-t4",
+                "label": "invalid('205...', 'check', 0)",
+                "input": "'2051438697', 'check', 0",
+                "expectedOutput": "Invalid request",
+                "actualOutput": "Invalid request",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c16-t1",
+                "quality": "essential",
+                "feedback": "Confirms core withdrawal logic."
+            },
+            {
+                "testId": "c16-t2",
+                "quality": "essential",
+                "feedback": "Confirms safety check against overdrawing."
+            },
+            {
+                "testId": "c16-t3",
+                "quality": "essential",
+                "feedback": "Checks safety behavior for missing accounts."
+            },
+            {
+                "testId": "c16-t4",
+                "quality": "redundant",
+                "feedback": "Confirms invalid route handling."
+            }
+        ],
+        "missedEvidenceExplanation": "Testing all logical paths confirms the nested dictionary and mutation logic are sound.",
+        "closingStatement": "The Teller is honest. Your funds are secure. Case dismissed."
+    },
+    {
+        "id": "case-17",
+        "difficulty": "medium",
+        "title": "Vending Machine",
+        "functionCode": "def vending_machine(item_number:int, money:float):\n    item = items.get(item_number)\n    if item == None: return \"Item not found\"\n    item_price = item['price']\n    if item_price > money: return f\"Not enough money for {item}\"\n    else:\n        change = money - item_price\n        return f\"Enjoy your {item}! Change: ${change}\"",
+        "description": "I provide snacks and change with perfect inventory mapping.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c17-t1",
+                "label": "buy(102, 2.0) -> juice",
+                "input": "102, 2.0",
+                "expectedOutput": "Enjoy your juice! Change: $1.0",
+                "actualOutput": "Enjoy your {'item': 'juice', 'price': 1.0}! Change: $1.0",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c17-t2",
+                "label": "buy(101, 0.5) -> error",
+                "input": "101, 0.5",
+                "expectedOutput": "Not enough money for soda",
+                "actualOutput": "Not enough money for {'item': 'soda', 'price': 1.23}",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c17-t3",
+                "label": "buy(999, 1.0) -> error",
+                "input": "999, 1.0",
+                "expectedOutput": "Item not found",
+                "actualOutput": "Item not found",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c17-t4",
+                "label": "buy(104, 2.0) -> chips",
+                "input": "104, 2.0",
+                "expectedOutput": "Enjoy your chips! Change: $0.0",
+                "actualOutput": "Enjoy your {'item': 'chips', 'price': 2.0}! Change: $0.0",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c17-t1",
+                "quality": "essential",
+                "feedback": "Exposes that the function returns the whole dictionary as a string."
+            },
+            {
+                "testId": "c17-t2",
+                "quality": "essential",
+                "feedback": "Shows raw metadata leaked to the user."
+            },
+            {
+                "testId": "c17-t3",
+                "quality": "misleading",
+                "feedback": "The safety check hides the output formatting bug."
+            },
+            {
+                "testId": "c17-t4",
+                "quality": "essential",
+                "feedback": "Confirms the type error across multiple items."
+            }
+        ],
+        "missedEvidenceExplanation": "The function fails to access the specific 'item' key, returning the container instead of the contents.",
+        "closingStatement": "Guilty of technical illiteracy! A user wants a snack, not a JSON object."
+    },
+    {
+        "id": "case-18",
+        "difficulty": "medium",
+        "title": "Bracket Checker",
+        "functionCode": "def bracket_pair_checker(formula:str):\n    have_parens = '(' in formula or ')' in formula\n    have_brackets = '[' in formula or ']' in formula\n    if have_parens:\n        if formula.count(\"(\") != formula.count(\")\"): return \"check your parenthesis\"\n    elif have_brackets:\n        if formula.count(\"[\") != formula.count(\"]\"): return \"check your brackets\"\n    return \"all good\"",
+        "description": "I check EVERY single parenthesis and bracket in a formula.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c18-t1",
+                "label": "check('(1+1) + [2')",
+                "input": "'(1+1) + [2'",
+                "expectedOutput": "check your brackets",
+                "actualOutput": "all good",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c18-t2",
+                "label": "check('(1+2')",
+                "input": "'(1+2'",
+                "expectedOutput": "check your parenthesis",
+                "actualOutput": "check your parenthesis",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c18-t3",
+                "label": "check('([ ])')",
+                "input": "'([ ])'",
+                "expectedOutput": "all good",
+                "actualOutput": "all good",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c18-t4",
+                "label": "check('( ) [ ] { ]')",
+                "input": "'( ) [ ] { ]'",
+                "expectedOutput": "check your braces",
+                "actualOutput": "all good",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c18-t1",
+                "quality": "essential",
+                "feedback": "Exposes that once parentheses are matched, brackets are ignored."
+            },
+            {
+                "testId": "c18-t2",
+                "quality": "misleading",
+                "feedback": "Hides the branching error."
+            },
+            {
+                "testId": "c18-t3",
+                "quality": "redundant",
+                "feedback": "Pass case."
+            },
+            {
+                "testId": "c18-t4",
+                "quality": "essential",
+                "feedback": "Further proof of selective blindness."
+            }
+        ],
+        "missedEvidenceExplanation": "By using elif, the function stops checking once the first condition is met.",
+        "closingStatement": "Guilty! Your selective blindness has let broken math into the system."
+    },
+    {
+        "id": "case-19",
+        "difficulty": "medium",
+        "title": "Web Server",
+        "functionCode": "database = []\ndef web_server(method:str, endpoint:str, data):\n    if method == \"POST\":\n        database.append(data)\n        return \"Data added\"\n    elif method == \"DELETE\":\n        database = []\n        return \"Database cleared\"\n    elif method == \"GET\": return database",
+        "description": "I handle POST data and DELETE commands to clear storage.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c19-t1",
+                "label": "POST -> DELETE -> GET",
+                "input": "'POST', '/add', 'A' -> 'DELETE', '/clear' -> 'GET', '/get'",
+                "expectedOutput": "[]",
+                "actualOutput": "['A']",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c19-t2",
+                "label": "POST -> GET",
+                "input": "'POST', '/add', 'A' -> 'GET', '/get'",
+                "expectedOutput": "['A']",
+                "actualOutput": "['A']",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c19-t3",
+                "label": "DELETE '/clear'",
+                "input": "'DELETE', '/clear', None",
+                "expectedOutput": "Database cleared",
+                "actualOutput": "UnboundLocalError or Ghost Clear",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c19-t4",
+                "label": "GET '/get' -> []",
+                "input": "'GET', '/get', None",
+                "expectedOutput": "[]",
+                "actualOutput": "[]",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c19-t1",
+                "quality": "essential",
+                "feedback": "Shows that the global database was never actually cleared."
+            },
+            {
+                "testId": "c19-t2",
+                "quality": "misleading",
+                "feedback": "Appending works without global, masking the scope bug."
+            },
+            {
+                "testId": "c19-t3",
+                "quality": "essential",
+                "feedback": "Exposes the scope failure upon reassignment."
+            },
+            {
+                "testId": "c19-t4",
+                "quality": "redundant",
+                "feedback": "Empty start check."
+            }
+        ],
+        "missedEvidenceExplanation": "Missing the 'global' keyword causes reassignment to create a local variable instead of clearing the global one.",
+        "closingStatement": "Guilty! Your data is trapped in local scope. To the scope-tower with you!"
+    },
+    {
+        "id": "case-20",
+        "difficulty": "medium",
+        "title": "Terminal Emulator",
+        "functionCode": "SHELL_COMMANDS = [\"ADD\", \"PWD\", \"CWD\", \"SPEAK\", \"PING\"]\ncurrent_directory = \"system/user>\"\ndef shell(command, request):\n    global current_directory\n    if command not in SHELL_COMMANDS: return f\"ERROR: {command}\"\n    if command == \"ADD\": return sum(int(n) for n in request.split(\" \"))\n    elif command == \"CWD\": current_directory = f\"{request}>\"; return current_directory\n    elif command == \"SPEAK\": return f\"{current_directory} {request}\"\n    elif command == \"PING\": return \"PONG\"\n    return current_directory",
+        "description": "I can add numbers, change directory, and echo speech accurately.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "evidencePool": [
+            {
+                "id": "c20-t1",
+                "label": "CWD -> SPEAK",
+                "input": "('CWD', '/home'), ('SPEAK', 'hi')",
+                "expectedOutput": "/home> hi",
+                "actualOutput": "/home> hi",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c20-t2",
+                "label": "ADD '1 2 3' -> 6",
+                "input": "'ADD', '1 2 3'",
+                "expectedOutput": "6",
+                "actualOutput": "6",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c20-t3",
+                "label": "PING -> PONG",
+                "input": "'PING', None",
+                "expectedOutput": "PONG",
+                "actualOutput": "PONG",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c20-t4",
+                "label": "INVALID -> ERROR",
+                "input": "'EXIT', None",
+                "expectedOutput": "ERROR: EXIT",
+                "actualOutput": "ERROR: EXIT",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c20-t1",
+                "quality": "essential",
+                "feedback": "Confirms global state persistence."
+            },
+            {
+                "testId": "c20-t2",
+                "quality": "essential",
+                "feedback": "Confirms math parsing."
+            },
+            {
+                "testId": "c20-t3",
+                "quality": "redundant",
+                "feedback": "Simple command check."
+            },
+            {
+                "testId": "c20-t4",
+                "quality": "essential",
+                "feedback": "Verifies whitelist validation."
+            }
+        ],
+        "missedEvidenceExplanation": "Testing multi-step state changes and input parsing confirms the shell is robust.",
+        "closingStatement": "The Shell is secure. It handles state and data with professional care. Not guilty."
+    },
+    {
+        "id": "case-21",
+        "difficulty": "medium",
+        "title": "Automated Registrar",
+        "functionCode": "def get_exam_results(student_id):\n    student_results = {123: 32, 124: 50, 125: 85}\n    if student_id not in student_results:\n        return f\"Student not found\"\n    else:\n        print(student_results[student_id])",
+        "description": "Provide an ID, and I will retrieve and return the exam score perfectly.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c21-t1",
+                "label": "results(125) -> 85",
+                "input": "125",
+                "expectedOutput": "85",
+                "actualOutput": "None",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c21-t2",
+                "label": "results(999)",
+                "input": "999",
+                "expectedOutput": "Student not found",
+                "actualOutput": "Student not found",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c21-t3",
+                "label": "results(123) -> 32",
+                "input": "123",
+                "expectedOutput": "32",
+                "actualOutput": "None",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c21-t4",
+                "label": "results(124) -> 50",
+                "input": "124",
+                "expectedOutput": "50",
+                "actualOutput": "None",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c21-t1",
+                "quality": "essential",
+                "feedback": "Exposes that the score is printed to console but never returned to the program."
+            },
+            {
+                "testId": "c21-t2",
+                "quality": "misleading",
+                "feedback": "Hides the bug because the error branch uses a proper return."
+            },
+            {
+                "testId": "c21-t3",
+                "quality": "essential",
+                "feedback": "Confirming the missing return across multiple valid IDs."
+            },
+            {
+                "testId": "c21-t4",
+                "quality": "essential",
+                "feedback": "Further proof of the vanishing return value."
+            }
+        ],
+        "missedEvidenceExplanation": "A print statement is not a return statement; the function sends 'None' back to the caller.",
+        "closingStatement": "Guilty! You shouted the scores into the void but never delivered them to the database."
+    }
+]
