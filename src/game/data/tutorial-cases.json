@@ -55,5 +55,360 @@
         ],
         "missedEvidenceExplanation": "We never tested for n=0, which is an important edge case for this function",
         "closingStatement": "The function correctly handles positive and negative numbers, but it fails to account for the edge case of zero. Therefore, the correct verdict is \"not guilty\" because the function is mostly correct but has a significant oversight."
+    },
+    {
+        "id": "case-2",
+        "difficulty": "easy",
+        "title": "The False Start",
+        "functionCode": "def greet(name):\n    # BUG: Forgot to add a space in the string\n    return \"Hello\" + name",
+        "description": "This function is supposed to greet a user by adding 'Hello ' before their name.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c2-t1",
+                "label": "greet('Alice') -> 'Hello Alice'",
+                "input": "'Alice'",
+                "expectedOutput": "Hello Alice",
+                "actualOutput": "HelloAlice",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c2-t2",
+                "label": "greet(' Bob') -> 'Hello Bob'",
+                "input": "' Bob'",
+                "expectedOutput": "Hello Bob",
+                "actualOutput": "Hello Bob",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c2-t3",
+                "label": "greet('') -> 'Hello '",
+                "input": "''",
+                "expectedOutput": "Hello ",
+                "actualOutput": "Hello",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c2-t4",
+                "label": "greet('World') -> 'Hello World'",
+                "input": "'World'",
+                "expectedOutput": "Hello World",
+                "actualOutput": "HelloWorld",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c2-t1",
+                "quality": "essential",
+                "feedback": "This clearly shows the names are smashed together without a space."
+            },
+            {
+                "testId": "c2-t2",
+                "quality": "misleading",
+                "feedback": "The input has a leading space (' Bob'), which makes the function appear correct."
+            },
+            {
+                "testId": "c2-t3",
+                "quality": "essential",
+                "feedback": "Even with no name, we expect a trailing space after Hello."
+            },
+            {
+                "testId": "c2-t4",
+                "quality": "redundant",
+                "feedback": "This is just another example of the same concatenation error."
+            }
+        ],
+        "missedEvidenceExplanation": "The function fails to provide its own space, relying on the user to include one in their input string.",
+        "closingStatement": "Guilty! The defendant failed to include the necessary space character in the return string, leading to unreadable greetings."
+    },
+    {
+        "id": "case-3",
+        "difficulty": "easy",
+        "title": "The One-Track Mind",
+        "functionCode": "def is_even(n):\n    if n % 2 == 0:\n        return True\n    # BUG: Missing the else statement or a default return\n    # Python returns 'None' if no return is hit",
+        "description": "I check if a number is even. I return True for evens and False for odds.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c3-t1",
+                "label": "is_even(2) -> True",
+                "input": "2",
+                "expectedOutput": "True",
+                "actualOutput": "True",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c3-t2",
+                "label": "is_even(3) -> False",
+                "input": "3",
+                "expectedOutput": "False",
+                "actualOutput": "None",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c3-t3",
+                "label": "is_even(0) -> True",
+                "input": "0",
+                "expectedOutput": "True",
+                "actualOutput": "True",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c3-t4",
+                "label": "is_even(7) -> False",
+                "input": "7",
+                "expectedOutput": "False",
+                "actualOutput": "None",
+                "passes": false,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c3-t1",
+                "quality": "redundant",
+                "feedback": "Testing an even number hides the missing logic for odd numbers."
+            },
+            {
+                "testId": "c3-t2",
+                "quality": "essential",
+                "feedback": "CRITICAL! This shows that for odd numbers, the function returns 'None' instead of 'False'."
+            },
+            {
+                "testId": "c3-t3",
+                "quality": "misleading",
+                "feedback": "Zero is even, so this test also hides the incomplete logic."
+            },
+            {
+                "testId": "c3-t4",
+                "quality": "essential",
+                "feedback": "Confirms that the function simply doesn't know how to handle non-even numbers."
+            }
+        ],
+        "missedEvidenceExplanation": "Every function needs an exit path for every condition; this one only had a path for success.",
+        "closingStatement": "Guilty! The defendant was so focused on being 'Even' that they completely forgot how to identify 'Odd' numbers, returning 'None' instead."
+    },
+    {
+        "id": "case-4",
+        "difficulty": "medium",
+        "title": "The Overzealous Adder",
+        "functionCode": "def add_positive_only(a, b):\n    if a > 0 and b > 0:\n        return a + b\n    # BUG: Returns a string instead of a number for errors\n    return \"Error\"",
+        "description": "I add two positive numbers. If either is 0 or less, I return 0.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c4-t1",
+                "label": "add(5, 5) -> 10",
+                "input": "5, 5",
+                "expectedOutput": "10",
+                "actualOutput": "10",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c4-t2",
+                "label": "add(-1, 5) -> 0",
+                "input": "-1, 5",
+                "expectedOutput": "0",
+                "actualOutput": "Error",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c4-t3",
+                "label": "add(0, 5) -> 0",
+                "input": "0, 5",
+                "expectedOutput": "0",
+                "actualOutput": "Error",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c4-t4",
+                "label": "add(10, 2) -> 12",
+                "input": "10, 2",
+                "expectedOutput": "12",
+                "actualOutput": "12",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c4-t1",
+                "quality": "misleading",
+                "feedback": "This looks correct, but it doesn't test the 'invalid input' requirement."
+            },
+            {
+                "testId": "c4-t2",
+                "quality": "essential",
+                "feedback": "Exposes that the function returns a string 'Error' instead of the required number 0."
+            },
+            {
+                "testId": "c4-t3",
+                "quality": "essential",
+                "feedback": "Shows that even zero is handled by returning a string rather than the requested integer."
+            },
+            {
+                "testId": "c4-t4",
+                "quality": "redundant",
+                "feedback": "Another standard positive case that ignores the specific error requirement."
+            }
+        ],
+        "missedEvidenceExplanation": "The function's description specifically asked for a return value of 0, but the code returned a string, which could break math operations.",
+        "closingStatement": "Guilty! While it can add, the defendant failed to follow the specific error-handling protocol, returning text when a number was expected."
+    },
+    {
+        "id": "case-5",
+        "difficulty": "easy",
+        "title": "The Listless Guardian",
+        "functionCode": "def get_first_item(items):\n    # BUG: Crashes if the list is empty\n    return items[0]",
+        "description": "I return the first item in any list. If the list is empty, I return 'None'.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c5-t1",
+                "label": "first(['A', 'B']) -> 'A'",
+                "input": "['A', 'B']",
+                "expectedOutput": "A",
+                "actualOutput": "A",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c5-t2",
+                "label": "first([]) -> None",
+                "input": "[]",
+                "expectedOutput": "None",
+                "actualOutput": "IndexError: list index out of range",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c5-t3",
+                "label": "first([100]) -> 100",
+                "input": "[100]",
+                "expectedOutput": "100",
+                "actualOutput": "100",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c5-t4",
+                "label": "first(['Cat', 'Dog']) -> 'Cat'",
+                "input": "['Cat', 'Dog']",
+                "expectedOutput": "Cat",
+                "actualOutput": "Cat",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c5-t1",
+                "quality": "redundant",
+                "feedback": "Works fine when there is data, but hides the danger."
+            },
+            {
+                "testId": "c5-t2",
+                "quality": "essential",
+                "feedback": "SMOKING GUN! The function crashes completely when given an empty list."
+            },
+            {
+                "testId": "c5-t3",
+                "quality": "redundant",
+                "feedback": "Hides the lack of a safety check."
+            },
+            {
+                "testId": "c5-t4",
+                "quality": "redundant",
+                "feedback": "Just more proof that it works... until it doesn't."
+            }
+        ],
+        "missedEvidenceExplanation": "Accessing items[0] without checking the length of the list is a common cause of program crashes.",
+        "closingStatement": "Guilty! The defendant claimed to handle empty lists but actually crashed the entire court on the first empty input!"
+    },
+    {
+        "id": "case-6",
+        "difficulty": "medium",
+        "title": "The Capital Crime",
+        "functionCode": "def check_password(pw):\n    # BUG: Only checks length, ignores the 'uppercase' rule\n    if len(pw) >= 8:\n        return True\n    return False",
+        "description": "I ensure passwords are secure. They must be 8 characters long AND contain at least one uppercase letter.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c6-t1",
+                "label": "check('password123') -> False",
+                "input": "'password123'",
+                "expectedOutput": "False",
+                "actualOutput": "True",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c6-t2",
+                "label": "check('Password123') -> True",
+                "input": "'Password123'",
+                "expectedOutput": "True",
+                "actualOutput": "True",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c6-t3",
+                "label": "check('ABC') -> False",
+                "input": "'ABC'",
+                "expectedOutput": "False",
+                "actualOutput": "False",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c6-t4",
+                "label": "check('short') -> False",
+                "input": "'short'",
+                "expectedOutput": "False",
+                "actualOutput": "False",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c6-t1",
+                "quality": "essential",
+                "feedback": "Proves the function ignores the 'uppercase' requirement entirely."
+            },
+            {
+                "testId": "c6-t2",
+                "quality": "misleading",
+                "feedback": "This password is valid, so the function appears to work."
+            },
+            {
+                "testId": "c6-t3",
+                "quality": "redundant",
+                "feedback": "Correctly fails for length, but doesn't test the uppercase bug."
+            },
+            {
+                "testId": "c6-t4",
+                "quality": "redundant",
+                "feedback": "Just another case of the length check working."
+            }
+        ],
+        "missedEvidenceExplanation": "To find this bug, you must test a password that is long enough but lacks an uppercase letter.",
+        "closingStatement": "Guilty! The security guard was only looking at the size of the password, letting weak, lowercase passwords right through the gate!"
     }
 ]
