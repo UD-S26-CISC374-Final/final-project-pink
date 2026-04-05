@@ -8,7 +8,7 @@ import { Preloader } from "./scenes/preloader";
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
-    title: "My Untitled CISC374 Game",
+    title: "Case By Case",
     version: "0.0.1",
     type: AUTO,
     parent: "game-container",
