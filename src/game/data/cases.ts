@@ -1,0 +1,66 @@
+
+import type { Case } from "./types";
+
+export const cases: Case[] = [
+    {
+        id: "case-0",
+        title: "The Case of Absolute Value",
+        isTutorial: true,
+        functionCode: 'def absolute_value(n):\n if n < 0:\n  return -n\n return n',
+        description: "This function claims to return the non-negative absolute value of any number.",
+        evidenceSlots: 2,
+        correctVerdict: "not guilty",
+        evidencePool: [
+            {
+                id: 'test-0',
+                label: 'AbsoluteValue(5) -> 5',
+                input: '5',
+                expectedOutput: '5',
+                actualOutput: '5',
+                passes: true,
+                showResult: true
+            },
+            {
+                id: 'test-1',
+                label: 'AbsoluteValue(-3) -> 3',
+                input: '-3',
+                expectedOutput: '3',
+                actualOutput: '3',
+                passes: true,
+                showResult: true
+            },
+            {
+                id: 'test-2',
+                label: 'AbsoluteValue(10) -> 10',
+                input: '10',
+                expectedOutput: '10',
+                actualOutput: '10',
+                passes: true,
+                showResult: true
+            },
+        ],
+        testFeedback: [
+            {
+                testId: 'test-0',
+                quality: 'essential',
+                feedback: 'This test covers the case where the input is a positive number'
+            },
+            {
+                testId: 'test-1',
+                quality: 'essential',
+                feedback: 'This test covers the case where the input is a negative number'
+            },
+            {
+                testId: 'test-2',
+                quality: 'redundant',
+                feedback: 'This test is redundant because it tests the same case as test-0 (positive number)'
+            },
+        ],
+        missedEvidenceExplanation: 'We never tested for n=0, which is an important edge case for this function',
+        closingStatement: 'The function correctly handles positive and negative numbers, but it fails to account for the edge case of zero. Therefore, the correct verdict is "not guilty" because the function is mostly correct but has a significant oversight.'
+    },
+    //{ more cases here...
+    //    id: "case-1",
+    //}
+];
+
