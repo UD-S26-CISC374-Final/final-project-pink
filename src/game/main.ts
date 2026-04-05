@@ -16,7 +16,7 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
     scale: {
         parent: "phaser-game",
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.ENVELOP,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         width: 1024,
         height: 768,
