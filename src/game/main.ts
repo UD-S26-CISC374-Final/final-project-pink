@@ -16,10 +16,10 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
     scale: {
         parent: "phaser-game",
-        mode: Phaser.Scale.ENVELOP,
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1024,
-        height: 768,
+        width: 1024, // 1024
+        height: 768, // 768
     },
     physics: {
         default: "arcade",
