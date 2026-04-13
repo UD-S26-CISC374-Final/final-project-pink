@@ -8,7 +8,7 @@ import { Preloader } from "./scenes/preloader";
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
-    title: "My Untitled CISC374 Game",
+    title: "Case By Case",
     version: "0.0.1",
     type: AUTO,
     parent: "game-container",
@@ -18,8 +18,8 @@ const config: Phaser.Types.Core.GameConfig = {
         parent: "phaser-game",
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1024,
-        height: 768,
+        width: 1024, // 1024
+        height: 768, // 768
     },
     physics: {
         default: "arcade",

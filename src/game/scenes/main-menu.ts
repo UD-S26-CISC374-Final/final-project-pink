@@ -8,20 +8,38 @@ export class MainMenu extends Scene implements ChangeableScene {
     logo: GameObjects.Image;
     title: GameObjects.Text;
     logoTween: Phaser.Tweens.Tween | null;
+    tutorialChosen: boolean;
+    gamemode: "Level1" | "Tutorial";
 
     constructor() {
         super("MainMenu");
     }
 
+    private drawButtons(buttonText: string, y: number, onClick: () => void) {
+        this.add
+            .text(512, y, buttonText, {
+                fontFamily: "Arial Black",
+                fontSize: 24,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 4,
+                backgroundColor: "#ff0000",
+                padding: { x: 10, y: 5 },
+            })
+            .setOrigin(0.5)
+            .setInteractive()
+            .on("pointerdown", () => {
+                onClick();
+            });
+    }
+
     create() {
         this.background = this.add.image(512, 384, "background");
 
-        this.logo = this.add.image(512, 300, "logo").setDepth(100);
-
         this.title = this.add
-            .text(512, 460, "Main Menu", {
+            .text(512, 260, "Case By Case", {
                 fontFamily: "Arial Black",
-                fontSize: 38,
+                fontSize: 70,
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 8,
@@ -30,16 +48,24 @@ export class MainMenu extends Scene implements ChangeableScene {
             .setOrigin(0.5)
             .setDepth(100);
 
+        this.drawButtons("Begin Trial", 400, () => {
+            this.gamemode = "Level1";
+            this.changeScene();
+        });
+        this.drawButtons("Start Tutorial", 460, () => {
+            this.gamemode = "Tutorial";
+            this.changeScene();
+        });
+
         EventBus.emit("current-scene-ready", this);
     }
 
     changeScene() {
-        if (this.logoTween) {
-            this.logoTween.stop();
-            this.logoTween = null;
+        if (this.gamemode === "Tutorial") {
+            this.scene.start("Tutorial");
+        } else {
+            this.scene.start("Level1");
         }
-
-        this.scene.start("Level1");
     }
 
     moveSprite(callback: ({ x, y }: { x: number; y: number }) => void) {

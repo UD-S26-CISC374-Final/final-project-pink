@@ -102,10 +102,10 @@ function App() {
                 ref={phaserRef}
                 onCurrentActiveSceneChange={onCurrentSceneChange}
             />
-            <div id="ui-panel">
+            {/* <div id="ui-panel">
                 <div>
                     <button className="button" onClick={changeScene}>
-                        Change Scene
+                       Change Scene
                     </button>
                 </div>
                 <div>
@@ -126,7 +126,7 @@ function App() {
                         Add New Sprite
                     </button>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }
