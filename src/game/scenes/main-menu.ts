@@ -8,6 +8,8 @@ export class MainMenu extends Scene implements ChangeableScene {
     logo: GameObjects.Image;
     title: GameObjects.Text;
     logoTween: Phaser.Tweens.Tween | null;
+    tutorialChosen: boolean;
+    gamemode: "Level1" | "Tutorial";
 
     constructor() {
         super("MainMenu");
@@ -46,23 +48,24 @@ export class MainMenu extends Scene implements ChangeableScene {
             .setOrigin(0.5)
             .setDepth(100);
 
-        this.drawButtons("Begin Trial", 400, () =>
-            alert("Start Game clicked!"),
-        );
-        this.drawButtons("Start Tutorial", 460, () =>
-            alert("Tutorial button clicked!"),
-        );
+        this.drawButtons("Begin Trial", 400, () => {
+            this.gamemode = "Level1";
+            this.changeScene();
+        });
+        this.drawButtons("Start Tutorial", 460, () => {
+            this.gamemode = "Tutorial";
+            this.changeScene();
+        });
 
         EventBus.emit("current-scene-ready", this);
     }
 
     changeScene() {
-        if (this.logoTween) {
-            this.logoTween.stop();
-            this.logoTween = null;
+        if (this.gamemode === "Tutorial") {
+            this.scene.start("Tutorial");
+        } else {
+            this.scene.start("Level1");
         }
-
-        this.scene.start("Level1");
     }
 
     moveSprite(callback: ({ x, y }: { x: number; y: number }) => void) {
