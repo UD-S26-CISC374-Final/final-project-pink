@@ -13,6 +13,24 @@ export class MainMenu extends Scene implements ChangeableScene {
         super("MainMenu");
     }
 
+    private drawButtons(buttonText: string, y: number, onClick: () => void) {
+        this.add
+            .text(512, y, buttonText, {
+                fontFamily: "Arial Black",
+                fontSize: 24,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 4,
+                backgroundColor: "#ff0000",
+                padding: { x: 10, y: 5 },
+            })
+            .setOrigin(0.5)
+            .setInteractive()
+            .on("pointerdown", () => {
+                onClick();
+            });
+    }
+
     create() {
         this.background = this.add.image(512, 384, "background");
 
@@ -28,37 +46,12 @@ export class MainMenu extends Scene implements ChangeableScene {
             .setOrigin(0.5)
             .setDepth(100);
 
-        this.add
-            .text(512, 460, "Hello Phaser!", {
-                fontFamily: "Arial Black",
-                fontSize: 24,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 4,
-                backgroundColor: "#ff0000",
-                padding: { x: 10, y: 5 },
-            })
-            .setOrigin(0.5)
-            .setInteractive()
-            .on("pointerdown", () => {
-                alert("Hello Phaser button clicked!");
-            });
-
-        this.add
-            .text(512, 390, "Hello Phaser!", {
-                fontFamily: "Arial Black",
-                fontSize: 24,
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 4,
-                backgroundColor: "#ff0000",
-                padding: { x: 10, y: 5 },
-            })
-            .setOrigin(0.5)
-            .setInteractive()
-            .on("pointerdown", () => {
-                alert("Hello Phaser button clicked!");
-            });
+        this.drawButtons("Begin Trial", 400, () =>
+            alert("Start Game clicked!"),
+        );
+        this.drawButtons("Start Tutorial", 460, () =>
+            alert("Tutorial button clicked!"),
+        );
 
         EventBus.emit("current-scene-ready", this);
     }
