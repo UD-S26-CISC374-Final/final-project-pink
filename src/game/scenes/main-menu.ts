@@ -16,12 +16,10 @@ export class MainMenu extends Scene implements ChangeableScene {
     create() {
         this.background = this.add.image(512, 384, "background");
 
-        this.logo = this.add.image(512, 300, "logo").setDepth(100);
-
         this.title = this.add
-            .text(512, 460, "Main Menu", {
+            .text(512, 260, "Case By Case", {
                 fontFamily: "Arial Black",
-                fontSize: 38,
+                fontSize: 70,
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 8,
@@ -29,6 +27,38 @@ export class MainMenu extends Scene implements ChangeableScene {
             })
             .setOrigin(0.5)
             .setDepth(100);
+
+        this.add
+            .text(512, 460, "Hello Phaser!", {
+                fontFamily: "Arial Black",
+                fontSize: 24,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 4,
+                backgroundColor: "#ff0000",
+                padding: { x: 10, y: 5 },
+            })
+            .setOrigin(0.5)
+            .setInteractive()
+            .on("pointerdown", () => {
+                alert("Hello Phaser button clicked!");
+            });
+
+        this.add
+            .text(512, 390, "Hello Phaser!", {
+                fontFamily: "Arial Black",
+                fontSize: 24,
+                color: "#ffffff",
+                stroke: "#000000",
+                strokeThickness: 4,
+                backgroundColor: "#ff0000",
+                padding: { x: 10, y: 5 },
+            })
+            .setOrigin(0.5)
+            .setInteractive()
+            .on("pointerdown", () => {
+                alert("Hello Phaser button clicked!");
+            });
 
         EventBus.emit("current-scene-ready", this);
     }
