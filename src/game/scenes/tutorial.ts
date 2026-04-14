@@ -34,6 +34,10 @@ export class Tutorial extends Scene {
 
         this.add.rectangle(373, 292, 700, 452, 0x000000);
         this.add.rectangle(868, 322, 266, 510, 0x000000);
+        this.add.rectangle(120, 688, 179, 155, 0x000000);
+        this.add.rectangle(310, 688, 179, 155, 0x000000);
+        this.add.rectangle(502, 688, 179, 155, 0x000000);
+        this.add.rectangle(692, 688, 179, 155, 0x000000);
 
         this.add.image(373, 292, "tutorial-code-1").setScale(0.3);
 
