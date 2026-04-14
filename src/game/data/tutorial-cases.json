@@ -3,6 +3,8 @@
         "id": "case-1",
         "difficulty": "easy",
         "title": "The Case of Absolute Value",
+        "introTutorialText": "Welcome to the tutorial! This is where you'll learn the basics of getting the hang at being a lawyer at the Syntax Criminal Court! To \nstart, let's familiarize ourselves with the interface you'll be using to disect each case. Starting off, each case will follow this UI:",
+        "descTutorialText": "The given function above claims to follow the specifications on the right. Counsel, select \nthe two test cases that best interrogate this claim. Will they confirm the function's innocence \nor expose its guilt?",
         "functionCode": "def absolute_value(n):\n if n < 0:\n  return -n\n return n",
         "description": "This function claims to return the non-negative absolute value of any number.",
         "evidenceSlots": 2,
@@ -59,6 +61,8 @@
     {
         "id": "case-2",
         "difficulty": "easy",
+        "introTutorialText": "",
+        "descTutorialText": "",
         "title": "The False Start",
         "functionCode": "def greet(name):\n    # BUG: Forgot to add a space in the string\n    return \"Hello\" + name",
         "description": "This function is supposed to greet a user by adding 'Hello ' before their name.",
@@ -130,6 +134,8 @@
     {
         "id": "case-3",
         "difficulty": "easy",
+        "introTutorialText": "",
+        "descTutorialText": "",
         "title": "The One-Track Mind",
         "functionCode": "def is_even(n):\n    if n % 2 == 0:\n        return True\n    # BUG: Missing the else statement or a default return\n    # Python returns 'None' if no return is hit",
         "description": "I check if a number is even. I return True for evens and False for odds.",
@@ -201,6 +207,8 @@
     {
         "id": "case-4",
         "difficulty": "medium",
+        "introTutorialText": "",
+        "descTutorialText": "",
         "title": "The Overzealous Adder",
         "functionCode": "def add_positive_only(a, b):\n    if a > 0 and b > 0:\n        return a + b\n    # BUG: Returns a string instead of a number for errors\n    return \"Error\"",
         "description": "I add two positive numbers. If either is 0 or less, I return 0.",
@@ -272,6 +280,8 @@
     {
         "id": "case-5",
         "difficulty": "easy",
+        "introTutorialText": "",
+        "descTutorialText": "",
         "title": "The Listless Guardian",
         "functionCode": "def get_first_item(items):\n    # BUG: Crashes if the list is empty\n    return items[0]",
         "description": "I return the first item in any list. If the list is empty, I return 'None'.",
@@ -343,6 +353,8 @@
     {
         "id": "case-6",
         "difficulty": "medium",
+        "introTutorialText": "",
+        "descTutorialText": "",
         "title": "The Capital Crime",
         "functionCode": "def check_password(pw):\n    # BUG: Only checks length, ignores the 'uppercase' rule\n    if len(pw) >= 8:\n        return True\n    return False",
         "description": "I ensure passwords are secure. They must be 8 characters long AND contain at least one uppercase letter.",
