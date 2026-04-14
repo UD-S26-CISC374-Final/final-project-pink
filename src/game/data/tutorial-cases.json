@@ -4,7 +4,7 @@
         "difficulty": "easy",
         "title": "The Case of Absolute Value",
         "introTutorialText": "Welcome to the tutorial! This is where you'll learn the basics of getting the hang at being a lawyer at the Syntax Criminal Court! To \nstart, let's familiarize ourselves with the interface you'll be using to disect each case. Starting off, each case will follow this UI:",
-        "descTutorialText": "The given function above claims to follow the specifications on the right. Select \nthe two test cases that best interrogate this claim. Will they confirm the function's innocence \nor expose its guilt?",
+        "descTutorialText": "The given function above claims to follow the specifications on the right. Select the two \ntest cases that best interrogate this claim. Will they confirm the function's innocence or \nexpose its guilt?",
         "functionCode": "def absolute_value(n):\n if n < 0:\n  return -n\n return n",
         "description": "This function claims to return the non-negative absolute value of any number.",
         "evidenceSlots": 2,
