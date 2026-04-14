@@ -24,11 +24,19 @@ export class Preloader extends Scene {
     preload() {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath("assets");
-        this.load.image("template", "game-layout-template.png");
+        this.load.image("template", "game-layout-template.jpg");
+
         this.load.image(
             "tutorial-code-1",
             "tutorial-cases-code/tutorial-1.png",
         );
+
+        for (let i = 1; i <= 3; i++) {
+            this.load.image(
+                `tutorial-test-${i}`,
+                `tutorial-cases-code/test-cases/tutorial-test-${i}.png`,
+            );
+        }
     }
 
     create() {
