@@ -24,6 +24,11 @@ export class Preloader extends Scene {
     preload() {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath("assets");
+        this.load.image("template", "game-layout-template.png");
+        this.load.image(
+            "tutorial-code-1",
+            "tutorial-cases-code/tutorial-1.png",
+        );
     }
 
     create() {
