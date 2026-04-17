@@ -82,7 +82,8 @@ export class Tutorial extends Scene {
             this.judge,
             this.typingInProgress,
             textObject.setText(tutorialText[0]),
-        );
+            1,
+        ); // TODO - remove 1
 
         const buttonContainer = this.add.container(512, 300).setAlpha(0);
 
@@ -124,7 +125,8 @@ export class Tutorial extends Scene {
                 this.judge,
                 this.typingInProgress,
                 textObject.setText(tutorialText[1]),
-            );
+                1,
+            ); // TODO - remove 1
 
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
