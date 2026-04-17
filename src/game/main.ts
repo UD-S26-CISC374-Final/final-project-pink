@@ -36,7 +36,7 @@ const config: Phaser.Types.Core.GameConfig = {
         gamepad: false,
     },
     render: {
-        pixelArt: false,
+        pixelArt: true,
         antialias: true,
     },
 };
