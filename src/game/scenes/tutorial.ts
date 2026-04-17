@@ -106,7 +106,7 @@ export class Tutorial extends Scene {
 
         this.judge.play("talk");
 
-        await this.typewriterEffect(textObject.setText(tutorialText[0]), 1); // TODO - remove 1
+        await this.typewriterEffect(textObject.setText(tutorialText[0]));
 
         const buttonContainer = this.add.container(512, 300).setAlpha(0);
 
