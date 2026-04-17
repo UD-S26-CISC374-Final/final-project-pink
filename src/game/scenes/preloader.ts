@@ -36,6 +36,15 @@ export class Preloader extends Scene {
             { frameWidth: 128, frameHeight: 128 },
         );
 
+        this.load.spritesheet(
+            "case-file-open-program",
+            "sprites/case-file-open-program.png",
+            {
+                frameWidth: 32,
+                frameHeight: 32,
+            },
+        );
+
         this.load.image(
             "tutorial-code-1",
             "tutorial-cases-code/tutorial-1.png",
