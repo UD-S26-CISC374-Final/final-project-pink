@@ -74,7 +74,7 @@ export class Tutorial extends Scene {
     async create() {
         this.cameras.main.setBackgroundColor("#2d2d2d");
 
-        this.add.rectangle(512, 130, 1024, 200, 0x000000, 0.8).setOrigin(0.5);
+        this.add.rectangle(512, 130, 1024, 205, 0x000000, 0.8).setOrigin(0.5);
 
         const textObject = this.add
             .text(512, 130, "", {
@@ -87,7 +87,7 @@ export class Tutorial extends Scene {
 
         const tutorialText = [
             "cout << \"Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! To start, let's familiarize ourselves with the interface you'll be using to dissect each case.\" << endl;",
-            'cout << "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It\'s up to you to determine that based on the presented evidence." << endl;',
+            'cout << "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It\'s up to you to determine that based on the presented evidence. Click on the case file to read your first case!" << endl;',
         ];
 
         this.anims.create({
@@ -106,7 +106,7 @@ export class Tutorial extends Scene {
 
         this.judge.play("talk");
 
-        await this.typewriterEffect(textObject.setText(tutorialText[0]));
+        await this.typewriterEffect(textObject.setText(tutorialText[0]), 1); // TODO - remove 1
 
         const buttonContainer = this.add.container(512, 300).setAlpha(0);
 
@@ -139,6 +139,14 @@ export class Tutorial extends Scene {
             this.judge.setTexture("judge-compiler-case-sprite");
             this.playGiveCaseFileAnimation();
             buttonContainer.destroy();
+            const caseFileButton = this.add
+                .rectangle(340, 575, 90, 127, 0x000000, 0)
+                .setOrigin(0.5)
+                .setInteractive();
+            caseFileButton.on("pointerdown", async () => {
+                if (this.typingInProgress) return;
+                alert("PRESSED!");
+            });
             await this.typewriterEffect(textObject.setText(tutorialText[1]));
         });
     }
