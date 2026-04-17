@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import tutorialCases from "../data/tutorial-cases.json";
+import { typewriterEffect } from "../utils/typeWriterAnimation";
 
 export class Tutorial extends Scene {
     judge: Phaser.GameObjects.Sprite;
@@ -10,7 +10,11 @@ export class Tutorial extends Scene {
         super("Tutorial");
     }
 
-    private playGiveCaseFileAnimation() {
+    init() {
+        this.cameras.main.setBackgroundColor("#2d2d2d");
+    }
+
+    playGiveCaseFileAnimation() {
         this.anims.create({
             key: "give-case-file",
             frames: this.anims.generateFrameNumbers(
@@ -22,6 +26,8 @@ export class Tutorial extends Scene {
             frameRate: 3,
             repeat: -1,
         });
+
+        this.judge.destroy();
 
         this.judge = this.add
             .sprite(
@@ -36,43 +42,8 @@ export class Tutorial extends Scene {
         this.judge.play("give-case-file");
     }
 
-    private typewriterEffect(
-        target: Phaser.GameObjects.Text,
-        speedInMS: number = 50,
-    ) {
-        // credit for code: https://joel.net/creating-a-typewriter-effect-in-phaserjs-v3
-        const message = target.text;
-        const invisibleMessage = message.replace(/[^ ]/g, " ");
-        target.text = "";
-        let visibleText = "";
-
-        return new Promise<void>((resolve) => {
-            this.typingInProgress = true;
-            const timer = target.scene.time.addEvent({
-                delay: speedInMS,
-                loop: true,
-                callback: () => {
-                    if (target.text === message) {
-                        timer.destroy();
-                        this.judge.anims.pause();
-                        this.judge.setFrame(0);
-                        this.typingInProgress = false;
-                        resolve();
-                        return;
-                    }
-
-                    visibleText += message[visibleText.length];
-                    const invisibleText = invisibleMessage.substring(
-                        visibleText.length,
-                    );
-                    target.setText(visibleText + invisibleText);
-                },
-            });
-        });
-    }
-
     async create() {
-        this.cameras.main.setBackgroundColor("#2d2d2d");
+        // this.add.sprite(512, 420, "test", 0).setScale(20);
 
         this.add.rectangle(512, 130, 1024, 205, 0x000000, 0.8).setOrigin(0.5);
 
@@ -88,6 +59,7 @@ export class Tutorial extends Scene {
         const tutorialText = [
             "cout << \"Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! To start, let's familiarize ourselves with the interface you'll be using to dissect each case.\" << endl;",
             'cout << "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It\'s up to you to determine that based on the presented evidence. Click on the case file to read your first case!" << endl;',
+            'cout << "Great! Each file will have a program for you to examine, like shown below. If you\'re unsure what a program is trying to do, click on the pink tab to read its statement of purpose. To see the set of test cases, click on the yellow tab!" << endl;',
         ];
 
         this.anims.create({
@@ -106,7 +78,12 @@ export class Tutorial extends Scene {
 
         this.judge.play("talk");
 
-        await this.typewriterEffect(textObject.setText(tutorialText[0]));
+        await typewriterEffect(
+            this.judge,
+            this.typingInProgress,
+            textObject.setText(tutorialText[0]),
+            1,
+        ); // TODO - remove 1
 
         const buttonContainer = this.add.container(512, 300).setAlpha(0);
 
@@ -143,17 +120,39 @@ export class Tutorial extends Scene {
                 .rectangle(340, 575, 90, 127, 0x000000, 0)
                 .setOrigin(0.5)
                 .setInteractive();
-            caseFileButton.on("pointerdown", async () => {
+
+            await typewriterEffect(
+                this.judge,
+                this.typingInProgress,
+                textObject.setText(tutorialText[1]),
+                1,
+            ); // TODO - remove 1
+
+            caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
-                alert("PRESSED!");
+                this.judge.destroy();
+                this.changeScene(
+                    true,
+                    // textObject.setText(tutorialText[2]),
+                    tutorialText[2],
+                    this.judge,
+                    this.typingInProgress,
+                );
             });
-            await this.typewriterEffect(textObject.setText(tutorialText[1]));
         });
     }
 
-    update() {}
-
-    changeScene() {
-        this.scene.start("GameOver");
+    changeScene(
+        isTutorial: boolean = true,
+        nextTutorialText: string,
+        judge: Phaser.GameObjects.Sprite,
+        typingInProgress: boolean = false,
+    ) {
+        this.scene.launch("Case", {
+            isTutorial,
+            nextTutorialText,
+            judge,
+            typingInProgress,
+        });
     }
 }
