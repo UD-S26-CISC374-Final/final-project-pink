@@ -30,6 +30,11 @@ export class Preloader extends Scene {
             "sprites/judge_compiler_speaking.png",
             { frameWidth: 128, frameHeight: 128 },
         );
+        this.load.spritesheet(
+            "judge-compiler-case-sprite",
+            "sprites/judge_compiler_case.png",
+            { frameWidth: 128, frameHeight: 128 },
+        );
 
         this.load.image(
             "tutorial-code-1",
@@ -42,6 +47,8 @@ export class Preloader extends Scene {
                 `tutorial-cases-code/test-cases/tutorial-test-${i}.png`,
             );
         }
+
+        this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
     }
 
     create() {
