@@ -129,6 +129,7 @@ export class Tutorial extends Scene {
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
                 this.judge.destroy();
+                this.changeScene(true, tutorialText[2]);
             });
         });
     }
