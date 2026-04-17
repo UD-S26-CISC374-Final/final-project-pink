@@ -80,10 +80,9 @@ export class Tutorial extends Scene {
 
         await typewriterEffect(
             this.judge,
-            this.typingInProgress,
             textObject.setText(tutorialText[0]),
-            1,
-        ); // TODO - remove 1
+            tutorialText[0],
+        );
 
         const buttonContainer = this.add.container(512, 300).setAlpha(0);
 
@@ -123,36 +122,21 @@ export class Tutorial extends Scene {
 
             await typewriterEffect(
                 this.judge,
-                this.typingInProgress,
                 textObject.setText(tutorialText[1]),
-                1,
-            ); // TODO - remove 1
+                tutorialText[1],
+            );
 
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
                 this.judge.destroy();
-                this.changeScene(
-                    true,
-                    // textObject.setText(tutorialText[2]),
-                    tutorialText[2],
-                    this.judge,
-                    this.typingInProgress,
-                );
             });
         });
     }
 
-    changeScene(
-        isTutorial: boolean = true,
-        nextTutorialText: string,
-        judge: Phaser.GameObjects.Sprite,
-        typingInProgress: boolean = false,
-    ) {
+    changeScene(isTutorial: boolean = true, nextTutorialText: string) {
         this.scene.launch("Case", {
             isTutorial,
             nextTutorialText,
-            judge,
-            typingInProgress,
         });
     }
 }
