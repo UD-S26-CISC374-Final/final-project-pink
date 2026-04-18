@@ -56,12 +56,6 @@ export class Tutorial extends Scene {
             })
             .setOrigin(0.5);
 
-        const tutorialText = [
-            "cout << \"Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! To start, let's familiarize ourselves with the interface you'll be using to dissect each case.\" << endl;",
-            'cout << "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It\'s up to you to determine that based on the presented evidence. Click on the case file to read your first case!" << endl;',
-            'cout << "Great! Each file will have a program for you to examine, like shown below. If you\'re unsure what a program is trying to do, click on the pink tab to read its statement of purpose. To see the set of test cases, click on the green tab!" << endl;',
-        ];
-
         this.anims.create({
             key: "talk",
             frames: this.anims.generateFrameNumbers("judge-compiler-sprite", {
@@ -78,11 +72,15 @@ export class Tutorial extends Scene {
 
         this.judge.play("talk");
 
+        const firstIntro =
+            "cout << \"Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! To start, let's familiarize ourselves with the interface you'll be using to dissect each case.\" << endl;";
+
         await typewriterEffect(
             this.judge,
-            textObject.setText(tutorialText[0]),
-            tutorialText[0],
-        );
+            textObject.setText(firstIntro),
+            firstIntro,
+            1,
+        ); // TODO - remove 1
 
         const buttonContainer = this.add.container(512, 300).setAlpha(0);
 
@@ -120,16 +118,23 @@ export class Tutorial extends Scene {
                 .setOrigin(0.5)
                 .setInteractive();
 
+            const secondIntro =
+                'cout << "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It\'s up to you to determine that based on the presented evidence. Click on the case file to read your first case!" << endl;';
+
             await typewriterEffect(
                 this.judge,
-                textObject.setText(tutorialText[1]),
-                tutorialText[1],
-            );
+                textObject.setText(secondIntro),
+                secondIntro,
+                1,
+            ); // TODO - remove 1
+
+            const thirdIntro =
+                'cout << "Great! Each file will have a program for you to examine, like shown below. If you\'re unsure what a program is trying to do, click on the pink tab to read its statement of purpose. To see the set of test cases, click on the green tab!" << endl;';
 
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
                 this.judge.destroy();
-                this.changeScene(true, tutorialText[2]);
+                this.changeScene(true, thirdIntro);
             });
         });
     }
