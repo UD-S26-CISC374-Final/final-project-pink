@@ -20,11 +20,9 @@ export class Case extends Scene {
     programDescTextReference: Phaser.GameObjects.Text;
     backButton: Phaser.GameObjects.Container;
 
-    // ! For some reason, switching to the MainMenu scene isn't working properly
-
     private async goBack() {
-        this.textObject.setText("");
-        this.programDescTextReference.destroy();
+        if (this.typingInProgress) return;
+
         this.caseFileCodeSnippet = this.add
             .image(512, 450, "tutorial-code-1")
             .setDisplaySize(920, 600)
@@ -35,9 +33,55 @@ export class Case extends Scene {
             .sprite(512, 450, "case-file-open-program", 0)
             .setDisplaySize(920, 600);
 
-        if (this.currentTab !== "code") this.currentTab = "code";
+        if (this.currentTab !== "code") {
+            this.currentTab = "code";
+            this.showBackButton();
+        }
 
-        await this.addAnimatedTypingText(this.nextTutorialText);
+        await typewriterEffect(
+            null,
+            this.textObject.setText(this.nextTutorialText),
+            this.nextTutorialText,
+            30,
+        );
+    }
+
+    private showBackButton() {
+        this.backButton = createTextButton.call(
+            this,
+            150,
+            190,
+            {
+                x: 0,
+                y: 0,
+                width: 100,
+                height: 40,
+                color: 0x000000,
+                alpha: 0.8,
+            },
+            {
+                text: this.currentTab === "code" ? "Main Menu" : "Go Back",
+                fontFamily: "Google Sans Code",
+                fontSize: 18,
+                color: "#ffffff",
+            },
+            true,
+        );
+
+        this.backButton.on("pointerdown", async () => {
+            if (this.currentTab === "code") {
+                const confirmation = confirm(
+                    "Are you sure you want to go back? Your progress in the tutorial will be lost.",
+                );
+                if (!confirmation) return;
+
+                this.scene.stop("Tutorial");
+                this.scene.start("MainMenu");
+                return;
+            }
+
+            await this.goBack();
+        });
     }
 
     private drawTabs() {
@@ -65,11 +109,8 @@ export class Case extends Scene {
             if (this.typingInProgress) return;
             this.caseFileCodeSnippet.destroy();
             this.currentTab = "explanation";
+            this.backButton.destroy();
             this.textObject.setText("");
-
-            const fourthIntro =
-                'cout << "Here is the program\'s statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases." << endl;';
-            await this.addAnimatedTypingText(fourthIntro);
 
             this.programDescTextReference = this.add
                 .text(512, 350, this.currTutorialCaseDesc, {
@@ -82,43 +123,12 @@ export class Case extends Scene {
                     },
                 })
                 .setOrigin(0.5);
-        });
 
-        this.backButton = createTextButton
-            .call(
-                this,
-                150,
-                190,
-                {
-                    x: 0,
-                    y: 0,
-                    width: 100,
-                    height: 40,
-                    color: 0x000000,
-                    alpha: 0.8,
-                },
-                {
-                    text: "Go Back",
-                    fontFamily: "Google Sans Code",
-                    fontSize: 18,
-                    color: "#ffffff",
-                },
-                true,
-            )
-            .setDepth(100);
-        this.backButton.on("pointerdown", async () => {
-            if (this.currentTab === "code") {
-                const confirmation = confirm(
-                    "Are you sure you want to go back? Your progress in the tutorial will be lost.",
-                );
-                if (!confirmation) return;
+            const fourthIntro =
+                'cout << "Here is the program\'s statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases." << endl;';
+            await this.addAnimatedTypingText(fourthIntro);
 
-                this.scene.stop("Tutorial");
-                this.scene.start("MainMenu");
-                return;
-            }
-
-            await this.goBack();
+            this.showBackButton();
         });
     }
 
@@ -131,7 +141,7 @@ export class Case extends Scene {
             wordWrap: { width: 800 },
         });
 
-        await typewriterEffect(null, this.textObject.setText(text), text, 1);
+        await typewriterEffect(null, this.textObject.setText(text), text, 30); // TODO - remove 1
         this.typingInProgress = false;
     }
 
@@ -148,20 +158,21 @@ export class Case extends Scene {
     }
 
     async create() {
-        // 1. first, we are going to introduce the user with the next tutorial's text
-        await this.addAnimatedTypingText(this.nextTutorialText);
-
-        // 2. Next, we are going to display the open case file sprite showing the program's code and adding the clickable tabs as well
+        // 1. First, we are going to display the open case file sprite showing the program's code and adding the clickable tabs as well
         this.add
             .sprite(512, 450, "case-file-open-program", 0)
             .setDisplaySize(920, 600);
         this.drawTabs();
 
-        // 3. Next, we will display the code snippet for the case file
+        // 2. Next, we will display the code snippet for the case file
         this.caseFileCodeSnippet = this.add
             .image(512, 450, "tutorial-code-1")
             .setDisplaySize(920, 600)
             .setScale(0.26)
             .setDepth(10);
+
+        // 3. Next, we are going to introduce the user with the next tutorial's text
+        this.showBackButton();
+        await this.addAnimatedTypingText(this.nextTutorialText);
     }
 }
