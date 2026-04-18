@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
+import createTextButton from "../utils/createTextButton";
 
 export class Tutorial extends Scene {
     judge: Phaser.GameObjects.Sprite;
@@ -82,31 +83,26 @@ export class Tutorial extends Scene {
             1,
         ); // TODO - remove 1
 
-        const buttonContainer = this.add.container(512, 300).setAlpha(0);
-
-        const buttonBackground = this.add
-            .rectangle(0, 0, 200, 50, 0x000000, 0.8)
-            .setOrigin(0.5);
-
-        const buttonText = this.add
-            .text(0, 0, "Next", {
+        const buttonContainer = createTextButton.call(
+            this,
+            512,
+            300,
+            {
+                x: 0,
+                y: 0,
+                width: 200,
+                height: 50,
+                color: 0x000000,
+                alpha: 0.8,
+            },
+            {
+                text: "Next",
                 fontFamily: "Google Sans Code",
                 fontSize: 20,
                 color: "#01ff34",
-            })
-            .setOrigin(0.5);
-
-        buttonContainer.add([buttonBackground, buttonText]);
-
-        buttonContainer.setSize(buttonText.width, buttonText.height);
-        buttonContainer.setInteractive();
-
-        this.tweens.add({
-            targets: buttonContainer,
-            alpha: 1,
-            duration: 1000,
-            ease: "Power2",
-        });
+            },
+            true,
+        );
 
         buttonContainer.on("pointerdown", async () => {
             if (this.typingInProgress) return;
