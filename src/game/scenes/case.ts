@@ -57,7 +57,7 @@ export class Case extends Scene {
                 width: 100,
                 height: 40,
                 color: 0x000000,
-                alpha: 0.8,
+                alpha: 1,
             },
             {
                 text: this.currentTab === "code" ? "Main Menu" : "Go Back",
@@ -141,7 +141,7 @@ export class Case extends Scene {
             wordWrap: { width: 800 },
         });
 
-        await typewriterEffect(null, this.textObject.setText(text), text, 30); // TODO - remove 1
+        await typewriterEffect(null, this.textObject.setText(text), text); // TODO - remove 1
         this.typingInProgress = false;
     }
 
