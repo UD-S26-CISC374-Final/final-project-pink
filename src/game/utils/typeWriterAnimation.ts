@@ -2,7 +2,7 @@ export function typewriterEffect(
     judge: Phaser.GameObjects.Sprite | null,
     target: Phaser.GameObjects.Text,
     message: string,
-    speedInMS: number = 50,
+    speedInMS: number = 30,
 ) {
     // credit for code: https://joel.net/creating-a-typewriter-effect-in-phaserjs-v3
     // code altered from the original, but overall logic and structure is the same
