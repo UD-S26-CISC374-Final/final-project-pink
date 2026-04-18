@@ -80,7 +80,6 @@ export class Tutorial extends Scene {
             this.judge,
             textObject.setText(firstIntro),
             firstIntro,
-            1,
         ); // TODO - remove 1
 
         const buttonContainer = createTextButton.call(
@@ -121,7 +120,6 @@ export class Tutorial extends Scene {
                 this.judge,
                 textObject.setText(secondIntro),
                 secondIntro,
-                1,
             ); // TODO - remove 1
 
             const thirdIntro =
