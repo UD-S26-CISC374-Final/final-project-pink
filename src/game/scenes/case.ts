@@ -19,9 +19,13 @@ export class Case extends Scene {
     caseFileCodeSnippet: Phaser.GameObjects.Image;
     programDescTextReference: Phaser.GameObjects.Text;
     backButton: Phaser.GameObjects.Container;
+    caseFileTestCases: Phaser.GameObjects.Image[] = [];
 
     private async goBack() {
         if (this.typingInProgress) return;
+
+        if (this.caseFileTestCases.length)
+            this.caseFileTestCases.forEach((testCase) => testCase.destroy());
 
         this.caseFileCodeSnippet = this.add
             .image(512, 450, "tutorial-code-1")
@@ -84,6 +88,30 @@ export class Case extends Scene {
         });
     }
 
+    private addTestCases(currentY: number = 350, margin: number = 5) {
+        for (
+            let i = 1;
+            i <= tutorialCases[this.currTutorialCaseIndex].evidencePool.length;
+            i++
+        ) {
+            const texture = this.textures.get(`tutorial-test-${i}`);
+            const source = texture.getSourceImage();
+
+            const scale = 0.2;
+            const scaledHeight = source.height * scale;
+
+            const testCase = this.add
+                .image(512, currentY, `tutorial-test-${i}`)
+                .setScale(scale)
+                .setDepth(10);
+
+            this.caseFileTestCases.push(testCase);
+
+            // move down for next image
+            currentY += scaledHeight + margin;
+        }
+    }
+
     private drawTabs() {
         const greenTab = this.add
             .rectangle(870, 190, 148, 80, 0x00ff00, 0.8)
@@ -92,10 +120,26 @@ export class Case extends Scene {
             .setAlpha(0.09)
             .setInteractive();
 
-        greenTab.on("pointerdown", () => {
+        greenTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
+            if (this.currentTab === "test-cases") return;
 
-            alert("You clicked the green tab!");
+            this.textObject.setText("");
+            this.currentTab = "test-cases";
+            this.backButton.destroy();
+            this.caseFileCodeSnippet.destroy();
+
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (this.programDescTextReference)
+                this.programDescTextReference.destroy();
+
+            const thirdIntro =
+                "cout << \"These are the program's test cases. Use them as evidence. If a test shows the function gives the wrong result, it's guilty. If the tests support it, it's innocent. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.\" << endl;";
+
+            this.addTestCases(350);
+
+            await this.addAnimatedTypingText(thirdIntro, 19);
+            this.showBackButton();
         });
 
         const pinkTab = this.add
@@ -107,9 +151,12 @@ export class Case extends Scene {
 
         pinkTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
+            if (this.currentTab === "explanation") return;
+
             this.caseFileCodeSnippet.destroy();
             this.currentTab = "explanation";
             this.backButton.destroy();
+            this.caseFileTestCases.forEach((testCase) => testCase.destroy());
             this.textObject.setText("");
 
             this.programDescTextReference = this.add
@@ -132,16 +179,16 @@ export class Case extends Scene {
         });
     }
 
-    async addAnimatedTypingText(text: string) {
+    async addAnimatedTypingText(text: string, fontSize: number = 21) {
         this.typingInProgress = true;
 
         this.textObject = this.add.text(100, 30, "", {
-            fontSize: "21px",
+            fontSize: `${fontSize}px`,
             color: "#01ff34",
             wordWrap: { width: 800 },
         });
 
-        await typewriterEffect(null, this.textObject.setText(text), text); // TODO - remove 1
+        await typewriterEffect(null, this.textObject.setText(text), text, 1); // TODO - remove 1
         this.typingInProgress = false;
     }
 
