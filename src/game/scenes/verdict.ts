@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import tutorialCases from "../data/tutorial-cases.json";
+import { typewriterEffect } from "../utils/typeWriterAnimation";
 
 export class Verdict extends Scene {
     constructor() {
@@ -14,19 +15,51 @@ export class Verdict extends Scene {
         C: 2,
         D: 3,
     };
+    isTutorial: boolean = false;
+    textObject: Phaser.GameObjects.Text;
+    typingInProgress: boolean = false;
 
     init(data: {
         selectedTestCasesIndices: string[];
         tutorialCaseIndex: number;
+        isTutorial: boolean;
+        addAnimatedTypingText: (
+            text: string,
+            fontSize?: number,
+        ) => Promise<void>;
     }) {
         this.cameras.main.setBackgroundColor("#2d2d2d");
+        this.add.rectangle(512, 80, 1024, 120, 0x000000, 0.8).setOrigin(0.5);
 
         const { selectedTestCasesIndices, tutorialCaseIndex } = data;
         this.selectedTestCases = selectedTestCasesIndices;
         this.currTutorialCaseIndex = tutorialCaseIndex;
+        this.isTutorial = data.isTutorial;
     }
 
-    showJudgeAnimation(mood: "happy" | "sad") {
+    async addAnimatedTypingText(
+        text: string,
+        fontSize: number = 21,
+        speed: number = 30,
+    ) {
+        this.typingInProgress = true;
+
+        this.textObject = this.add.text(100, 30, "", {
+            fontSize: `${fontSize}px`,
+            color: "#01ff34",
+            wordWrap: { width: 800 },
+        });
+
+        await typewriterEffect(
+            null,
+            this.textObject.setText(text),
+            text,
+            speed,
+        ); // TODO - replace 1 with speed
+        this.typingInProgress = false;
+    }
+
+    async showJudgeAnimation(mood: "happy" | "sad") {
         if (mood === "happy") {
             const judge = this.add
                 .sprite(
@@ -51,6 +84,15 @@ export class Verdict extends Scene {
             });
 
             judge.play("happy-speaking");
+
+            await this.addAnimatedTypingText(
+                'cout << "Well done selecting the best test cases! This is the verdict screen. Regardless of your choices, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict of innocence or guilt." << endl;',
+                20,
+                25,
+            );
+
+            judge.anims.pause();
+            judge.setFrame(0);
         } else {
             const judge = this.add
                 .sprite(
@@ -75,10 +117,17 @@ export class Verdict extends Scene {
             });
 
             judge.play("sad-speaking");
+
+            await this.addAnimatedTypingText(
+                "cout << \"Even though your selected test cases weren't the best fit, that's okay. You should keep going because the more you review cases, the better you'll get at identifying the most meaningful evidences. Regardless of your choices, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict of innocence or guilt.\" << endl;",
+                18,
+            );
+            judge.anims.pause();
+            judge.setFrame(1);
         }
     }
 
-    private checkUserSelections() {
+    private async checkUserSelections() {
         const currentTestCase = tutorialCases[this.currTutorialCaseIndex];
         let numCorrect = 0;
         let numEssential = 0;
@@ -91,14 +140,14 @@ export class Verdict extends Scene {
         }
 
         if (numCorrect < numEssential) {
-            this.showJudgeAnimation("sad");
+            await this.showJudgeAnimation("sad");
         } else {
-            this.showJudgeAnimation("happy");
+            await this.showJudgeAnimation("happy");
         }
     }
 
-    create() {
-        this.checkUserSelections();
+    async create() {
+        await this.checkUserSelections();
     }
 
     update() {}
