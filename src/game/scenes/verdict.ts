@@ -59,6 +59,37 @@ export class Verdict extends Scene {
         this.typingInProgress = false;
     }
 
+    showTestCaseReasonings() {
+        const tutorialTestFeedback =
+            tutorialCases[this.currTutorialCaseIndex].testFeedback;
+
+        for (let i = 0; i < this.selectedTestCases.length; i++) {
+            // render the corresponding test case image for each feedback and have them be displayed vertically with some spacing
+            const feedback =
+                tutorialTestFeedback[
+                    this.answerMapping[this.selectedTestCases[i]]
+                ];
+            const yPosition = 200 + i * 120;
+            const testCaseImage = this.add
+                .image(40, yPosition, `tutorial-test-${i + 1}`)
+                .setOrigin(0, 0)
+                .setScale(0.2);
+
+            const feedbackText = feedback.feedback;
+
+            this.add.text(
+                testCaseImage.x + testCaseImage.width * 2 + 20,
+                yPosition + 20,
+                feedbackText,
+                {
+                    fontSize: "18px",
+                    color: "#01ff34",
+                    wordWrap: { width: 600 },
+                },
+            );
+        }
+    }
+
     async showJudgeAnimation(mood: "happy" | "sad") {
         if (mood === "happy") {
             const judge = this.add
@@ -85,8 +116,10 @@ export class Verdict extends Scene {
 
             judge.play("happy-speaking");
 
+            this.showTestCaseReasonings();
+
             await this.addAnimatedTypingText(
-                'cout << "Well done selecting the best test cases! This is the verdict screen. Regardless of your choices, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict of innocence or guilt." << endl;',
+                'cout << "Well done selecting the best test cases! This is the verdict screen. I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on" << endl;',
                 20,
                 25,
             );
@@ -117,9 +150,10 @@ export class Verdict extends Scene {
             });
 
             judge.play("sad-speaking");
+            this.showTestCaseReasonings();
 
             await this.addAnimatedTypingText(
-                "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying the most meaningful evidences. Regardless of your choices, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict of innocence or guilt.\" << endl;",
+                "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying meaningful evidence. Here, I explain which tests were useful, which were misleading or redundant, and how your choices influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on\" << endl;",
                 18,
             );
             judge.anims.pause();
