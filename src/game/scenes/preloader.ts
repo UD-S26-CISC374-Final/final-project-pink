@@ -45,6 +45,15 @@ export class Preloader extends Scene {
             },
         );
 
+        this.load.spritesheet(
+            "judge-compiler-speaking-sad",
+            "sprites/judge_compiler_speaking_sad.png",
+            {
+                frameWidth: 128,
+                frameHeight: 128,
+            },
+        );
+
         this.load.image(
             "tutorial-code-1",
             "tutorial-cases-code/tutorial-1.png",
