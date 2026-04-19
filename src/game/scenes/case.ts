@@ -31,6 +31,8 @@ export class Case extends Scene {
         1: "B",
         2: "C",
     };
+    thirdIntro =
+        "cout << \"These are the program's test cases. Use them as evidence. If a test shows the function gives the wrong result, it's guilty. If the tests support it, it's innocent. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.\" << endl;";
 
     private async goBack() {
         if (this.typingInProgress) return;
@@ -139,10 +141,10 @@ export class Case extends Scene {
 
                     if (this.presentToJudgeButton) {
                         this.presentToJudgeButton.destroy();
-                        // if (this.reminderMessageReference)
-                        // this.reminderMessageReference.destroy();
-
                         this.presentToJudgeButton = undefined;
+                        this.textObject.setText("");
+
+                        await this.addAnimatedTypingText(this.thirdIntro, 19);
                     }
                 } else {
                     if (this.selectedTestCases.length < 2) {
@@ -152,7 +154,7 @@ export class Case extends Scene {
                         this.textObject.setText("");
                         await this.addAnimatedTypingText(
                             'cout << "Remember: You can only select up to 2 test cases as evidence. Please deselect one of your currently selected test cases to choose a different one. Fair warning that switching tabs will reset your selections!" << endl;',
-                            18,
+                            22,
                         );
                         this.reminderMessageReference = this.textObject;
                     }
@@ -210,10 +212,10 @@ export class Case extends Scene {
                 this.programDescTextReference.destroy();
 
             const thirdIntro =
-                "cout << \"These are the program's test cases. Use them as evidence. If a test shows the function gives the wrong result, it's guilty. If the tests support it, it's innocent. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.\" << endl;";
+                "cout << \"These are the program's test cases. Use them as evidence. If a test shows the function gives the wrong result, it's guilty. If the tests support it, it's innocent. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.\" << endl;";
 
             this.addTestCases(350);
-            await this.addAnimatedTypingText(thirdIntro, 19);
+            await this.addAnimatedTypingText(thirdIntro, 18);
             this.showBackButton();
         });
 
