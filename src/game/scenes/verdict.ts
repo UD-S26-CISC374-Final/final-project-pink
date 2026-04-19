@@ -119,7 +119,7 @@ export class Verdict extends Scene {
             judge.play("sad-speaking");
 
             await this.addAnimatedTypingText(
-                "cout << \"Even though your selected test cases weren't the best fit, that's okay. You should keep going because the more you review cases, the better you'll get at identifying the most meaningful evidences. Regardless of your choices, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict of innocence or guilt.\" << endl;",
+                "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying the most meaningful evidences. Regardless of your choices, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict of innocence or guilt.\" << endl;",
                 18,
             );
             judge.anims.pause();
