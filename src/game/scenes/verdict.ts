@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import tutorialCases from "../data/tutorial-cases.json";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
+import { playConfettiEffect } from "../utils/playConfettiEffect";
 
 export class Verdict extends Scene {
     constructor() {
@@ -22,6 +23,7 @@ export class Verdict extends Scene {
         tutorialCases[this.currTutorialCaseIndex].testFeedback.length;
     currReviewedEvidence: string[] = [];
     judge: Phaser.GameObjects.Sprite;
+    showVerdictText = false;
 
     init(data: {
         selectedTestCasesIndices: string[];
@@ -60,6 +62,7 @@ export class Verdict extends Scene {
             text,
             speed,
         ); // TODO - replace 1 with speed
+
         this.typingInProgress = false;
     }
 
@@ -82,9 +85,9 @@ export class Verdict extends Scene {
                 this.textObject.setText("");
 
                 if (mood === "happy") {
-                    this.judge.play("happy-speaking");
+                    this.playJudgeAnimation("happy");
                 } else {
-                    this.judge.play("sad-speaking");
+                    this.playJudgeAnimation("sad");
                 }
 
                 await this.addAnimatedTypingText(feedbackObj.feedback);
@@ -108,9 +111,62 @@ export class Verdict extends Scene {
                 if (
                     this.currReviewedEvidence.length === this.totalEvidenceCases
                 ) {
-                    alert(
-                        "Viewed all evidence cases! Now we will present the final verdict!",
+                    this.textObject.setText("");
+
+                    await new Promise((resolve) => setTimeout(resolve, 800));
+
+                    this.playJudgeAnimation("happy");
+
+                    await this.addAnimatedTypingText(
+                        'cout << "You\'ve reviewed all the evidence, great work! Hopefully my explanations were clear enough for you to start getting the hang of determining good test cases over poorer ones. With that being said, I order this program to be..." << endl;',
+                        20,
                     );
+
+                    // ! - bug - it seems like the player can still interrupt the stream of text that follows up with the verdict reveal if they click on the evidence again while the text is still being typed out, even with the check for typingInProgress at the beginning of this event listener. This is something to look into and fix if possible, but it doesn't break any core functionality so it's not a huge priority
+                    this.typingInProgress = true; // will prevent the player from interrupting the stream of text that follows up with the verdict reveal if they try to click on the evidence again while the text is still being typed out
+
+                    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+                    this.judge.anims.pause();
+                    this.judge.setFrame(0);
+
+                    if (
+                        tutorialCases[this.currTutorialCaseIndex]
+                            .correctVerdict === "not guilty"
+                    ) {
+                        this.playJudgeAnimation("happy");
+                        this.add
+                            .sprite(704, 200, "innocent", 0)
+                            .setScale(3)
+                            .setOrigin(0.5);
+
+                        this.textObject.setText("");
+
+                        await this.addAnimatedTypingText(
+                            'cout << "INNOCENT!" << endl;',
+                            40,
+                        );
+
+                        playConfettiEffect.call(this);
+
+                        this.judge.anims.pause();
+                        this.judge.setFrame(0);
+                    } else {
+                        this.playJudgeAnimation("sad");
+                        this.add
+                            .sprite(712, 200, "guilty", 0)
+                            .setScale(3)
+                            .setOrigin(0.5);
+
+                        this.textObject.setText("");
+                        await this.addAnimatedTypingText(
+                            'cout << "GUILTY!" << endl;',
+                            40,
+                        );
+
+                        this.judge.anims.pause();
+                        this.judge.setFrame(1);
+                    }
                 }
             });
         }
@@ -185,19 +241,6 @@ export class Verdict extends Scene {
         } else {
             this.playJudgeAnimation("sad");
 
-            this.anims.create({
-                key: "sad-speaking",
-                frames: this.anims.generateFrameNumbers(
-                    "judge-compiler-speaking-sad",
-                    {
-                        frames: [0, 1, 2],
-                    },
-                ),
-                frameRate: 3,
-                repeat: -1,
-            });
-
-            this.judge.play("sad-speaking");
             this.showTestCaseReasonings("sad");
 
             await this.addAnimatedTypingText(
