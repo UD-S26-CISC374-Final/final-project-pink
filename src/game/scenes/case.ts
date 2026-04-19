@@ -3,6 +3,8 @@ import { typewriterEffect } from "../utils/typeWriterAnimation";
 import tutorialCases from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
 
+// TODO - will need to add guardrails around tutorail-related code to only have it work if this.tutorial is true
+
 export class Case extends Scene {
     constructor() {
         super("Case");
@@ -42,12 +44,8 @@ export class Case extends Scene {
             this.showBackButton();
         }
 
-        await typewriterEffect(
-            null,
-            this.textObject.setText(this.nextTutorialText),
-            this.nextTutorialText,
-            30,
-        );
+        this.textObject.setText("");
+        await this.addAnimatedTypingText(this.nextTutorialText);
     }
 
     private showBackButton() {
@@ -188,7 +186,7 @@ export class Case extends Scene {
             wordWrap: { width: 800 },
         });
 
-        await typewriterEffect(null, this.textObject.setText(text), text, 1); // TODO - remove 1
+        await typewriterEffect(null, this.textObject.setText(text), text); // TODO - remove 1
         this.typingInProgress = false;
     }
 
