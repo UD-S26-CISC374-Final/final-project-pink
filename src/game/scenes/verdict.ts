@@ -18,6 +18,10 @@ export class Verdict extends Scene {
     isTutorial: boolean = false;
     textObject: Phaser.GameObjects.Text;
     typingInProgress: boolean = false;
+    totalEvidenceCases =
+        tutorialCases[this.currTutorialCaseIndex].testFeedback.length;
+    currReviewedEvidenceCount = 0;
+    judge: Phaser.GameObjects.Sprite;
 
     init(data: {
         selectedTestCasesIndices: string[];
@@ -64,7 +68,6 @@ export class Verdict extends Scene {
             tutorialCases[this.currTutorialCaseIndex].testFeedback;
 
         for (let i = 0; i < tutorialTestFeedback.length; i++) {
-            // render the corresponding test case image for each feedback and have them be displayed vertically with some spacing
             const feedbackObj = tutorialTestFeedback[i];
             const yPosition = 200 + i * 120;
             const testCaseImage = this.add
@@ -78,14 +81,17 @@ export class Verdict extends Scene {
                 testCaseImage.setAlpha(0.6);
                 this.textObject.setText("");
                 await this.addAnimatedTypingText(feedbackObj.feedback); // TODO - replace 1 with speed
+                this.currReviewedEvidenceCount++;
                 testCaseImage.setAlpha(1);
+
+                // play talking animation
             });
         }
     }
 
-    async showJudgeAnimation(mood: "happy" | "sad") {
+    playJudgeAnimation(mood: "happy" | "sad") {
         if (mood === "happy") {
-            const judge = this.add
+            this.judge = this.add
                 .sprite(
                     this.cameras.main.width,
                     this.cameras.main.height,
@@ -107,20 +113,9 @@ export class Verdict extends Scene {
                 repeat: -1,
             });
 
-            judge.play("happy-speaking");
-
-            this.showTestCaseReasonings();
-
-            await this.addAnimatedTypingText(
-                'cout << "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on." << endl;',
-                20,
-                25,
-            );
-
-            judge.anims.pause();
-            judge.setFrame(0);
+            this.judge.play("happy-speaking");
         } else {
-            const judge = this.add
+            this.judge = this.add
                 .sprite(
                     this.cameras.main.width,
                     this.cameras.main.height,
@@ -142,15 +137,48 @@ export class Verdict extends Scene {
                 repeat: -1,
             });
 
-            judge.play("sad-speaking");
+            this.judge.play("sad-speaking");
+        }
+    }
+
+    async showJudgeAnimation(mood: "happy" | "sad") {
+        if (mood === "happy") {
+            this.playJudgeAnimation("happy");
+
+            this.showTestCaseReasonings();
+
+            await this.addAnimatedTypingText(
+                'cout << "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on." << endl;',
+                20,
+                25,
+            );
+
+            this.judge.anims.pause();
+            this.judge.setFrame(0);
+        } else {
+            this.playJudgeAnimation("sad");
+
+            this.anims.create({
+                key: "sad-speaking",
+                frames: this.anims.generateFrameNumbers(
+                    "judge-compiler-speaking-sad",
+                    {
+                        frames: [0, 1, 2],
+                    },
+                ),
+                frameRate: 3,
+                repeat: -1,
+            });
+
+            this.judge.play("sad-speaking");
             this.showTestCaseReasonings();
 
             await this.addAnimatedTypingText(
                 "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying meaningful evidence. Here, I explain which tests were useful, which were misleading or redundant, and how your choices influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on.\" << endl;",
                 18,
             );
-            judge.anims.pause();
-            judge.setFrame(1);
+            this.judge.anims.pause();
+            this.judge.setFrame(1);
         }
     }
 
