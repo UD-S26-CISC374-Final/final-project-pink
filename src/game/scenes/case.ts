@@ -4,6 +4,7 @@ import tutorialCases from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
 
 // TODO - will need to add guardrails around tutorail-related code to only have it work if this.tutorial is true
+// ! BUG - for some reason the text is incorrect if you hit 'go back' from the green tab
 
 export class Case extends Scene {
     constructor() {
@@ -22,6 +23,14 @@ export class Case extends Scene {
     programDescTextReference: Phaser.GameObjects.Text;
     backButton: Phaser.GameObjects.Container;
     caseFileTestCases: Phaser.GameObjects.Image[] = [];
+    selectedTestCases: string[] = [];
+    presentToJudgeButton: Phaser.GameObjects.Container | undefined;
+    reminderMessageReference: Phaser.GameObjects.Text;
+    letterMap: Record<number, string> = {
+        0: "A",
+        1: "B",
+        2: "C",
+    };
 
     private async goBack() {
         if (this.typingInProgress) return;
@@ -101,12 +110,80 @@ export class Case extends Scene {
             const testCase = this.add
                 .image(512, currentY, `tutorial-test-${i}`)
                 .setScale(scale)
-                .setDepth(10);
+                .setDepth(10)
+                .setInteractive();
 
             this.caseFileTestCases.push(testCase);
 
             // move down for next image
             currentY += scaledHeight + margin;
+        }
+
+        this.clickableTestCases();
+    }
+
+    private clickableTestCases() {
+        for (let i = 0; i < this.caseFileTestCases.length; i++) {
+            const testCase = this.caseFileTestCases[i];
+
+            testCase.on("pointerdown", async () => {
+                if (this.typingInProgress) return;
+
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                const letter: string = this.letterMap[i];
+                if (this.selectedTestCases.includes(letter)) {
+                    this.selectedTestCases = this.selectedTestCases.filter(
+                        (test) => test !== letter,
+                    );
+                    testCase.setAlpha(1);
+
+                    if (this.presentToJudgeButton) {
+                        this.presentToJudgeButton.destroy();
+                        // if (this.reminderMessageReference)
+                        // this.reminderMessageReference.destroy();
+
+                        this.presentToJudgeButton = undefined;
+                    }
+                } else {
+                    if (this.selectedTestCases.length < 2) {
+                        this.selectedTestCases.push(letter);
+                        testCase.setAlpha(0.5);
+                    } else {
+                        this.textObject.setText("");
+                        await this.addAnimatedTypingText(
+                            'cout << "Remember: You can only select up to 2 test cases as evidence. Please deselect one of your currently selected test cases to choose a different one. Fair warning that switching tabs will reset your selections!" << endl;',
+                            18,
+                        );
+                        this.reminderMessageReference = this.textObject;
+                    }
+                }
+
+                if (
+                    this.selectedTestCases.length === 2 &&
+                    !this.presentToJudgeButton
+                ) {
+                    this.presentToJudgeButton = createTextButton.call(
+                        this,
+                        400,
+                        190,
+                        {
+                            x: 0,
+                            y: 0,
+                            width: 380,
+                            height: 40,
+                            color: 0x000000,
+                            alpha: 1,
+                        },
+                        {
+                            text: "Present Evidence to Judge Compiler",
+                            fontFamily: "Google Sans Code",
+                            fontSize: 18,
+                            color: "#ffffff",
+                        },
+                        true,
+                    );
+                }
+            });
         }
     }
 
@@ -121,6 +198,7 @@ export class Case extends Scene {
         greenTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
             if (this.currentTab === "test-cases") return;
+            this.caseFileTestCases = [];
 
             this.textObject.setText("");
             this.currentTab = "test-cases";
@@ -135,7 +213,6 @@ export class Case extends Scene {
                 "cout << \"These are the program's test cases. Use them as evidence. If a test shows the function gives the wrong result, it's guilty. If the tests support it, it's innocent. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.\" << endl;";
 
             this.addTestCases(350);
-
             await this.addAnimatedTypingText(thirdIntro, 19);
             this.showBackButton();
         });
@@ -150,6 +227,8 @@ export class Case extends Scene {
         pinkTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
             if (this.currentTab === "explanation") return;
+            if (this.selectedTestCases.length) this.selectedTestCases = [];
+            if (this.presentToJudgeButton) this.presentToJudgeButton.destroy();
 
             this.caseFileCodeSnippet.destroy();
             this.currentTab = "explanation";
@@ -186,7 +265,7 @@ export class Case extends Scene {
             wordWrap: { width: 800 },
         });
 
-        await typewriterEffect(null, this.textObject.setText(text), text); // TODO - remove 1
+        await typewriterEffect(null, this.textObject.setText(text), text, 1); // TODO - remove 1
         this.typingInProgress = false;
     }
 
