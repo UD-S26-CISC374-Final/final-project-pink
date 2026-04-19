@@ -8,6 +8,7 @@ import { Tutorial } from "./scenes/tutorial";
 import { Case } from "./scenes/case";
 import { Verdict } from "./scenes/verdict";
 import { Pause } from "./scenes/pause";
+import { SummaryScene } from "./scenes/summary-scene";
 
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -27,6 +28,7 @@ const config: Phaser.Types.Core.GameConfig = {
         Case,
         Verdict,
         Pause,
+        SummaryScene,
     ],
     scale: {
         parent: "phaser-game",
