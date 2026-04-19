@@ -13,6 +13,7 @@ const POINTS_MISLEADING_EVIDENCE = -5;
 
 export interface CaseResult {
     caseId: string;
+    playerVerdict: Verdict;
     verdictCorrect: boolean;
     selectedEvidenceIds: string[];
     pointsEarned: number;
@@ -105,6 +106,10 @@ class CaseManager {
         return this.cases[this.currentCaseIndex];
     }
 
+    getCaseById(id: string): Case | undefined {
+        return this.cases.find((c) => c.id === id);
+    }
+
     getCurrentCaseIndex(): number {
         return this.currentCaseIndex;
     }
@@ -172,6 +177,7 @@ class CaseManager {
 
         const result: CaseResult = {
             caseId: currentCase.id,
+            playerVerdict,
             verdictCorrect,
             selectedEvidenceIds: [...this.selectedEvidenceIds],
             pointsEarned: points,
@@ -194,7 +200,9 @@ class CaseManager {
     }
 
     getMaxPossibleScore(): number {
-        return this.cases.reduce((total, c) => {
+        return this.caseResults.reduce((total, result) => {
+            const c = this.cases.find((cas) => cas.id === result.caseId);
+            if (!c) return total;
             const essentialCount = c.testFeedback.filter(
                 (f) => f.quality === "essential",
             ).length;
