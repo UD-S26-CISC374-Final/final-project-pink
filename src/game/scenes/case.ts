@@ -153,7 +153,7 @@ export class Case extends Scene {
                     } else {
                         this.textObject.setText("");
                         await this.addAnimatedTypingText(
-                            'cout << "Remember: You can only select up to 2 test cases as evidence. Please deselect one of your currently selected test cases to choose a different one. Fair warning that switching tabs will reset your selections!" << endl;',
+                            'cout << "Remember: You can only select 2 test cases as evidence. Please deselect one of your currently selected test cases to choose a different one. Fair warning that switching tabs will reset your selections!" << endl;',
                             22,
                         );
                         this.reminderMessageReference = this.textObject;
