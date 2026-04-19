@@ -1,7 +1,8 @@
 import { Scene } from "phaser";
 import CaseManager from "../case-manager";
 
-const FONT = "Courier New";
+// Loaded by hqureshi's preloader — falls back to monospace until that branch merges
+const FONT = "Google Sans Code";
 
 export class SummaryScene extends Scene {
     constructor() {
@@ -43,8 +44,72 @@ export class SummaryScene extends Scene {
             .setOrigin(0.5);
     }
 
+    private drawCaseBreakdown(manager: CaseManager, width: number) {
+        const results = manager.getCaseResults();
+        const rowHeight = 52;
+        const startY = 340;
+
+        this.add
+            .text(width / 2, startY - 24, "CASE BREAKDOWN", {
+                fontFamily: FONT,
+                fontSize: 13,
+                color: "#aaaaaa",
+            })
+            .setOrigin(0.5);
+
+        results.forEach((result, i) => {
+            const y = startY + i * rowHeight;
+            const caseData = manager.getCaseById(result.caseId);
+            const title = caseData?.title ?? result.caseId;
+            const verdictColor = result.verdictCorrect ? "#01ff34" : "#ff4444";
+            const verdictLabel = `${result.verdictCorrect ? "✓" : "✗"}  ${(result.playerVerdict as string).toUpperCase()}`;
+
+            // Row background alternates slightly
+            const rowAlpha = i % 2 === 0 ? 0.5 : 0.3;
+            this.add
+                .rectangle(width / 2, y, 900, rowHeight - 4, 0x000000, rowAlpha)
+                .setOrigin(0.5);
+
+            // Case title
+            this.add
+                .text(80, y, title, {
+                    fontFamily: FONT,
+                    fontSize: 16,
+                    color: "#ffffff",
+                })
+                .setOrigin(0, 0.5);
+
+            // Verdict result
+            this.add
+                .text(width - 280, y, verdictLabel, {
+                    fontFamily: FONT,
+                    fontSize: 16,
+                    color: verdictColor,
+                })
+                .setOrigin(0, 0.5);
+
+            // Points earned
+            this.add
+                .text(width - 90, y, `+${result.pointsEarned} pts`, {
+                    fontFamily: FONT,
+                    fontSize: 16,
+                    color: result.pointsEarned > 0 ? "#01ff34" : "#ff4444",
+                })
+                .setOrigin(1, 0.5);
+        });
+    }
+
     create() {
         const manager = CaseManager.getInstance();
+
+        // DEV PREVIEW: seed fake results so the layout is visible
+        if (manager.getCaseResults().length === 0) {
+            manager.loadCases("easy");
+            manager.submitVerdict("guilty");
+            manager.advanceCase();
+            manager.submitVerdict("not guilty");
+        }
+
         const { width, height } = this.cameras.main;
 
         this.cameras.main.setBackgroundColor("#2d2d2d");
@@ -54,7 +119,7 @@ export class SummaryScene extends Scene {
 
         this.add
             .text(width / 2, 30, "COURT ADJOURNED", {
-                fontFamily: "Courier New",
+                fontFamily: FONT,
                 fontSize: 36,
                 color: "#01ff34",
                 stroke: "#000000",
@@ -71,6 +136,7 @@ export class SummaryScene extends Scene {
             .setOrigin(0.5);
 
         this.drawScorePanel(manager, width);
+        this.drawCaseBreakdown(manager, width);
 
         // Return to menu button
         const btnBg = this.add
@@ -80,7 +146,7 @@ export class SummaryScene extends Scene {
 
         this.add
             .text(width / 2, height - 50, "Return to Main Menu", {
-                fontFamily: "Courier New",
+                fontFamily: FONT,
                 fontSize: 18,
                 color: "#01ff34",
             })
