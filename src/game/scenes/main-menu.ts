@@ -2,13 +2,13 @@ import { GameObjects, Scene } from "phaser";
 
 import { EventBus } from "../event-bus";
 import type { ChangeableScene } from "../reactable-scene";
+import CaseManager from "../case-manager";
 
 export class MainMenu extends Scene implements ChangeableScene {
     background: GameObjects.Image;
     logo: GameObjects.Image;
     title: GameObjects.Text;
     logoTween: Phaser.Tweens.Tween | null;
-    tutorialChosen: boolean;
     gamemode: "Level1" | "Tutorial";
 
     constructor() {
@@ -48,11 +48,19 @@ export class MainMenu extends Scene implements ChangeableScene {
             .setOrigin(0.5)
             .setDepth(100);
 
-        this.drawButtons("Begin Trial", 400, () => {
-            this.gamemode = "Level1";
+        this.drawButtons("Start", 400, () => {
+            const caseManager = CaseManager.getInstance();
+            if (caseManager.hasTutorialBeenCompleted()) {
+                caseManager.loadRandomEasyCase();
+                this.gamemode = "Level1";
+            } else {
+                caseManager.loadTutorial();
+                this.gamemode = "Tutorial";
+            }
             this.changeScene();
         });
-        this.drawButtons("Start Tutorial", 460, () => {
+        this.drawButtons("Tutorial", 460, () => {
+            CaseManager.getInstance().loadTutorial();
             this.gamemode = "Tutorial";
             this.changeScene();
         });
