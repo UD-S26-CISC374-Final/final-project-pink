@@ -26,7 +26,8 @@
         "erasableSyntaxOnly": true,
         "noFallthroughCasesInSwitch": true,
         "noUncheckedSideEffectImports": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "resolveJsonModule": true
     },
     "include": ["src", "tests"]
 }
