@@ -6,6 +6,7 @@ import { AUTO, Game } from "phaser";
 import { Preloader } from "./scenes/preloader";
 import { Tutorial } from "./scenes/tutorial";
 import { Case } from "./scenes/case";
+import { Verdict } from "./scenes/verdict";
 
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -15,7 +16,16 @@ const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
     parent: "game-container",
     backgroundColor: "#ffffff",
-    scene: [Boot, Preloader, MainMenu, MainGame, GameOver, Tutorial, Case],
+    scene: [
+        Boot,
+        Preloader,
+        MainMenu,
+        MainGame,
+        GameOver,
+        Tutorial,
+        Case,
+        Verdict,
+    ],
     scale: {
         parent: "phaser-game",
         mode: Phaser.Scale.FIT,
