@@ -119,7 +119,7 @@ export class Verdict extends Scene {
             this.showTestCaseReasonings();
 
             await this.addAnimatedTypingText(
-                'cout << "Well done selecting the best test cases! This is the verdict screen. I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on" << endl;',
+                'cout << "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on" << endl;',
                 20,
                 25,
             );
