@@ -63,30 +63,23 @@ export class Verdict extends Scene {
         const tutorialTestFeedback =
             tutorialCases[this.currTutorialCaseIndex].testFeedback;
 
-        for (let i = 0; i < this.selectedTestCases.length; i++) {
+        for (let i = 0; i < tutorialTestFeedback.length; i++) {
             // render the corresponding test case image for each feedback and have them be displayed vertically with some spacing
-            const feedback =
-                tutorialTestFeedback[
-                    this.answerMapping[this.selectedTestCases[i]]
-                ];
+            const feedbackObj = tutorialTestFeedback[i];
             const yPosition = 200 + i * 120;
             const testCaseImage = this.add
                 .image(40, yPosition, `tutorial-test-${i + 1}`)
                 .setOrigin(0, 0)
-                .setScale(0.2);
+                .setScale(0.2)
+                .setInteractive();
 
-            const feedbackText = feedback.feedback;
-
-            this.add.text(
-                testCaseImage.x + testCaseImage.width * 2 + 20,
-                yPosition + 20,
-                feedbackText,
-                {
-                    fontSize: "18px",
-                    color: "#01ff34",
-                    wordWrap: { width: 600 },
-                },
-            );
+            testCaseImage.on("pointerdown", async () => {
+                if (this.typingInProgress) return;
+                testCaseImage.setAlpha(0.6);
+                this.textObject.setText("");
+                await this.addAnimatedTypingText(feedbackObj.feedback); // TODO - replace 1 with speed
+                testCaseImage.setAlpha(1);
+            });
         }
     }
 
@@ -119,7 +112,7 @@ export class Verdict extends Scene {
             this.showTestCaseReasonings();
 
             await this.addAnimatedTypingText(
-                'cout << "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on" << endl;',
+                'cout << "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on." << endl;',
                 20,
                 25,
             );
@@ -153,7 +146,7 @@ export class Verdict extends Scene {
             this.showTestCaseReasonings();
 
             await this.addAnimatedTypingText(
-                "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying meaningful evidence. Here, I explain which tests were useful, which were misleading or redundant, and how your choices influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on\" << endl;",
+                "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying meaningful evidence. Here, I explain which tests were useful, which were misleading or redundant, and how your choices influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on.\" << endl;",
                 18,
             );
             judge.anims.pause();
