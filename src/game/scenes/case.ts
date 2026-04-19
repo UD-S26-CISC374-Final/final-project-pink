@@ -188,7 +188,10 @@ export class Case extends Scene {
 
                 this.presentToJudgeButton?.on("pointerdown", () => {
                     this.scene.stop("Tutorial");
-                    this.scene.start("Verdict");
+                    this.scene.start("Verdict", {
+                        selectedTestCasesIndices: this.selectedTestCases,
+                        tutorialCaseIndex: this.currTutorialCaseIndex,
+                    });
                 });
             });
         }
