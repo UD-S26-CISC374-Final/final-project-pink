@@ -63,7 +63,7 @@ export class Verdict extends Scene {
         this.typingInProgress = false;
     }
 
-    showTestCaseReasonings() {
+    showTestCaseReasonings(mood: "happy" | "sad") {
         const tutorialTestFeedback =
             tutorialCases[this.currTutorialCaseIndex].testFeedback;
 
@@ -80,11 +80,25 @@ export class Verdict extends Scene {
                 if (this.typingInProgress) return;
                 testCaseImage.setAlpha(0.6);
                 this.textObject.setText("");
+
+                if (mood === "happy") {
+                    this.judge.play("happy-speaking");
+                } else {
+                    this.judge.play("sad-speaking");
+                }
+
                 await this.addAnimatedTypingText(feedbackObj.feedback); // TODO - replace 1 with speed
+
+                if (mood === "happy") {
+                    this.judge.anims.pause();
+                    this.judge.setFrame(0);
+                } else {
+                    this.judge.anims.pause();
+                    this.judge.setFrame(1);
+                }
+
                 this.currReviewedEvidenceCount++;
                 testCaseImage.setAlpha(1);
-
-                // play talking animation
             });
         }
     }
@@ -145,7 +159,7 @@ export class Verdict extends Scene {
         if (mood === "happy") {
             this.playJudgeAnimation("happy");
 
-            this.showTestCaseReasonings();
+            this.showTestCaseReasonings("happy");
 
             await this.addAnimatedTypingText(
                 'cout << "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on." << endl;',
@@ -171,7 +185,7 @@ export class Verdict extends Scene {
             });
 
             this.judge.play("sad-speaking");
-            this.showTestCaseReasonings();
+            this.showTestCaseReasonings("sad");
 
             await this.addAnimatedTypingText(
                 "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying meaningful evidence. Here, I explain which tests were useful, which were misleading or redundant, and how your choices influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on.\" << endl;",
