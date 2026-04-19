@@ -185,6 +185,11 @@ export class Case extends Scene {
                         true,
                     );
                 }
+
+                this.presentToJudgeButton?.on("pointerdown", () => {
+                    this.scene.stop("Tutorial");
+                    this.scene.start("Verdict");
+                });
             });
         }
     }
