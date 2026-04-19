@@ -20,7 +20,7 @@ export class Verdict extends Scene {
     typingInProgress: boolean = false;
     totalEvidenceCases =
         tutorialCases[this.currTutorialCaseIndex].testFeedback.length;
-    currReviewedEvidenceCount = 0;
+    currReviewedEvidence: string[] = [];
     judge: Phaser.GameObjects.Sprite;
 
     init(data: {
@@ -87,7 +87,7 @@ export class Verdict extends Scene {
                     this.judge.play("sad-speaking");
                 }
 
-                await this.addAnimatedTypingText(feedbackObj.feedback); // TODO - replace 1 with speed
+                await this.addAnimatedTypingText(feedbackObj.feedback);
 
                 if (mood === "happy") {
                     this.judge.anims.pause();
@@ -96,9 +96,22 @@ export class Verdict extends Scene {
                     this.judge.anims.pause();
                     this.judge.setFrame(1);
                 }
-
-                this.currReviewedEvidenceCount++;
                 testCaseImage.setAlpha(1);
+
+                const letter = Object.keys(this.answerMapping).find(
+                    (key) => this.answerMapping[key] === i,
+                ) as string;
+
+                if (this.currReviewedEvidence.includes(letter)) return;
+                this.currReviewedEvidence.push(letter);
+
+                if (
+                    this.currReviewedEvidence.length === this.totalEvidenceCases
+                ) {
+                    alert(
+                        "Viewed all evidence cases! Now we will present the final verdict!",
+                    );
+                }
             });
         }
     }
