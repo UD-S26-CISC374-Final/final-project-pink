@@ -54,6 +54,11 @@ export class Preloader extends Scene {
             },
         );
 
+        this.load.spritesheet("innocent", "sprites/innocent.png", {
+            frameWidth: 64,
+            frameHeight: 32,
+        });
+
         this.load.image(
             "tutorial-code-1",
             "tutorial-cases-code/tutorial-1.png",
