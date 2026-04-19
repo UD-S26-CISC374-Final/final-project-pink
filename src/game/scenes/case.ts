@@ -191,6 +191,7 @@ export class Case extends Scene {
                     this.scene.start("Verdict", {
                         selectedTestCasesIndices: this.selectedTestCases,
                         tutorialCaseIndex: this.currTutorialCaseIndex,
+                        isTutorial: this.isTutorial,
                     });
                 });
             });
