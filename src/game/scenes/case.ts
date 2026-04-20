@@ -44,7 +44,7 @@ export class Case extends Scene {
             .image(
                 512,
                 450,
-                `tutorial-code-${this.currentTutorialCaseIndex + 1}`,
+                `tutorial-code-${this.currentTutorialCaseIndex ? this.currentTutorialCaseIndex : this.currentTutorialCaseIndex}`,
             )
             .setDisplaySize(920, 600)
             .setScale(0.26)
@@ -102,20 +102,30 @@ export class Case extends Scene {
     }
 
     private addTestCases(currentY: number = 350, margin: number = 5) {
+        console.log(
+            tutorialCases[this.currentTutorialCaseIndex].evidencePool,
+            this.currentTutorialCaseIndex,
+        );
         for (
             let i = 1;
             i <=
             tutorialCases[this.currentTutorialCaseIndex].evidencePool.length;
             i++
         ) {
-            const texture = this.textures.get(`tutorial-test-${i}`);
+            const texture = this.textures.get(
+                `tutorial-${this.currentTutorialCaseIndex}-t${i}`,
+            );
             const source = texture.getSourceImage();
 
             const scale = 0.2;
             const scaledHeight = source.height * scale;
 
             const testCase = this.add
-                .image(512, currentY, `tutorial-test-${i}`)
+                .image(
+                    512,
+                    currentY,
+                    `tutorial-${this.currentTutorialCaseIndex}-t${i}`,
+                )
                 .setScale(scale)
                 .setDepth(10)
                 .setInteractive();
@@ -294,13 +304,13 @@ export class Case extends Scene {
     }) {
         this.cameras.main.setBackgroundColor("#2d2d2d");
         this.add.rectangle(512, 80, 1024, 120, 0x000000, 0.8).setOrigin(0.5);
-        this.currentTab = "code";
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
         this.currentDifficulty = data.difficulty;
         this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
         this.currTutorialCaseDesc =
             tutorialCases[this.currentTutorialCaseIndex].description;
+        console.log(">>", data.currentTutorialCaseIndex);
     }
 
     async create() {
@@ -312,7 +322,7 @@ export class Case extends Scene {
 
         // 2. Next, we will display the code snippet for the case file
         this.caseFileCodeSnippet = this.add
-            .image(512, 450, "tutorial-code-1")
+            .image(512, 450, `tutorial-code-${this.currentTutorialCaseIndex}`)
             .setDisplaySize(920, 600)
             .setScale(0.26)
             .setDepth(10);
