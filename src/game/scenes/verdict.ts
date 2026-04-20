@@ -67,6 +67,33 @@ export class Verdict extends Scene {
         this.typingInProgress = false;
     }
 
+    private showNextCaseButton() {
+        const nextCaseButton = createTextButton.call(
+            this,
+            850,
+            190,
+            {
+                x: 0,
+                y: 0,
+                width: 160,
+                height: 40,
+                color: 0x000000,
+                alpha: 1,
+            },
+            {
+                text: "Next Case",
+                fontFamily: "Google Sans Code",
+                fontSize: 18,
+                color: "#ffffff",
+            },
+            true,
+        );
+
+        nextCaseButton.on("pointerdown", () => {
+            alert("NEXT CASE!");
+        });
+    }
+
     showTestCaseReasonings(mood: "happy" | "sad") {
         const tutorialTestFeedback =
             tutorialCases[this.currTutorialCaseIndex].testFeedback;
@@ -139,6 +166,7 @@ export class Verdict extends Scene {
 
                     revealVerdictButton.on("pointerdown", async () => {
                         if (this.typingInProgress) return;
+
                         revealVerdictButton.destroy();
 
                         this.textObject.setText("");
@@ -177,6 +205,8 @@ export class Verdict extends Scene {
                                     'cout << "INNOCENT!" << endl;',
                                     40,
                                 );
+
+                                this.showNextCaseButton();
                             });
 
                             this.judge.anims.pause();
@@ -203,6 +233,8 @@ export class Verdict extends Scene {
                                     'cout << "GUILTY!" << endl;',
                                     40,
                                 );
+
+                                this.showNextCaseButton();
                             });
 
                             this.judge.anims.pause();
