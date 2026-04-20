@@ -5,6 +5,8 @@ import createTextButton from "../utils/createTextButton";
 
 // TODO - will need to add guardrails around tutorail-related code to only have it work if this.tutorial is true
 // ! BUG - for some reason if you go from green tab and back to the pink tab, the 'present to judge' button doesn't show
+// ! BUG - for some reason on the second case, you have to click the pink tab first and then the green tab
+// ! BUG - the 'present to judge' button show/hide logic is a bit glitchy when it comes to the second case
 
 export class Case extends Scene {
     constructor() {
@@ -105,7 +107,7 @@ export class Case extends Scene {
         for (
             let i = 1;
             i <=
-            tutorialCases[this.currentTutorialCaseIndex].evidencePool.length;
+            tutorialCases[this.currentTutorialCaseIndex].testFeedback.length;
             i++
         ) {
             const texture = this.textures.get(
@@ -306,6 +308,7 @@ export class Case extends Scene {
         this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
         this.currTutorialCaseDesc =
             tutorialCases[this.currentTutorialCaseIndex].description;
+        this.selectedTestCases = [];
     }
 
     async create() {
