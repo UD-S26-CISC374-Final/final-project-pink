@@ -81,6 +81,7 @@ export class Verdict extends Scene {
 
             testCaseImage.on("pointerdown", async () => {
                 if (this.typingInProgress) return;
+                
                 testCaseImage.setAlpha(0.6);
                 this.textObject.setText("");
 
@@ -118,7 +119,7 @@ export class Verdict extends Scene {
                     this.playJudgeAnimation("happy");
 
                     await this.addAnimatedTypingText(
-                        'cout << "You\'ve reviewed all the evidence, great work! Hopefully my explanations were clear enough for you to start getting the hang of determining good test cases over poorer ones. With that being said, I order this program to be..." << endl;',
+                        'cout << "Great work, you\'ve reviewed all the evidence! Hopefully my explanations were clear enough for you to start getting the hang of determining good test cases over poorer ones. With that being said, I order this program to be..." << endl;',
                         20,
                     );
 
@@ -135,10 +136,16 @@ export class Verdict extends Scene {
                             .correctVerdict === "not guilty"
                     ) {
                         this.playJudgeAnimation("happy");
-                        this.add
-                            .sprite(704, 200, "innocent", 0)
-                            .setScale(3)
-                            .setOrigin(0.5);
+
+                        this.tweens.add({
+                            targets: this.add
+                                .sprite(830, 290, "innocent")
+                                .setOrigin(0.5),
+                            scale: 3.5,
+                            duration: 500,
+                            ease: "Bounce.easeOut",
+                            angle: 13,
+                        });
 
                         this.textObject.setText("");
 
@@ -147,16 +154,23 @@ export class Verdict extends Scene {
                             40,
                         );
 
+                        // TODO - consider having the sprite effect end after sometime
                         playConfettiEffect.call(this);
 
                         this.judge.anims.pause();
                         this.judge.setFrame(0);
                     } else {
                         this.playJudgeAnimation("sad");
-                        this.add
-                            .sprite(712, 200, "guilty", 0)
-                            .setScale(3)
-                            .setOrigin(0.5);
+
+                        this.tweens.add({
+                            targets: this.add
+                                .sprite(860, 300, "guilty")
+                                .setOrigin(0.5),
+                            scale: 3.5,
+                            duration: 500,
+                            ease: "Bounce.easeOut",
+                            angle: 13,
+                        });
 
                         this.textObject.setText("");
                         await this.addAnimatedTypingText(
