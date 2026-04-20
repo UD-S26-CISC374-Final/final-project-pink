@@ -9,7 +9,7 @@ export class Verdict extends Scene {
         super("Verdict");
     }
 
-    currTutorialCaseIndex = 0;
+    currTutorialCaseIndex: number;
     selectedTestCases: string[] = [];
     answerMapping: Record<string, number> = {
         A: 0,
@@ -20,8 +20,7 @@ export class Verdict extends Scene {
     isTutorial: boolean = false;
     textObject: Phaser.GameObjects.Text;
     typingInProgress: boolean = false;
-    totalEvidenceCases =
-        tutorialCases[this.currTutorialCaseIndex].testFeedback.length;
+    totalEvidenceCases: number;
     currReviewedEvidence: string[] = [];
     judge: Phaser.GameObjects.Sprite;
     showVerdictText = false;
@@ -41,6 +40,9 @@ export class Verdict extends Scene {
         this.currTutorialCaseIndex = tutorialCaseIndex;
         this.isTutorial = data.isTutorial;
         this.currentDifficulty = data.difficulty;
+        this.currTutorialCaseIndex = data.tutorialCaseIndex;
+        this.totalEvidenceCases =
+            tutorialCases[this.currTutorialCaseIndex].evidencePool.length;
     }
 
     async addAnimatedTypingText(
@@ -215,11 +217,15 @@ export class Verdict extends Scene {
                                     angle: 13,
                                 });
 
+                                this.playJudgeAnimation("happy");
+
                                 this.typingInProgress = false;
                                 await this.addAnimatedTypingText(
                                     'cout << "INNOCENT!" << endl;',
                                     40,
                                 );
+                                this.judge.anims.pause();
+                                this.judge.setFrame(0);
 
                                 this.showNextCaseButton();
                             });
@@ -243,12 +249,16 @@ export class Verdict extends Scene {
                                     angle: 13,
                                 });
 
+                                this.playJudgeAnimation("sad");
+
                                 this.typingInProgress = false;
                                 await this.addAnimatedTypingText(
                                     'cout << "GUILTY!" << endl;',
                                     40,
                                 );
 
+                                this.judge.anims.pause();
+                                this.judge.setFrame(1);
                                 this.showNextCaseButton();
                             });
 
@@ -335,7 +345,8 @@ export class Verdict extends Scene {
             await this.addAnimatedTypingText(
                 "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying meaningful evidence. Here, I explain which tests were useful, which were misleading or redundant, and how your choices influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on.\" << endl;",
                 18,
-            );
+                1,
+            ); // TODO - remove 1
             this.judge.anims.pause();
             this.judge.setFrame(1);
         }
