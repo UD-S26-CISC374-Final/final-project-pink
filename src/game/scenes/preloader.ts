@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import tutorialCases from "../data/tutorial-cases.json";
 
 export class Preloader extends Scene {
     constructor() {
@@ -64,16 +65,21 @@ export class Preloader extends Scene {
             frameHeight: 32,
         });
 
-        this.load.image(
-            "tutorial-code-1",
-            "tutorial-cases-code/tutorial-1.png",
-        );
-
-        for (let i = 1; i <= 3; i++) {
+        let i = 0;
+        // TODO - replace 1 with tutorialCases.length
+        while (i !== 1) {
             this.load.image(
-                `tutorial-test-${i}`,
-                `tutorial-cases-code/test-cases/tutorial-test-${i}.png`,
+                `tutorial-code-${i}`,
+                `tutorial-cases-code/tutorial-${i}.png`,
             );
+
+            for (let j = 1; j <= tutorialCases[i].evidencePool.length; j++) {
+                this.load.image(
+                    `tutorial-${i}-t${j}`,
+                    `tutorial-cases-code/test-cases/tutorial-${i}-t${j}.png`,
+                );
+            }
+            i++;
         }
 
         this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
