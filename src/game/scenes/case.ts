@@ -102,10 +102,6 @@ export class Case extends Scene {
     }
 
     private addTestCases(currentY: number = 350, margin: number = 5) {
-        console.log(
-            tutorialCases[this.currentTutorialCaseIndex].evidencePool,
-            this.currentTutorialCaseIndex,
-        );
         for (
             let i = 1;
             i <=
@@ -310,7 +306,6 @@ export class Case extends Scene {
         this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
         this.currTutorialCaseDesc =
             tutorialCases[this.currentTutorialCaseIndex].description;
-        console.log(">>", data.currentTutorialCaseIndex);
     }
 
     async create() {
