@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import tutorialCases from "../data/tutorial-cases.json";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import { playConfettiEffect } from "../utils/playConfettiEffect";
+import createTextButton from "../utils/createTextButton";
 
 export class Verdict extends Scene {
     constructor() {
@@ -81,7 +82,7 @@ export class Verdict extends Scene {
 
             testCaseImage.on("pointerdown", async () => {
                 if (this.typingInProgress) return;
-                
+
                 testCaseImage.setAlpha(0.6);
                 this.textObject.setText("");
 
@@ -112,75 +113,102 @@ export class Verdict extends Scene {
                 if (
                     this.currReviewedEvidence.length === this.totalEvidenceCases
                 ) {
-                    this.textObject.setText("");
-
-                    await new Promise((resolve) => setTimeout(resolve, 800));
-
-                    this.playJudgeAnimation("happy");
-
-                    await this.addAnimatedTypingText(
-                        'cout << "Great work, you\'ve reviewed all the evidence! Hopefully my explanations were clear enough for you to start getting the hang of determining good test cases over poorer ones. With that being said, I order this program to be..." << endl;',
-                        20,
+                    const revealVerdictButton = createTextButton.call(
+                        this,
+                        850,
+                        190,
+                        {
+                            x: 0,
+                            y: 0,
+                            width: 160,
+                            height: 40,
+                            color: 0x000000,
+                            alpha: 1,
+                        },
+                        {
+                            text: "Reveal Verdict",
+                            fontFamily: "Google Sans Code",
+                            fontSize: 18,
+                            color: "#ffffff",
+                        },
+                        true,
                     );
-
-                    // ! - bug - it seems like the player can still interrupt the stream of text that follows up with the verdict reveal if they click on the evidence again while the text is still being typed out, even with the check for typingInProgress at the beginning of this event listener. This is something to look into and fix if possible, but it doesn't break any core functionality so it's not a huge priority
-                    this.typingInProgress = true; // will prevent the player from interrupting the stream of text that follows up with the verdict reveal if they try to click on the evidence again while the text is still being typed out
-
-                    await new Promise((resolve) => setTimeout(resolve, 1000));
 
                     this.judge.anims.pause();
                     this.judge.setFrame(0);
 
-                    if (
-                        tutorialCases[this.currTutorialCaseIndex]
-                            .correctVerdict === "not guilty"
-                    ) {
+                    revealVerdictButton.on("pointerdown", async () => {
+                        if (this.typingInProgress) return;
+                        revealVerdictButton.destroy();
+
+                        this.textObject.setText("");
                         this.playJudgeAnimation("happy");
 
-                        this.tweens.add({
-                            targets: this.add
-                                .sprite(830, 290, "innocent")
-                                .setOrigin(0.5),
-                            scale: 3.5,
-                            duration: 500,
-                            ease: "Bounce.easeOut",
-                            angle: 13,
-                        });
-
-                        this.textObject.setText("");
-
                         await this.addAnimatedTypingText(
-                            'cout << "INNOCENT!" << endl;',
-                            40,
+                            'cout << "Great work, you\'ve reviewed all the evidence! Hopefully my explanations were clear enough for you to start getting the hang of determining good test cases over poorer ones. With that being said, I order this program to be..." << endl;',
+                            20,
                         );
 
-                        // TODO - consider having the sprite effect end after sometime
-                        playConfettiEffect.call(this);
+                        if (
+                            tutorialCases[this.currTutorialCaseIndex]
+                                .correctVerdict === "not guilty"
+                        ) {
+                            this.playJudgeAnimation("happy");
 
-                        this.judge.anims.pause();
-                        this.judge.setFrame(0);
-                    } else {
-                        this.playJudgeAnimation("sad");
+                            this.typingInProgress = true;
 
-                        this.tweens.add({
-                            targets: this.add
-                                .sprite(860, 300, "guilty")
-                                .setOrigin(0.5),
-                            scale: 3.5,
-                            duration: 500,
-                            ease: "Bounce.easeOut",
-                            angle: 13,
-                        });
+                            this.time.delayedCall(2000, async () => {
+                                this.textObject.setText("");
 
-                        this.textObject.setText("");
-                        await this.addAnimatedTypingText(
-                            'cout << "GUILTY!" << endl;',
-                            40,
-                        );
+                                playConfettiEffect.call(this);
 
-                        this.judge.anims.pause();
-                        this.judge.setFrame(1);
-                    }
+                                this.tweens.add({
+                                    targets: this.add
+                                        .sprite(830, 290, "innocent")
+                                        .setOrigin(0.5),
+                                    scale: 3.5,
+                                    duration: 500,
+                                    ease: "Bounce.easeOut",
+                                    angle: 13,
+                                });
+
+                                this.typingInProgress = false;
+                                await this.addAnimatedTypingText(
+                                    'cout << "INNOCENT!" << endl;',
+                                    40,
+                                );
+                            });
+
+                            this.judge.anims.pause();
+                            this.judge.setFrame(0);
+                        } else {
+                            this.playJudgeAnimation("sad");
+                            this.typingInProgress = true;
+
+                            this.time.delayedCall(2000, async () => {
+                                this.textObject.setText("");
+
+                                this.tweens.add({
+                                    targets: this.add
+                                        .sprite(830, 290, "guilty")
+                                        .setOrigin(0.5),
+                                    scale: 3.5,
+                                    duration: 500,
+                                    ease: "Bounce.easeOut",
+                                    angle: 13,
+                                });
+
+                                this.typingInProgress = false;
+                                await this.addAnimatedTypingText(
+                                    'cout << "GUILTY!" << endl;',
+                                    40,
+                                );
+                            });
+
+                            this.judge.anims.pause();
+                            this.judge.setFrame(1);
+                        }
+                    });
                 }
             });
         }
