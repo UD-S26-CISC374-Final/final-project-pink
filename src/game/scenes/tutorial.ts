@@ -128,16 +128,22 @@ export class Tutorial extends Scene {
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
                 this.judge.destroy();
-                this.changeScene(true, thirdIntro, "easy");
+                this.changeScene(true, thirdIntro, "easy", 0);
             });
         });
     }
 
-    changeScene(isTutorial: boolean = true, nextTutorialText: string, difficulty: "easy" | "medium" | "hard" = "easy") {
+    changeScene(
+        isTutorial: boolean = true,
+        nextTutorialText: string,
+        difficulty: "easy" | "medium" | "hard" = "easy",
+        currentTutorialCaseIndex: number = 0,
+    ) {
         this.scene.launch("Case", {
             isTutorial,
             nextTutorialText,
             difficulty,
+            currentTutorialCaseIndex,
         });
     }
 }
