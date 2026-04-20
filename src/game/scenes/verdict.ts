@@ -25,15 +25,13 @@ export class Verdict extends Scene {
     currReviewedEvidence: string[] = [];
     judge: Phaser.GameObjects.Sprite;
     showVerdictText = false;
+    currentDifficulty: "easy" | "medium" | "hard" = "easy";
 
     init(data: {
         selectedTestCasesIndices: string[];
         tutorialCaseIndex: number;
         isTutorial: boolean;
-        addAnimatedTypingText: (
-            text: string,
-            fontSize?: number,
-        ) => Promise<void>;
+        difficulty: "easy" | "medium" | "hard";
     }) {
         this.cameras.main.setBackgroundColor("#2d2d2d");
         this.add.rectangle(512, 80, 1024, 120, 0x000000, 0.8).setOrigin(0.5);
@@ -42,6 +40,7 @@ export class Verdict extends Scene {
         this.selectedTestCases = selectedTestCasesIndices;
         this.currTutorialCaseIndex = tutorialCaseIndex;
         this.isTutorial = data.isTutorial;
+        this.currentDifficulty = data.difficulty;
     }
 
     async addAnimatedTypingText(
@@ -90,7 +89,18 @@ export class Verdict extends Scene {
         );
 
         nextCaseButton.on("pointerdown", () => {
-            alert("NEXT CASE!");
+            this.scene.stop("Verdict");
+            // TODO - will need to make this dynamic!!!
+            // TODO - add a check if the player is nearing the last tutorial case; if so, modify it so that it'll let them know they're nearing the end.
+            // TODO - add a check involving difficulty level where once the player enters 'medium', it'll let the player know they're moving on to a little more challenging cases.
+            this.scene.start("Case", {
+                isTutorial: this.isTutorial,
+                // nextTutorialText:
+                //     tutorialCases[this.currTutorialCaseIndex + 1].description,
+                nextTutorialText:
+                    'cout << "Great work on the first case! Let\'s move on to the next one!" << endl;',
+                judge: this.judge,
+            });
         });
     }
 
