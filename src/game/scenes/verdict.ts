@@ -200,7 +200,7 @@ export class Verdict extends Scene {
 
                             this.typingInProgress = true;
 
-                            this.time.delayedCall(2000, async () => {
+                            this.time.delayedCall(1000, async () => {
                                 this.textObject.setText("");
 
                                 playConfettiEffect.call(this);
@@ -230,7 +230,7 @@ export class Verdict extends Scene {
                             this.playJudgeAnimation("sad");
                             this.typingInProgress = true;
 
-                            this.time.delayedCall(2000, async () => {
+                            this.time.delayedCall(1000, async () => {
                                 this.textObject.setText("");
 
                                 this.tweens.add({
