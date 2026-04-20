@@ -72,7 +72,7 @@ export class Preloader extends Scene {
                 `tutorial-cases-code/tutorial-${i}.png`,
             );
 
-            for (let j = 1; j <= tutorialCases[i].evidencePool.length; j++) {
+            for (let j = 1; j <= tutorialCases[i].testFeedback.length; j++) {
                 this.load.image(
                     `tutorial-${i}-t${j}`,
                     `tutorial-cases-code/test-cases/tutorial-${i}-t${j}.png`,
