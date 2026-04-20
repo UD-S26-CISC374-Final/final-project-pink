@@ -42,7 +42,7 @@ export class Verdict extends Scene {
         this.currentDifficulty = data.difficulty;
         this.currTutorialCaseIndex = data.tutorialCaseIndex;
         this.totalEvidenceCases =
-            tutorialCases[this.currTutorialCaseIndex].evidencePool.length;
+            tutorialCases[this.currTutorialCaseIndex].testFeedback.length;
     }
 
     async addAnimatedTypingText(
@@ -92,15 +92,16 @@ export class Verdict extends Scene {
 
         nextCaseButton.on("pointerdown", () => {
             this.scene.stop("Verdict");
-            // TODO - will need to make this dynamic!!!
             // TODO - add a check if the player is nearing the last tutorial case; if so, modify it so that it'll let them know they're nearing the end.
             // TODO - add a check involving difficulty level where once the player enters 'medium', it'll let the player know they're moving on to a little more challenging cases.
+            // TODO - need to make the end tutorial scene
+            // TODO - in the tutorial-cases JSON, update the explanations for each test case and style them with 'cout <</ << endl; ' etc. so that they fit the game's aesthetic and feel more integrated into the game.
             this.scene.start("Case", {
                 isTutorial: this.isTutorial,
                 // nextTutorialText:
                 //     tutorialCases[this.currTutorialCaseIndex + 1].description,
                 nextTutorialText:
-                    'cout << "Great work on the first case! Let\'s move on to the next one!" << endl;',
+                    'cout << "Great job getting through your first case! Let\'s move on to the next one!" << endl;',
                 difficulty: this.currentDifficulty,
                 currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
             });
@@ -221,8 +222,8 @@ export class Verdict extends Scene {
 
                                 this.typingInProgress = false;
                                 await this.addAnimatedTypingText(
-                                    'cout << "INNOCENT!" << endl;',
-                                    40,
+                                    tutorialCases[this.currTutorialCaseIndex]
+                                        .closingStatement,
                                 );
                                 this.judge.anims.pause();
                                 this.judge.setFrame(0);
@@ -271,7 +272,7 @@ export class Verdict extends Scene {
         }
     }
 
-    playJudgeAnimation(mood: "happy" | "sad") {
+    private playJudgeAnimation(mood: "happy" | "sad") {
         if (mood === "happy") {
             this.judge = this.add
                 .sprite(
@@ -343,7 +344,8 @@ export class Verdict extends Scene {
             this.showTestCaseReasonings("sad");
 
             await this.addAnimatedTypingText(
-                "cout << \"Even though your selected test cases weren't the best fit, that's okay. The more you review cases, the better you'll get at identifying meaningful evidence. Here, I explain which tests were useful, which were misleading or redundant, and how your choices influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on.\" << endl;",
+                tutorialCases[this.currTutorialCaseIndex]
+                    .missedEvidenceExplanation,
                 18,
                 1,
             ); // TODO - remove 1
@@ -374,8 +376,4 @@ export class Verdict extends Scene {
     async create() {
         await this.checkUserSelections();
     }
-
-    update() {}
-
-    changeScene() {}
 }
