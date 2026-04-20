@@ -44,8 +44,6 @@ export class Tutorial extends Scene {
     }
 
     async create() {
-        // this.add.sprite(512, 420, "test", 0).setScale(20);
-
         this.add.rectangle(512, 130, 1024, 205, 0x000000, 0.8).setOrigin(0.5);
 
         const textObject = this.add
@@ -80,6 +78,7 @@ export class Tutorial extends Scene {
             this.judge,
             textObject.setText(firstIntro),
             firstIntro,
+            1,
         ); // TODO - remove 1
 
         const buttonContainer = createTextButton.call(
@@ -120,6 +119,7 @@ export class Tutorial extends Scene {
                 this.judge,
                 textObject.setText(secondIntro),
                 secondIntro,
+                1,
             ); // TODO - remove 1
 
             const thirdIntro =
@@ -128,15 +128,16 @@ export class Tutorial extends Scene {
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
                 this.judge.destroy();
-                this.changeScene(true, thirdIntro);
+                this.changeScene(true, thirdIntro, "easy");
             });
         });
     }
 
-    changeScene(isTutorial: boolean = true, nextTutorialText: string) {
+    changeScene(isTutorial: boolean = true, nextTutorialText: string, difficulty: "easy" | "medium" | "hard" = "easy") {
         this.scene.launch("Case", {
             isTutorial,
             nextTutorialText,
+            difficulty,
         });
     }
 }
