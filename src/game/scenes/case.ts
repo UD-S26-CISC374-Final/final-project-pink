@@ -16,9 +16,8 @@ export class Case extends Scene {
     typingInProgress: boolean = false;
     textObject: Phaser.GameObjects.Text;
     currentTab: "code" | "explanation" | "test-cases";
-    currTutorialCaseIndex = 0;
-    currTutorialCaseDesc =
-        tutorialCases[this.currTutorialCaseIndex].description;
+    currentTutorialCaseIndex: number;
+    currTutorialCaseDesc: string;
     caseFileCodeSnippet: Phaser.GameObjects.Image;
     programDescTextReference: Phaser.GameObjects.Text;
     backButton: Phaser.GameObjects.Container;
@@ -42,7 +41,11 @@ export class Case extends Scene {
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
 
         this.caseFileCodeSnippet = this.add
-            .image(512, 450, "tutorial-code-1")
+            .image(
+                512,
+                450,
+                `tutorial-code-${this.currentTutorialCaseIndex + 1}`,
+            )
             .setDisplaySize(920, 600)
             .setScale(0.26)
             .setDepth(10);
@@ -101,7 +104,8 @@ export class Case extends Scene {
     private addTestCases(currentY: number = 350, margin: number = 5) {
         for (
             let i = 1;
-            i <= tutorialCases[this.currTutorialCaseIndex].evidencePool.length;
+            i <=
+            tutorialCases[this.currentTutorialCaseIndex].evidencePool.length;
             i++
         ) {
             const texture = this.textures.get(`tutorial-test-${i}`);
@@ -191,7 +195,7 @@ export class Case extends Scene {
                     this.scene.stop("Tutorial");
                     this.scene.start("Verdict", {
                         selectedTestCasesIndices: this.selectedTestCases,
-                        tutorialCaseIndex: this.currTutorialCaseIndex,
+                        tutorialCaseIndex: this.currentTutorialCaseIndex,
                         isTutorial: this.isTutorial,
                         difficulty: this.currentDifficulty,
                     });
@@ -286,6 +290,7 @@ export class Case extends Scene {
         isTutorial: boolean;
         nextTutorialText: string;
         difficulty: "easy" | "medium" | "hard";
+        currentTutorialCaseIndex: number;
     }) {
         this.cameras.main.setBackgroundColor("#2d2d2d");
         this.add.rectangle(512, 80, 1024, 120, 0x000000, 0.8).setOrigin(0.5);
@@ -293,6 +298,9 @@ export class Case extends Scene {
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
         this.currentDifficulty = data.difficulty;
+        this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
+        this.currTutorialCaseDesc =
+            tutorialCases[this.currentTutorialCaseIndex].description;
     }
 
     async create() {
