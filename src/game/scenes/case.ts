@@ -4,7 +4,7 @@ import tutorialCases from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
 
 // TODO - will need to add guardrails around tutorail-related code to only have it work if this.tutorial is true
-// ! BUG - for some reason the text is incorrect if you hit 'go back' from the green tab
+// ! BUG - for some reason if you go from green tab and back to the pink tab, the 'present to judge' button doesn't show
 
 export class Case extends Scene {
     constructor() {
@@ -33,6 +33,7 @@ export class Case extends Scene {
     };
     thirdIntro =
         "cout << \"These are the program's test cases. Use them as evidence. If a test shows the function gives the wrong result, it's guilty. If the tests support it, it's innocent. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.\" << endl;";
+    currentDifficulty = "easy";
 
     private async goBack() {
         if (this.typingInProgress) return;
@@ -192,6 +193,7 @@ export class Case extends Scene {
                         selectedTestCasesIndices: this.selectedTestCases,
                         tutorialCaseIndex: this.currTutorialCaseIndex,
                         isTutorial: this.isTutorial,
+                        difficulty: this.currentDifficulty,
                     });
                 });
             });
@@ -283,13 +285,14 @@ export class Case extends Scene {
     init(data: {
         isTutorial: boolean;
         nextTutorialText: string;
-        judge: Phaser.GameObjects.Sprite;
+        difficulty: "easy" | "medium" | "hard";
     }) {
         this.cameras.main.setBackgroundColor("#2d2d2d");
         this.add.rectangle(512, 80, 1024, 120, 0x000000, 0.8).setOrigin(0.5);
         this.currentTab = "code";
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
+        this.currentDifficulty = data.difficulty;
     }
 
     async create() {
