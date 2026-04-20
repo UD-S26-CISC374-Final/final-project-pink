@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import createTextButton from "../utils/createTextButton";
+import tutorialCases from "../data/tutorial-cases.json";
 
 export class Tutorial extends Scene {
     judge: Phaser.GameObjects.Sprite;
@@ -71,8 +72,7 @@ export class Tutorial extends Scene {
 
         this.judge.play("talk");
 
-        const firstIntro =
-            "cout << \"Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! To start, let's familiarize ourselves with the interface you'll be using to dissect each case.\" << endl;";
+        const firstIntro = tutorialCases[0].tutorialText as string;
 
         await typewriterEffect(
             this.judge,
