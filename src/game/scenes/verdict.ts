@@ -99,7 +99,8 @@ export class Verdict extends Scene {
                 //     tutorialCases[this.currTutorialCaseIndex + 1].description,
                 nextTutorialText:
                     'cout << "Great work on the first case! Let\'s move on to the next one!" << endl;',
-                judge: this.judge,
+                difficulty: this.currentDifficulty,
+                currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
             });
         });
     }
@@ -112,7 +113,11 @@ export class Verdict extends Scene {
             const feedbackObj = tutorialTestFeedback[i];
             const yPosition = 200 + i * 120;
             const testCaseImage = this.add
-                .image(40, yPosition, `tutorial-test-${i + 1}`)
+                .image(
+                    40,
+                    yPosition,
+                    `tutorial-${this.currTutorialCaseIndex}-t${i + 1}`,
+                )
                 .setOrigin(0, 0)
                 .setScale(0.2)
                 .setInteractive();
