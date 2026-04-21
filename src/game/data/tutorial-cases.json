@@ -3,68 +3,37 @@
         "id": "case-1",
         "difficulty": "easy",
         "title": "The Case of Absolute Value",
-        "introTutorialText": "Welcome to the tutorial! This is where you'll learn the basics of getting the hang at being a lawyer at the Syntax Criminal Court! To \nstart, let's familiarize ourselves with the interface you'll be using to disect each case. Starting off, each case will follow this UI:",
-        "descTutorialText": "The given function above claims to follow the specifications on the right. Select the two \ntest cases that best interrogate this claim. Will they confirm the function's innocence or \nexpose its guilt?",
+        "tutorialText": "cout << \"Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! Let's begin.\" << endl;",
         "functionCode": "def absolute_value(n):\n if n < 0:\n  return -n\n return n",
         "description": "This function claims to return the non-negative absolute value of any number.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "evidencePool": [
-            {
-                "id": "c1-t1",
-                "label": "AbsoluteValue(5) -> 5",
-                "input": "5",
-                "expectedOutput": "5",
-                "actualOutput": "5",
-                "passes": true,
-                "showResult": true
-            },
-            {
-                "id": "c1-t2",
-                "label": "AbsoluteValue(-3) -> 3",
-                "input": "-3",
-                "expectedOutput": "3",
-                "actualOutput": "3",
-                "passes": true,
-                "showResult": true
-            },
-            {
-                "id": "c1-t3",
-                "label": "AbsoluteValue(10) -> 10",
-                "input": "10",
-                "expectedOutput": "10",
-                "actualOutput": "10",
-                "passes": true,
-                "showResult": true
-            }
-        ],
         "testFeedback": [
             {
                 "testId": "c1-t1",
                 "quality": "essential",
-                "feedback": "This test covers the case where the input is a positive number"
+                "feedback": "cout << \"This test is useful because it verifies the 'positive' path of the code. It confirms that when given a normal positive number, the function returns it unchanged.\" << endl;"
             },
             {
                 "testId": "c1-t2",
                 "quality": "essential",
-                "feedback": "This test covers the case where the input is a negative number"
+                "feedback": "cout << \"This is a high-quality test. It forces the code to enter the 'if' block, which is the only way to prove the function can correctly handle negative inputs.\" << endl;"
             },
             {
                 "testId": "c1-t3",
                 "quality": "redundant",
-                "feedback": "This test is redundant because it tests the same case as test 1 (positive number)"
+                "feedback": "cout << \"This test is redundant. Since we already have a test for a positive number, adding another one doesn't reveal any new information about how the code works.\" << endl;"
             }
         ],
-        "missedEvidenceExplanation": "We never tested for n=0, which is an important edge case for this function",
-        "closingStatement": "The function correctly handles positive and negative numbers, but it fails to account for the edge case of zero. Therefore, the correct verdict is \"not guilty\" because the function is mostly correct but has a significant oversight."
+        "missedEvidenceExplanation": "cout << \"Even though your selected test cases weren't the best fit, that's okay because every case is a chance to learn. In this trial, the most important tests were at the 'boundaries.' While testing basic numbers is a good start, always look for the 'Zero' case to ensure the logic doesn't break at the edge. Below, I have explained which tests were useful, redundant, or misleading. Please review these insights before we move to the next trial.\" << endl;",
+        "closingStatement": "cout << \"The evidence shows that the function handles both positive and negative inputs correctly. Even though we didn't see every possible number, the logic holds up. I find the defendant NOT GUILTY.\" << endl;"
     },
     {
         "id": "case-2",
         "difficulty": "easy",
-        "introTutorialText": "",
-        "descTutorialText": "",
+        "tutorialText": "",
         "title": "The False Start",
-        "functionCode": "def greet(name):\n    # BUG: Forgot to add a space in the string\n    return \"Hello\" + name",
+        "functionCode": "def greet(name):\n   return \"Hello\" + name",
         "description": "This function is supposed to greet a user by adding 'Hello ' before their name.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
@@ -110,26 +79,26 @@
             {
                 "testId": "c2-t1",
                 "quality": "essential",
-                "feedback": "This clearly shows the names are smashed together without a space."
+                "feedback": "cout << \"This test is a critical piece of evidence. It clearly demonstrates that the function fails to add a space, resulting in the name and greeting being smashed together.\" << endl;"
             },
             {
                 "testId": "c2-t2",
                 "quality": "misleading",
-                "feedback": "The input has a leading space (' Bob'), which makes the function appear correct."
+                "feedback": "cout << \"This test is misleading. Because the input itself starts with a space (' Bob'), it makes the function look like it's working even though the code is actually broken.\" << endl;"
             },
             {
                 "testId": "c2-t3",
                 "quality": "essential",
-                "feedback": "Even with no name, we expect a trailing space after Hello."
+                "feedback": "cout << \"This is a great edge case test. By using an empty name, we can see that the function doesn't even provide a trailing space after the word 'Hello'.\" << endl;"
             },
             {
                 "testId": "c2-t4",
                 "quality": "redundant",
-                "feedback": "This is just another example of the same concatenation error."
+                "feedback": "cout << \"This test is redundant. We already proved the missing space error with 'Alice', so testing 'World' doesn't give the jury any new information.\" << endl;"
             }
         ],
-        "missedEvidenceExplanation": "The function fails to provide its own space, relying on the user to include one in their input string.",
-        "closingStatement": "Guilty! The defendant failed to include the necessary space character in the return string, leading to unreadable greetings."
+        "missedEvidenceExplanation": "cout << \"Even if your evidence wasn't a perfect fit, remember that the best lawyers learn from every trial. In this case, we saw a 'misleading' test where a space in the input ( ' Bob') accidentally covered up a bug in the code. To truly catch a bug, you need 'clean' evidence that doesn't do the function's work for it. Please review the test details below to see how each piece of evidence influenced the final verdict.\" << endl;",
+        "closingStatement": "cout << \"The verdict is GUILTY. The function failed to include the required space character, relying on the user to fix the formatting themselves. The defendant is sentenced to the Debugging Ward!\" << endl;"
     },
     {
         "id": "case-3",
