@@ -24,6 +24,7 @@ export class SummaryScene extends Scene {
         this.load.setPath("assets");
         this.load.image("judge_compiler", "judge_compiler.PNG");
         this.load.image("stamp_guilty", "guilty.png");
+        this.load.image("stamp_not_guilty", "not_guilty.png");
     }
 
     // ── Speech bubble ──────────────────────────────────────────────────────────
@@ -81,10 +82,13 @@ export class SummaryScene extends Scene {
             .map((result) => {
                 const caseData = manager.getCaseById(result.caseId);
                 const title = caseData?.title ?? result.caseId;
-                const verdictClass = result.verdictCorrect ? "v-ok" : "v-fail";
-                const verdictLabel = `${result.verdictCorrect ? "✓" : "✗"} ${(result.playerVerdict as string).toUpperCase()}`;
+                const isGuilty = result.playerVerdict === "guilty";
+                const verdictBadge = isGuilty
+                    ? `<img src="assets/guilty_no_frame.png" class="verdict-img">`
+                    : `<img src="assets/not_guilty_no_frame_green.png" class="verdict-img">`;
                 const ptsSign = result.pointsEarned >= 0 ? "+" : "";
-                const ptsColor = result.pointsEarned > 0 ? "#01ff34" : "#ff4444";
+                const ptsColor = result.pointsEarned > 0 ? "#E8A000" : "#ff4444";
+                const rowClass = result.pointsEarned > 0 ? "case-row row-positive" : "case-row";
 
                 let expandedHTML = "";
                 if (caseData) {
@@ -119,12 +123,12 @@ export class SummaryScene extends Scene {
 
                 const closingEncoded = encodeURIComponent(caseData?.closingStatement ?? "");
 
-                return `<div class="case-row" data-case-id="${result.caseId}" data-verdict="${result.playerVerdict}" data-closing="${closingEncoded}">
+                return `<div class="${rowClass}" data-case-id="${result.caseId}" data-verdict="${result.playerVerdict}" data-closing="${closingEncoded}">
                     <div class="row-hdr">
                         <span class="ctitle">${title}</span>
                         <div class="rright">
-                            <span class="${verdictClass}">${verdictLabel}</span>
-                            <span style="color:${ptsColor};font-size:13px">${ptsSign}${result.pointsEarned}&nbsp;pts</span>
+                            ${verdictBadge}
+                            <span style="color:${ptsColor};font-size:13px;${result.pointsEarned > 0 ? "text-shadow:0 0 8px rgba(232,160,0,.7);font-weight:bold" : ""}">${ptsSign}${result.pointsEarned}&nbsp;pts</span>
                             <span class="chev">▼</span>
                         </div>
                     </div>
@@ -156,13 +160,13 @@ export class SummaryScene extends Scene {
 .clist::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:3px}
 .case-row{margin-bottom:5px;border-radius:5px;border:1px solid #2c2c2c;cursor:pointer;background:rgba(0,0,0,.4);opacity:0;transform:translateX(-24px);transition:opacity .25s ease,transform .25s ease}
 .case-row.visible{opacity:1;transform:translateX(0)}
+.case-row.row-positive{border-color:#7a5c00;box-shadow:0 0 10px rgba(232,160,0,.25),inset 0 0 24px rgba(232,160,0,.07)}
 .case-row.expanded{border-color:#484848}
 .row-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px}
 .row-hdr:hover{background:rgba(255,255,255,.04)}
 .ctitle{font-size:14px;color:#e0e0e0;flex:1}
 .rright{display:flex;align-items:center;gap:12px}
-.v-ok{font-size:13px;color:#01ff34}
-.v-fail{font-size:13px;color:#ff4444}
+.verdict-img{height:28px;width:auto;object-fit:contain;display:block;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
 .chev{font-size:11px;color:#777;transition:transform .2s;display:inline-block}
 .case-row.expanded .chev{transform:rotate(180deg)}
 .exp{display:none;padding:10px 14px 14px;border-top:1px solid #2c2c2c}
@@ -213,7 +217,8 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
     // ── Stamp animation ────────────────────────────────────────────────────────
 
-    private slamStamp() {
+    private slamStamp(key: string) {
+        this.stamp.setTexture(key);
         const targetScale = Math.min(200 / this.stamp.width, 1);
         this.tweens.killTweensOf(this.stamp);
 
@@ -240,18 +245,18 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
     }
 
     private playIntroSequence(rowEls: HTMLElement[]) {
-        const PER_CASE = 1500; // ms between each row reveal
+        const PER_CASE = 1500;
 
         rowEls.forEach((rowEl, i) => {
-            // Reveal the row
             this.time.delayedCall(i * PER_CASE + 150, () => {
                 rowEl.classList.add("visible");
             });
 
-            // Slam the stamp after a beat if verdict is guilty
-            if (rowEl.dataset.verdict === "guilty") {
+            const verdict = rowEl.dataset.verdict;
+            if (verdict === "guilty" || verdict === "not guilty") {
+                const key = verdict === "guilty" ? "stamp_guilty" : "stamp_not_guilty";
                 this.time.delayedCall(i * PER_CASE + 550, () => {
-                    this.slamStamp();
+                    this.slamStamp(key);
                 });
             }
         });
