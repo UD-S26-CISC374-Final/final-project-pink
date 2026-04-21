@@ -3,6 +3,7 @@ import CaseManager from "../case-manager";
 
 // Loaded by hqureshi's preloader — falls back to monospace until that branch merges
 const FONT = "Google Sans Code";
+const DPR = window.devicePixelRatio || 1;
 
 export class SummaryScene extends Scene {
     constructor() {
@@ -20,13 +21,13 @@ export class SummaryScene extends Scene {
 
         // Score (left)
         this.add
-            .text(256, 175, "SCORE", { fontFamily: FONT, fontSize: 14, color: "#aaaaaa" })
+            .text(256, 175, "SCORE", { fontFamily: FONT, fontSize: 14, color: "#aaaaaa", resolution: DPR })
             .setOrigin(0.5);
         this.add
-            .text(256, 215, `${total}`, { fontFamily: FONT, fontSize: 52, color: "#01ff34" })
+            .text(256, 215, `${total}`, { fontFamily: FONT, fontSize: 52, color: "#01ff34", resolution: DPR })
             .setOrigin(0.5);
         this.add
-            .text(256, 255, `out of ${max} possible`, { fontFamily: FONT, fontSize: 14, color: "#aaaaaa" })
+            .text(256, 255, `out of ${max} possible`, { fontFamily: FONT, fontSize: 14, color: "#aaaaaa", resolution: DPR })
             .setOrigin(0.5);
 
         // Divider
@@ -34,13 +35,13 @@ export class SummaryScene extends Scene {
 
         // Verdicts (right)
         this.add
-            .text(768, 175, "VERDICTS", { fontFamily: FONT, fontSize: 14, color: "#aaaaaa" })
+            .text(768, 175, "VERDICTS", { fontFamily: FONT, fontSize: 14, color: "#aaaaaa", resolution: DPR })
             .setOrigin(0.5);
         this.add
-            .text(768, 215, `${correct} / ${totalCases}`, { fontFamily: FONT, fontSize: 52, color: "#01ff34" })
+            .text(768, 215, `${correct} / ${totalCases}`, { fontFamily: FONT, fontSize: 52, color: "#01ff34", resolution: DPR })
             .setOrigin(0.5);
         this.add
-            .text(768, 255, "correct", { fontFamily: FONT, fontSize: 14, color: "#aaaaaa" })
+            .text(768, 255, "correct", { fontFamily: FONT, fontSize: 14, color: "#aaaaaa", resolution: DPR })
             .setOrigin(0.5);
     }
 
@@ -57,6 +58,7 @@ export class SummaryScene extends Scene {
                 fontFamily: FONT,
                 fontSize: 13,
                 color: "#aaaaaa",
+                resolution: DPR,
             })
             .setOrigin(0.5);
 
@@ -74,9 +76,9 @@ export class SummaryScene extends Scene {
 
             container.add([
                 this.add.rectangle(width / 2, y, 900, rowHeight - 4, 0x000000, rowAlpha).setOrigin(0.5),
-                this.add.text(80, y, title, { fontFamily: FONT, fontSize: 16, color: "#ffffff" }).setOrigin(0, 0.5),
-                this.add.text(width - 280, y, verdictLabel, { fontFamily: FONT, fontSize: 16, color: verdictColor }).setOrigin(0, 0.5),
-                this.add.text(width - 90, y, `+${result.pointsEarned} pts`, { fontFamily: FONT, fontSize: 16, color: result.pointsEarned > 0 ? "#01ff34" : "#ff4444" }).setOrigin(1, 0.5),
+                this.add.text(80, y, title, { fontFamily: FONT, fontSize: 16, color: "#ffffff", resolution: DPR }).setOrigin(0, 0.5),
+                this.add.text(width - 280, y, verdictLabel, { fontFamily: FONT, fontSize: 16, color: verdictColor, resolution: DPR }).setOrigin(0, 0.5),
+                this.add.text(width - 90, y, `+${result.pointsEarned} pts`, { fontFamily: FONT, fontSize: 16, color: result.pointsEarned > 0 ? "#01ff34" : "#ff4444", resolution: DPR }).setOrigin(1, 0.5),
             ]);
         });
 
@@ -91,7 +93,7 @@ export class SummaryScene extends Scene {
 
         this.input.on(
             Phaser.Input.Events.POINTER_WHEEL,
-            (_p: Phaser.Input.Pointer, _go: unknown[], _dx: number, deltaY: number) => {
+            (_p: Phaser.Input.Pointer, _go: Phaser.GameObjects.GameObject[], _dx: number, deltaY: number) => {
                 container.y = Phaser.Math.Clamp(
                     container.y - deltaY * 0.5,
                     listTop - maxScroll,
@@ -126,6 +128,7 @@ export class SummaryScene extends Scene {
                 color: "#01ff34",
                 stroke: "#000000",
                 strokeThickness: 4,
+                resolution: DPR,
             })
             .setOrigin(0.5);
 
@@ -137,6 +140,7 @@ export class SummaryScene extends Scene {
                 fontFamily: FONT,
                 fontSize: 16,
                 color: "#aaaaaa",
+                resolution: DPR,
             })
             .setOrigin(0.5);
 
@@ -154,6 +158,7 @@ export class SummaryScene extends Scene {
                 fontFamily: FONT,
                 fontSize: 18,
                 color: "#01ff34",
+                resolution: DPR,
             })
             .setOrigin(0.5);
 
