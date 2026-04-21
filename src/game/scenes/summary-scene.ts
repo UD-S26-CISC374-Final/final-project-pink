@@ -14,6 +14,7 @@ const RIGHT_CX = PANEL_W + (SCREEN_W - PANEL_W) / 2; // 842
 export class SummaryScene extends Scene {
     private bubbleBg!: Phaser.GameObjects.Graphics;
     private bubbleText!: Phaser.GameObjects.Text;
+    private stamp!: Phaser.GameObjects.Image;
 
     constructor() {
         super("Summary");
@@ -22,6 +23,7 @@ export class SummaryScene extends Scene {
     preload() {
         this.load.setPath("assets");
         this.load.image("judge_compiler", "judge_compiler.PNG");
+        this.load.image("stamp_guilty", "guilty.png");
     }
 
     // ── Speech bubble ──────────────────────────────────────────────────────────
@@ -91,9 +93,7 @@ export class SummaryScene extends Scene {
                             const test = caseData.evidencePool.find((t) => t.id === id);
                             const fb = caseData.testFeedback.find((f) => f.testId === id);
                             if (!test || !fb) return "";
-                            let cls = "card-bad";
-                            let lbl = fb.quality === "redundant" ? "Redundant" : "Misleading";
-                            if (fb.quality === "essential") { cls = "card-good"; lbl = "Good Evidence"; }
+                            const cls = fb.quality === "essential" ? "card-good" : "card-bad";
                             return `<div class="ev-card ${cls}"><code>${test.label}</code><p>${fb.feedback}</p></div>`;
                         })
                         .join("");
@@ -119,7 +119,7 @@ export class SummaryScene extends Scene {
 
                 const closingEncoded = encodeURIComponent(caseData?.closingStatement ?? "");
 
-                return `<div class="case-row" data-case-id="${result.caseId}" data-closing="${closingEncoded}">
+                return `<div class="case-row" data-case-id="${result.caseId}" data-verdict="${result.playerVerdict}" data-closing="${closingEncoded}">
                     <div class="row-hdr">
                         <span class="ctitle">${title}</span>
                         <div class="rright">
@@ -154,7 +154,8 @@ export class SummaryScene extends Scene {
 .clist::-webkit-scrollbar{width:5px}
 .clist::-webkit-scrollbar-track{background:#1a1a1a}
 .clist::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:3px}
-.case-row{margin-bottom:5px;border-radius:5px;border:1px solid #2c2c2c;cursor:pointer;background:rgba(0,0,0,.4)}
+.case-row{margin-bottom:5px;border-radius:5px;border:1px solid #2c2c2c;cursor:pointer;background:rgba(0,0,0,.4);opacity:0;transform:translateX(-24px);transition:opacity .25s ease,transform .25s ease}
+.case-row.visible{opacity:1;transform:translateX(0)}
 .case-row.expanded{border-color:#484848}
 .row-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px}
 .row-hdr:hover{background:rgba(255,255,255,.04)}
@@ -210,6 +211,52 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 </div>`;
     }
 
+    // ── Stamp animation ────────────────────────────────────────────────────────
+
+    private slamStamp() {
+        const targetScale = Math.min(200 / this.stamp.width, 1);
+        this.tweens.killTweensOf(this.stamp);
+
+        this.stamp.setAlpha(1).setScale(targetScale * 3).setRotation(-0.35);
+
+        this.tweens.add({
+            targets: this.stamp,
+            scale: targetScale,
+            rotation: -0.12,
+            duration: 180,
+            ease: "Back.Out",
+            onComplete: () => {
+                this.time.delayedCall(650, () => {
+                    this.tweens.add({
+                        targets: this.stamp,
+                        alpha: 0,
+                        scale: targetScale * 0.85,
+                        duration: 220,
+                        ease: "Sine.In",
+                    });
+                });
+            },
+        });
+    }
+
+    private playIntroSequence(rowEls: HTMLElement[]) {
+        const PER_CASE = 1500; // ms between each row reveal
+
+        rowEls.forEach((rowEl, i) => {
+            // Reveal the row
+            this.time.delayedCall(i * PER_CASE + 150, () => {
+                rowEl.classList.add("visible");
+            });
+
+            // Slam the stamp after a beat if verdict is guilty
+            if (rowEl.dataset.verdict === "guilty") {
+                this.time.delayedCall(i * PER_CASE + 550, () => {
+                    this.slamStamp();
+                });
+            }
+        });
+    }
+
     // ── Scene lifecycle ────────────────────────────────────────────────────────
 
     create() {
@@ -259,6 +306,13 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
         panelDiv.querySelector("#menu-btn")?.addEventListener("click", () => {
             this.scene.start("MainMenu");
         });
+
+        // ── Stamp (starts hidden, slam animation on intro) ──
+        this.stamp = this.add.image(RIGHT_CX, SCREEN_H / 2 - 60, "stamp_guilty").setAlpha(0);
+
+        // ── Intro sequence: reveal rows one by one ──
+        const rowEls = Array.from(panelDiv.querySelectorAll<HTMLElement>(".case-row"));
+        this.playIntroSequence(rowEls);
 
         // ── Judge Compiler sprite ──
         const sprite = this.add.image(RIGHT_CX + 10, SCREEN_H - 20, "judge_compiler");
