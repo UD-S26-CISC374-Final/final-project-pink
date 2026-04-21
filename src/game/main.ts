@@ -50,6 +50,9 @@ const config: Phaser.Types.Core.GameConfig = {
         touch: true,
         gamepad: false,
     },
+    dom: {
+        createContainer: true,
+    },
     render: {
         pixelArt: true,
         antialias: true,
