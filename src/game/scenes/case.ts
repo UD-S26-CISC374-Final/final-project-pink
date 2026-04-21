@@ -3,10 +3,9 @@ import { typewriterEffect } from "../utils/typeWriterAnimation";
 import tutorialCases from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
 
-// TODO - will need to add guardrails around tutorail-related code to only have it work if this.tutorial is true
-// ! BUG - for some reason if you go from green tab and back to the pink tab, the 'present to judge' button doesn't show
-// ! BUG - for some reason on the second case, you have to click the pink tab first and then the green tab
-// ! BUG - the 'present to judge' button show/hide logic is a bit glitchy when it comes to the second case
+// TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
+// TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
+// TODO - change it so that if you select a test case and then de-select, instead of the text animation playing again, it just shows the text again without the animation
 
 export class Case extends Scene {
     constructor() {
@@ -15,7 +14,7 @@ export class Case extends Scene {
 
     isTutorial: boolean = false;
     nextTutorialText: string;
-    typingInProgress: boolean = false;
+    typingInProgress: boolean;
     textObject: Phaser.GameObjects.Text;
     currentTab: "code" | "explanation" | "test-cases";
     currentTutorialCaseIndex: number;
@@ -26,15 +25,15 @@ export class Case extends Scene {
     caseFileTestCases: Phaser.GameObjects.Image[] = [];
     selectedTestCases: string[] = [];
     presentToJudgeButton: Phaser.GameObjects.Container | undefined;
-    reminderMessageReference: Phaser.GameObjects.Text;
+    reminderMessageReference: Phaser.GameObjects.Text | undefined;
     letterMap: Record<number, string> = {
         0: "A",
         1: "B",
         2: "C",
     };
     thirdIntro =
-        "cout << \"These are the program's test cases. Use them as evidence. If a test shows the function gives the wrong result, it's guilty. If the tests support it, it's innocent. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.\" << endl;";
-    currentDifficulty = "easy";
+        'cout << "These are the program\'s test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them." << endl;';
+    currentDifficulty = "easy"; // TODO - in the future, will need to change this so it's not hardcoded
 
     private async goBack() {
         if (this.typingInProgress) return;
@@ -143,40 +142,53 @@ export class Case extends Scene {
 
             testCase.on("pointerdown", async () => {
                 if (this.typingInProgress) return;
-
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 const letter: string = this.letterMap[i];
-                if (this.selectedTestCases.includes(letter)) {
+                const isSelected = this.selectedTestCases.includes(letter);
+
+                // Prevent async spam
+                if (isSelected) {
+                    // REMOVE
                     this.selectedTestCases = this.selectedTestCases.filter(
                         (test) => test !== letter,
                     );
                     testCase.setAlpha(1);
 
-                    if (this.presentToJudgeButton) {
+                    // Only remove button if no longer valid
+                    if (
+                        this.selectedTestCases.length < 2 &&
+                        this.presentToJudgeButton
+                    ) {
                         this.presentToJudgeButton.destroy();
                         this.presentToJudgeButton = undefined;
-                        this.textObject.setText("");
 
-                        await this.addAnimatedTypingText(this.thirdIntro, 19);
-                    }
-                } else {
-                    if (this.selectedTestCases.length < 2) {
-                        this.selectedTestCases.push(letter);
-                        testCase.setAlpha(0.5);
-                    } else {
                         this.textObject.setText("");
                         await this.addAnimatedTypingText(
-                            'cout << "Remember: You can only select 2 test cases as evidence. Please deselect one of your currently selected test cases to choose a different one. Fair warning that switching tabs will reset your selections!" << endl;',
-                            22,
+                            this.thirdIntro,
+                            19,
+                            1,
                         );
-                        this.reminderMessageReference = this.textObject;
                     }
+                } else {
+                    // ADD
+                    if (this.selectedTestCases.length >= 2) {
+                        this.textObject.setText("");
+
+                        await this.addAnimatedTypingText(
+                            'cout << "Remember: You can only select 2 test cases as evidence. Please deselect one..." << endl;',
+                            22,
+                            20,
+                        );
+
+                        this.reminderMessageReference = this.textObject;
+                        return;
+                    }
+
+                    this.selectedTestCases.push(letter);
+                    testCase.setAlpha(0.5);
                 }
 
-                if (
-                    this.selectedTestCases.length === 2 &&
-                    !this.presentToJudgeButton
-                ) {
+                if (this.selectedTestCases.length === 2) {
                     this.presentToJudgeButton = createTextButton.call(
                         this,
                         400,
@@ -224,6 +236,7 @@ export class Case extends Scene {
             if (this.typingInProgress) return;
             if (this.currentTab === "test-cases") return;
             this.caseFileTestCases = [];
+            this.selectedTestCases = [];
 
             this.textObject.setText("");
             this.currentTab = "test-cases";
@@ -235,7 +248,7 @@ export class Case extends Scene {
                 this.programDescTextReference.destroy();
 
             const thirdIntro =
-                "cout << \"These are the program's test cases. Use them as evidence. If a test shows the function gives the wrong result, it's guilty. If the tests support it, it's innocent. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.\" << endl;";
+                "cout << \"These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.\" << endl;";
 
             this.addTestCases(350);
             await this.addAnimatedTypingText(thirdIntro, 18);
@@ -252,7 +265,6 @@ export class Case extends Scene {
         pinkTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
             if (this.currentTab === "explanation") return;
-            if (this.selectedTestCases.length) this.selectedTestCases = [];
             if (this.presentToJudgeButton) this.presentToJudgeButton.destroy();
 
             this.caseFileCodeSnippet.destroy();
@@ -281,7 +293,11 @@ export class Case extends Scene {
         });
     }
 
-    async addAnimatedTypingText(text: string, fontSize: number = 21) {
+    async addAnimatedTypingText(
+        text: string,
+        fontSize: number = 21,
+        speed?: number,
+    ) {
         this.typingInProgress = true;
 
         this.textObject = this.add.text(100, 30, "", {
@@ -290,7 +306,12 @@ export class Case extends Scene {
             wordWrap: { width: 800 },
         });
 
-        await typewriterEffect(null, this.textObject.setText(text), text, 1); // TODO - remove 1
+        await typewriterEffect(
+            null,
+            this.textObject.setText(text),
+            text,
+            speed,
+        );
         this.typingInProgress = false;
     }
 
@@ -309,6 +330,7 @@ export class Case extends Scene {
         this.currTutorialCaseDesc =
             tutorialCases[this.currentTutorialCaseIndex].description;
         this.selectedTestCases = [];
+        this.currentTab = "code";
     }
 
     async create() {
@@ -327,6 +349,6 @@ export class Case extends Scene {
 
         // 3. Next, we are going to introduce the user with the next tutorial's text
         this.showBackButton();
-        await this.addAnimatedTypingText(this.nextTutorialText);
+        await this.addAnimatedTypingText(this.nextTutorialText); // TODO - remove 1
     }
 }
