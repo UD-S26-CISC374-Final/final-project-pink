@@ -43,6 +43,7 @@ export class Verdict extends Scene {
         this.currTutorialCaseIndex = data.tutorialCaseIndex;
         this.totalEvidenceCases =
             tutorialCases[this.currTutorialCaseIndex].testFeedback.length;
+        this.currReviewedEvidence = [];
     }
 
     async addAnimatedTypingText(
@@ -100,8 +101,8 @@ export class Verdict extends Scene {
                 isTutorial: this.isTutorial,
                 // nextTutorialText:
                 //     tutorialCases[this.currTutorialCaseIndex + 1].description,
-                nextTutorialText:
-                    'cout << "Great job getting through your first case! Let\'s move on to the next one!" << endl;',
+                nextTutorialText: tutorialCases[this.currTutorialCaseIndex + 1]
+                    .tutorialText as string,
                 difficulty: this.currentDifficulty,
                 currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
             });
@@ -191,7 +192,7 @@ export class Verdict extends Scene {
                         this.playJudgeAnimation("happy");
 
                         await this.addAnimatedTypingText(
-                            'cout << "Great work, you\'ve reviewed all the evidence! Hopefully my explanations were clear enough for you to start getting the hang of determining good test cases over poorer ones. With that being said, I order this program to be..." << endl;',
+                            'cout << "Great work—you\'ve reviewed all the evidence! I hope my explanations helped you better understand how to distinguish strong test cases from weaker ones. With that said, I declare this program to be..." << endl;',
                             20,
                         );
 
@@ -254,8 +255,8 @@ export class Verdict extends Scene {
 
                                 this.typingInProgress = false;
                                 await this.addAnimatedTypingText(
-                                    'cout << "GUILTY!" << endl;',
-                                    40,
+                                    tutorialCases[this.currTutorialCaseIndex]
+                                        .closingStatement,
                                 );
 
                                 this.judge.anims.pause();
