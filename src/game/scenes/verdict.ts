@@ -3,6 +3,7 @@ import tutorialCases from "../data/tutorial-cases.json";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import { playConfettiEffect } from "../utils/playConfettiEffect";
 import createTextButton from "../utils/createTextButton";
+import type { Case } from "./case";
 
 export class Verdict extends Scene {
     constructor() {
@@ -96,16 +97,28 @@ export class Verdict extends Scene {
             // TODO - add a check if the player is nearing the last tutorial case; if so, modify it so that it'll let them know they're nearing the end.
             // TODO - add a check involving difficulty level where once the player enters 'medium', it'll let the player know they're moving on to a little more challenging cases.
             // TODO - need to make the end tutorial scene
-            // TODO - in the tutorial-cases JSON, update the explanations for each test case and style them with 'cout <</ << endl; ' etc. so that they fit the game's aesthetic and feel more integrated into the game.
-            this.scene.start("Case", {
-                isTutorial: this.isTutorial,
-                // nextTutorialText:
-                //     tutorialCases[this.currTutorialCaseIndex + 1].description,
-                nextTutorialText: tutorialCases[this.currTutorialCaseIndex + 1]
-                    .tutorialText as string,
-                difficulty: this.currentDifficulty,
-                currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
-            });
+
+            const nextDifficulty =
+                tutorialCases[this.currTutorialCaseIndex + 1].difficulty;
+            if (
+                nextDifficulty === "medium" ||
+                this.currentDifficulty === "hard"
+            ) {
+                alert(
+                    "You are moving on to more challenging cases! Get ready...",
+                );
+                // TODO - add pause scene here where local storage keeps track of the next difficulty so that tutorial starts from there
+                return;
+            } else {
+                this.scene.start("Case", {
+                    isTutorial: this.isTutorial,
+                    nextTutorialText: tutorialCases[
+                        this.currTutorialCaseIndex + 1
+                    ].tutorialText as string,
+                    difficulty: this.currentDifficulty,
+                    currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
+                });
+            }
         });
     }
 
