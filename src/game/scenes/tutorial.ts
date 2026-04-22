@@ -5,7 +5,7 @@ import tutorialCases from "../data/tutorial-cases.json";
 
 export class Tutorial extends Scene {
     judge: Phaser.GameObjects.Sprite;
-    index: number = 0;
+    index: number;
     typingInProgress: boolean = false;
 
     constructor() {
@@ -14,6 +14,33 @@ export class Tutorial extends Scene {
 
     init() {
         this.cameras.main.setBackgroundColor("#2d2d2d");
+
+        const savedTutorialState = localStorage.getItem("savedProgress");
+
+        const parsedSavedTutorialData =
+            savedTutorialState &&
+            (JSON.parse(savedTutorialState) as {
+                currentTutorialCaseIndex: number;
+                difficulty: "easy" | "medium" | "hard";
+            });
+
+        this.index =
+            parsedSavedTutorialData ?
+                parsedSavedTutorialData.currentTutorialCaseIndex
+            :   0;
+
+        if (this.index > 0) {
+            this.scene.start("Case", {
+                isTutorial: true,
+                nextTutorialText:
+                    'cout << "Welcome back to the tutorial! Let\'s continue where you left off with a little more challenging cases." << endl;',
+                difficulty:
+                    parsedSavedTutorialData ?
+                        parsedSavedTutorialData.difficulty
+                    :   "easy",
+                currentTutorialCaseIndex: this.index,
+            });
+        }
     }
 
     playGiveCaseFileAnimation() {
@@ -128,7 +155,7 @@ export class Tutorial extends Scene {
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
                 this.judge.destroy();
-                this.changeScene(true, thirdIntro, "easy", 0);
+                this.changeScene(true, thirdIntro, "easy", this.index);
             });
         });
     }
