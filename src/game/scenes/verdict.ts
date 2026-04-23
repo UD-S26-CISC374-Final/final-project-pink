@@ -3,7 +3,6 @@ import tutorialCases from "../data/tutorial-cases.json";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import { playConfettiEffect } from "../utils/playConfettiEffect";
 import createTextButton from "../utils/createTextButton";
-import type { Case } from "./case";
 
 export class Verdict extends Scene {
     constructor() {
@@ -104,10 +103,13 @@ export class Verdict extends Scene {
                 nextDifficulty === "medium" ||
                 this.currentDifficulty === "hard"
             ) {
-                alert(
-                    "You are moving on to more challenging cases! Get ready...",
-                );
-                // TODO - add pause scene here where local storage keeps track of the next difficulty so that tutorial starts from there
+                this.scene.start("Pause", {
+                    isTutorial: this.isTutorial,
+                    nextTutorialText:
+                        "cout << \"Things are going to start a little more challenging now! Before we proceed, would you like to take a recess and come back later? If so, hit the 'Save Progress' button. Otherwise, hit the 'Next Case' button to proceed.\" << endl;",
+                    difficulty: this.currentDifficulty,
+                    currentTutorialCaseIndex: this.currTutorialCaseIndex,
+                });
                 return;
             } else {
                 this.scene.start("Case", {
