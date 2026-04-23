@@ -175,7 +175,7 @@ export class Pause extends Scene {
         this.saveProgressButton.on("pointerdown", async () => {
             if (this.typingInProgress) return;
 
-            localStorage.setItem(
+            sessionStorage.setItem(
                 "savedProgress",
                 JSON.stringify({
                     currentTutorialCaseIndex: this.currentTutorialCaseIndex,

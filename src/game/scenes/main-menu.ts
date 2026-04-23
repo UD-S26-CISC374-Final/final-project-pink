@@ -47,14 +47,8 @@ export class MainMenu extends Scene implements ChangeableScene {
             .setDepth(100);
 
         this.drawButtons("Start", 400, () => {
-            const caseManager = CaseManager.getInstance();
-            if (caseManager.hasTutorialBeenCompleted()) {
-                caseManager.loadRandomEasyCase();
-                this.gamemode = "Level1";
-            } else {
-                caseManager.loadTutorial();
-                this.gamemode = "Tutorial";
-            }
+            CaseManager.getInstance().loadTutorial();
+            this.gamemode = "Tutorial";
             this.changeScene();
         });
         this.drawButtons("Tutorial", 460, () => {

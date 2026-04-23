@@ -66,7 +66,7 @@ export class Preloader extends Scene {
         });
 
         let i = 0;
-        while (i !== tutorialCases.length - 1) {
+        while (i < tutorialCases.length - 2) {
             this.load.image(
                 `tutorial-code-${i}`,
                 `tutorial-cases-code/tutorial-${i}.png`,
@@ -89,6 +89,6 @@ export class Preloader extends Scene {
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start("Summary");
+        this.scene.start("MainMenu");
     }
 }
