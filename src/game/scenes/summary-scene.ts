@@ -92,7 +92,7 @@ export class SummaryScene extends Scene {
 
                 let expandedHTML = "";
                 if (caseData) {
-                    const LETTER_IDX: Record<string, number> = { A: 0, B: 1, C: 2, D: 3 };
+                    const LETTER_IDX: Record<string, number | undefined> = { A: 0, B: 1, C: 2, D: 3 };
 
                     const submittedCards = result.selectedEvidenceIds
                         .map((letter) => {
@@ -100,7 +100,6 @@ export class SummaryScene extends Scene {
                             if (i === undefined) return "";
                             const test = caseData.evidencePool?.[i];
                             const fb = caseData.testFeedback[i];
-                            if (!fb) return "";
                             const cls = fb.quality === "essential" ? "card-good" : "card-bad";
                             const label = test?.label ?? letter;
                             return `<div class="ev-card ${cls}"><code>${label}</code><p>${fb.feedback}</p></div>`;

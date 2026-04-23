@@ -26,7 +26,7 @@ export interface Case {
     functionCode: string; // Displayed in the case file function box, this is the function on trial
     description: string; // What the function should do
     evidenceSlots: number; // evidence card slots available
-    evidencePool: UnitTest[]; // All the tests that the player can choose from
+    evidencePool?: UnitTest[]; // All the tests that the player can choose from
     correctVerdict: Verdict;
     testFeedback: TestFeedback[];
     missedEvidenceExplanation: string;
