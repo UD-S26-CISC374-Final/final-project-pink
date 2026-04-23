@@ -102,36 +102,47 @@ export class Case extends Scene {
         });
     }
 
-    private addTestCases(currentY: number = 350, margin: number = 5) {
-        for (
-            let i = 1;
-            i <=
-            tutorialCases[this.currentTutorialCaseIndex].testFeedback.length;
-            i++
-        ) {
+    private addTestCases(startY: number = 380, marginY: number = 15) {
+        const testFeedback =
+            tutorialCases[this.currentTutorialCaseIndex].testFeedback;
+        const centerX = 512; // Your current horizontal center
+        const columnWidth = 400; // How far apart the two columns should be
+        const scale = 0.2;
+
+        // Gemini provided the grid formatting logic below:
+        testFeedback.forEach((_, i) => {
+            // Determine column (0 or 1) and row (0, 1, 2...)
+            const col = i % 2;
+            const row = Math.floor(i / 2);
+
+            // Calculate X: Offset left for col 0, right for col 1
+            const xPos =
+                col === 0 ?
+                    centerX - columnWidth / 2
+                :   centerX + columnWidth / 2;
+
+            // Get texture to calculate height dynamically
             const texture = this.textures.get(
-                `tutorial-${this.currentTutorialCaseIndex}-t${i}`,
+                `tutorial-${this.currentTutorialCaseIndex}-t${i + 1}`,
             );
             const source = texture.getSourceImage();
-
-            const scale = 0.2;
             const scaledHeight = source.height * scale;
+
+            // Calculate Y: Start position + (height of image + margin) * row index
+            const yPos = startY + row * (scaledHeight + marginY);
 
             const testCase = this.add
                 .image(
-                    512,
-                    currentY,
-                    `tutorial-${this.currentTutorialCaseIndex}-t${i}`,
+                    xPos,
+                    yPos,
+                    `tutorial-${this.currentTutorialCaseIndex}-t${i + 1}`,
                 )
                 .setScale(scale)
                 .setDepth(10)
                 .setInteractive();
 
             this.caseFileTestCases.push(testCase);
-
-            // move down for next image
-            currentY += scaledHeight + margin;
-        }
+        });
 
         this.clickableTestCases();
     }
