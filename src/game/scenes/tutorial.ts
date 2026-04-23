@@ -29,17 +29,16 @@ export class Tutorial extends Scene {
                 parsedSavedTutorialData.currentTutorialCaseIndex
             :   0;
 
-        if (this.index > 0) {
-            this.scene.start("Case", {
-                isTutorial: true,
-                nextTutorialText:
-                    'cout << "Welcome back to the tutorial! Let\'s continue where you left off with a little more challenging cases." << endl;',
-                difficulty:
-                    parsedSavedTutorialData ?
-                        parsedSavedTutorialData.difficulty
-                    :   "easy",
-                currentTutorialCaseIndex: this.index,
-            });
+        if (parsedSavedTutorialData) {
+            if (this.index > 0) {
+                this.scene.start("Case", {
+                    isTutorial: true,
+                    nextTutorialText:
+                        'cout << "Welcome back to the tutorial! Let\'s continue where you left off with a little more challenging cases." << endl;',
+                    difficulty: parsedSavedTutorialData.difficulty,
+                    currentTutorialCaseIndex: this.index,
+                });
+            }
         }
     }
 
