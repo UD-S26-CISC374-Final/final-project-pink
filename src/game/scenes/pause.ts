@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import createTextButton from "../utils/createTextButton";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
+import tutorialCases from "../data/tutorial-cases.json";
 
 export class Pause extends Scene {
     isTutorial: boolean;
@@ -57,7 +58,7 @@ export class Pause extends Scene {
             this.textObject.setText(text),
             text,
             speed,
-        ); // TODO - replace 1 with speed
+        ); 
 
         this.typingInProgress = false;
 
@@ -78,7 +79,7 @@ export class Pause extends Scene {
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
         this.difficulty = data.difficulty;
-        this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
+        this.currentTutorialCaseIndex = data.currentTutorialCaseIndex + 1;
 
         this.playJudgeSpeakingAnimation();
         await this.addAnimatedTypingText(this.nextTutorialText, 20);
@@ -177,7 +178,7 @@ export class Pause extends Scene {
             localStorage.setItem(
                 "savedProgress",
                 JSON.stringify({
-                    currentTutorialCaseIndex: this.currentTutorialCaseIndex + 1,
+                    currentTutorialCaseIndex: this.currentTutorialCaseIndex,
                     difficulty: this.difficulty,
                 }),
             );
@@ -194,9 +195,13 @@ export class Pause extends Scene {
         });
 
         continueButton.on("pointerdown", () => {
-            alert(
-                "Moving on to the next case! (Not really, this is just a demo)",
-            );
+            this.scene.start("Case", {
+                isTutorial: this.isTutorial,
+                nextTutorialText: tutorialCases[this.currentTutorialCaseIndex]
+                    .tutorialText as string,
+                difficulty: this.difficulty,
+                currentTutorialCaseIndex: this.currentTutorialCaseIndex,
+            });
         });
     }
 }
