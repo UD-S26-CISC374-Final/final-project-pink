@@ -20,11 +20,13 @@ export interface TestFeedback {
 export interface Case {
     id: string;
     difficulty: Difficulty;
+    tutorialText: string;
+    descTutorialText?: string;
     title: string;
     functionCode: string; // Displayed in the case file function box, this is the function on trial
     description: string; // What the function should do
-    evidencePool: UnitTest[]; // All the tests that the player can choose from
     evidenceSlots: number; // evidence card slots available
+    evidencePool: UnitTest[]; // All the tests that the player can choose from
     correctVerdict: Verdict;
     testFeedback: TestFeedback[];
     missedEvidenceExplanation: string;

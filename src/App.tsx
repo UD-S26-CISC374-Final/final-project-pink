@@ -102,6 +102,7 @@ function App() {
                 ref={phaserRef}
                 onCurrentActiveSceneChange={onCurrentSceneChange}
             />
+
             {/* <div id="ui-panel">
                 <div>
                     <button className="button" onClick={changeScene}>

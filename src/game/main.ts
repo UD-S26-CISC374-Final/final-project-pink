@@ -4,6 +4,10 @@ import { Level1 as MainGame } from "./scenes/level1";
 import { MainMenu } from "./scenes/main-menu";
 import { AUTO, Game } from "phaser";
 import { Preloader } from "./scenes/preloader";
+import { Tutorial } from "./scenes/tutorial";
+import { Case } from "./scenes/case";
+import { Verdict } from "./scenes/verdict";
+import { Pause } from "./scenes/pause";
 
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -13,7 +17,17 @@ const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
     parent: "game-container",
     backgroundColor: "#ffffff",
-    scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
+    scene: [
+        Boot,
+        Preloader,
+        MainMenu,
+        MainGame,
+        GameOver,
+        Tutorial,
+        Case,
+        Verdict,
+        Pause,
+    ],
     scale: {
         parent: "phaser-game",
         mode: Phaser.Scale.FIT,
@@ -35,7 +49,7 @@ const config: Phaser.Types.Core.GameConfig = {
         gamepad: false,
     },
     render: {
-        pixelArt: false,
+        pixelArt: true,
         antialias: true,
     },
 };

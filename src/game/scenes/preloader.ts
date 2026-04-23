@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import tutorialCases from "../data/tutorial-cases.json";
 
 export class Preloader extends Scene {
     constructor() {
@@ -24,6 +25,63 @@ export class Preloader extends Scene {
     preload() {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath("assets");
+        this.load.image("judge-compiler", "judge_compiler_happy.png");
+        this.load.spritesheet(
+            "judge-compiler-sprite",
+            "sprites/judge_compiler_speaking.png",
+            { frameWidth: 128, frameHeight: 128 },
+        );
+        this.load.spritesheet(
+            "judge-compiler-case-sprite",
+            "sprites/judge_compiler_case.png",
+            { frameWidth: 128, frameHeight: 128 },
+        );
+
+        this.load.spritesheet(
+            "case-file-open-program",
+            "sprites/case-file-open-program.png",
+            {
+                frameWidth: 32,
+                frameHeight: 32,
+            },
+        );
+
+        this.load.spritesheet(
+            "judge-compiler-speaking-sad",
+            "sprites/judge_compiler_speaking_sad.png",
+            {
+                frameWidth: 128,
+                frameHeight: 128,
+            },
+        );
+
+        this.load.spritesheet("innocent", "sprites/innocent.png", {
+            frameWidth: 128,
+            frameHeight: 32,
+        });
+
+        this.load.spritesheet("guilty", "sprites/guilty.png", {
+            frameWidth: 128,
+            frameHeight: 32,
+        });
+
+        let i = 0;
+        while (i !== tutorialCases.length - 1) {
+            this.load.image(
+                `tutorial-code-${i}`,
+                `tutorial-cases-code/tutorial-${i}.png`,
+            );
+
+            for (let j = 1; j <= tutorialCases[i].testFeedback.length; j++) {
+                this.load.image(
+                    `tutorial-${i}-t${j}`,
+                    `tutorial-cases-code/test-cases/tutorial-${i}-t${j}.png`,
+                );
+            }
+            i++;
+        }
+
+        this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
     }
 
     create() {
