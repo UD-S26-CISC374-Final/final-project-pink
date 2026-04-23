@@ -107,7 +107,7 @@ export class Verdict extends Scene {
                     isTutorial: this.isTutorial,
                     nextTutorialText:
                         "cout << \"Things are going to start a little more challenging now! Before we proceed, would you like to take a recess and come back later? If so, hit the 'Save Progress' button. Otherwise, hit the 'Next Case' button to proceed.\" << endl;",
-                    difficulty: this.currentDifficulty,
+                    difficulty: nextDifficulty,
                     currentTutorialCaseIndex: this.currTutorialCaseIndex,
                 });
                 return;
