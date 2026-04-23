@@ -61,7 +61,7 @@ export class Case extends Scene {
         }
 
         this.textObject.setText("");
-        await this.addAnimatedTypingText(this.nextTutorialText);
+        await this.addAnimatedTypingText(this.nextTutorialText); // TODO - remove 1
     }
 
     private showBackButton() {
@@ -174,11 +174,7 @@ export class Case extends Scene {
                         this.presentToJudgeButton = undefined;
 
                         this.textObject.setText("");
-                        await this.addAnimatedTypingText(
-                            this.thirdIntro,
-                            19,
-                            1,
-                        );
+                        await this.addAnimatedTypingText(this.thirdIntro, 19); // TODO - remove 1
                     }
                 } else {
                     // ADD
@@ -262,7 +258,7 @@ export class Case extends Scene {
                 "cout << \"These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.\" << endl;";
 
             this.addTestCases(350);
-            await this.addAnimatedTypingText(thirdIntro, 18);
+            await this.addAnimatedTypingText(thirdIntro, 18); 
             this.showBackButton();
         });
 
