@@ -92,22 +92,28 @@ export class SummaryScene extends Scene {
 
                 let expandedHTML = "";
                 if (caseData) {
+                    const LETTER_IDX: Record<string, number> = { A: 0, B: 1, C: 2, D: 3 };
+
                     const submittedCards = result.selectedEvidenceIds
-                        .map((id) => {
-                            const test = caseData.evidencePool.find((t) => t.id === id);
-                            const fb = caseData.testFeedback.find((f) => f.testId === id);
-                            if (!test || !fb) return "";
+                        .map((letter) => {
+                            const i = LETTER_IDX[letter];
+                            if (i === undefined) return "";
+                            const test = caseData.evidencePool?.[i];
+                            const fb = caseData.testFeedback[i];
+                            if (!fb) return "";
                             const cls = fb.quality === "essential" ? "card-good" : "card-bad";
-                            return `<div class="ev-card ${cls}"><code>${test.label}</code><p>${fb.feedback}</p></div>`;
+                            const label = test?.label ?? letter;
+                            return `<div class="ev-card ${cls}"><code>${label}</code><p>${fb.feedback}</p></div>`;
                         })
                         .join("");
 
-                    const missedCards = caseData.evidencePool
-                        .filter((t) => !result.selectedEvidenceIds.includes(t.id))
-                        .filter((t) => caseData.testFeedback.find((f) => f.testId === t.id)?.quality === "essential")
-                        .map((test) => {
-                            const fb = caseData.testFeedback.find((f) => f.testId === test.id);
-                            return `<div class="ev-card card-missed"><code>${test.label}</code><p>${fb?.feedback ?? ""}</p></div>`;
+                    const selectedIndices = new Set(result.selectedEvidenceIds.map((l) => LETTER_IDX[l]));
+                    const missedCards = caseData.testFeedback
+                        .map((fb, i) => ({ fb, i, test: caseData.evidencePool?.[i] }))
+                        .filter(({ i, fb }) => !selectedIndices.has(i) && fb.quality === "essential")
+                        .map(({ fb, test }) => {
+                            const label = test?.label ?? "—";
+                            return `<div class="ev-card card-missed"><code>${label}</code><p>${fb.feedback}</p></div>`;
                         })
                         .join("");
 
@@ -269,13 +275,14 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
         // DEV PREVIEW: seed fake results if scene opened directly
         if (manager.getCaseResults().length === 0) {
-            manager.loadCases("easy");
-            manager.toggleEvidence("c1-t1");
-            manager.toggleEvidence("c1-t3");
-            manager.submitVerdict("guilty");
-            manager.advanceCase();
-            manager.toggleEvidence("c2-t1");
+            manager.loadTutorial();
+            manager.toggleEvidence("A");
+            manager.toggleEvidence("B");
             manager.submitVerdict("not guilty");
+            manager.advanceCase();
+            manager.toggleEvidence("A");
+            manager.toggleEvidence("C");
+            manager.submitVerdict("guilty");
         }
 
         this.cameras.main.setBackgroundColor("#1a1a1a");
