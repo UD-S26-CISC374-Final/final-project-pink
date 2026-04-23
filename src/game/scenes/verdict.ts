@@ -374,11 +374,13 @@ export class Verdict extends Scene {
         const currentTestCase = tutorialCases[this.currTutorialCaseIndex];
         let numCorrect = 0;
         let numEssential = 0;
+        const letters = ["A", "B", "C", "D"];
         for (let i = 0; i < currentTestCase.testFeedback.length; i++) {
             if (currentTestCase.testFeedback[i].quality === "essential") {
                 numEssential++;
-                if (this.answerMapping[this.selectedTestCases[i]] === i)
-                    numCorrect++;
+                // if (this.answerMapping[this.selectedTestCases[i]] === i)
+                // if (this.answerMapping[letters[i]] === i)
+                if (this.selectedTestCases.includes(letters[i])) numCorrect++;
             }
         }
 
