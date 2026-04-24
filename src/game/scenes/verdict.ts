@@ -114,7 +114,6 @@ export class Verdict extends Scene {
             } else {
                 this.scene.start("Case", {
                     isTutorial: this.isTutorial,
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     nextTutorialText: tutorialCases[
                         this.currTutorialCaseIndex + 1
                     ].tutorialText,

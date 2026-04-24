@@ -153,7 +153,6 @@ export class Case extends Scene {
 
             testCase.on("pointerdown", async () => {
                 if (this.typingInProgress) return;
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 const letter: string = this.letterMap[i];
                 const isSelected = this.selectedTestCases.includes(letter);
 
@@ -250,7 +249,6 @@ export class Case extends Scene {
             this.backButton.destroy();
             this.caseFileCodeSnippet.destroy();
 
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (this.programDescTextReference)
                 this.programDescTextReference.destroy();
 

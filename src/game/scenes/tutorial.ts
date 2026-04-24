@@ -98,7 +98,6 @@ export class Tutorial extends Scene {
 
         this.judge.play("talk");
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const firstIntro = tutorialCases[0].tutorialText;
 
         await typewriterEffect(

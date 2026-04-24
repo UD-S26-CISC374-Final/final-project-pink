@@ -197,7 +197,6 @@ export class Pause extends Scene {
         continueButton.on("pointerdown", () => {
             this.scene.start("Case", {
                 isTutorial: this.isTutorial,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 nextTutorialText: tutorialCases[this.currentTutorialCaseIndex]
                     .tutorialText,
                 difficulty: this.difficulty,
