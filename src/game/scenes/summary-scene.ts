@@ -8,8 +8,7 @@ const SCREEN_W = 1024;
 const SCREEN_H = 768;
 const DEFAULT_BUBBLE = "Select a case to\nreview the evidence.";
 
-// Right panel center x (used for sprite + bubble)
-const RIGHT_CX = PANEL_W + (SCREEN_W - PANEL_W) / 2; // 842
+const RIGHT_CX = PANEL_W + (SCREEN_W - PANEL_W) / 2;
 
 export class SummaryScene extends Scene {
     private bubbleBg!: Phaser.GameObjects.Graphics;
@@ -27,8 +26,6 @@ export class SummaryScene extends Scene {
         this.load.image("stamp_not_guilty", "not_guilty.png");
     }
 
-    // ── Speech bubble ──────────────────────────────────────────────────────────
-
     private updateSpeechBubble(rawText: string) {
         this.bubbleText.setText(rawText);
         this.redrawBubble();
@@ -40,35 +37,33 @@ export class SummaryScene extends Scene {
         const bw = Math.max(180, bounds.width + pad * 2);
         const bh = bounds.height + pad * 2;
 
-        // Position: upper-center of right panel, never crossing the panel divider
         const bx = Math.max(PANEL_W + 10 + bw / 2, RIGHT_CX);
         const by = SCREEN_H - 330 - bh / 2;
 
         this.bubbleBg.clear();
 
-        // Shadow
         this.bubbleBg.fillStyle(0x000000, 0.25);
-        this.bubbleBg.fillRoundedRect(bx - bw / 2 + 3, by - bh / 2 + 3, bw, bh, 10);
+        this.bubbleBg.fillRoundedRect(
+            bx - bw / 2 + 3,
+            by - bh / 2 + 3,
+            bw,
+            bh,
+            10,
+        );
 
-        // Bubble body
         this.bubbleBg.fillStyle(0xf0f0f0, 0.97);
         this.bubbleBg.fillRoundedRect(bx - bw / 2, by - bh / 2, bw, bh, 10);
 
-        // Bubble outline
         this.bubbleBg.lineStyle(1.5, 0x888888, 0.6);
         this.bubbleBg.strokeRoundedRect(bx - bw / 2, by - bh / 2, bw, bh, 10);
 
-        // Tail pointing down toward sprite
         const tx = bx;
         const ty = by + bh / 2;
         this.bubbleBg.fillStyle(0xf0f0f0, 0.97);
         this.bubbleBg.fillTriangle(tx - 10, ty, tx + 10, ty, tx, ty + 18);
 
-        // Reposition text to bubble center
         this.bubbleText.setPosition(bx, by);
     }
-
-    // ── Panel HTML/CSS ─────────────────────────────────────────────────────────
 
     private buildPanel(manager: CaseManager): string {
         const total = manager.getTotalScore();
@@ -83,16 +78,26 @@ export class SummaryScene extends Scene {
                 const caseData = manager.getCaseById(result.caseId);
                 const title = caseData?.title ?? result.caseId;
                 const isGuilty = result.playerVerdict === "guilty";
-                const verdictBadge = isGuilty
-                    ? `<img src="assets/guilty_no_frame.png" class="verdict-img">`
-                    : `<img src="assets/not_guilty_no_frame_green.png" class="verdict-img">`;
+                const verdictBadge =
+                    isGuilty ?
+                        `<img src="assets/guilty_no_frame.png" class="verdict-img">`
+                    :   `<img src="assets/not_guilty_no_frame_green.png" class="verdict-img">`;
                 const ptsSign = result.pointsEarned >= 0 ? "+" : "";
-                const ptsColor = result.pointsEarned > 0 ? "#E8A000" : "#ff4444";
-                const rowClass = result.pointsEarned > 0 ? "case-row row-positive" : "case-row";
+                const ptsColor =
+                    result.pointsEarned > 0 ? "#E8A000" : "#ff4444";
+                const rowClass =
+                    result.pointsEarned > 0 ?
+                        "case-row row-positive"
+                    :   "case-row";
 
                 let expandedHTML = "";
                 if (caseData) {
-                    const LETTER_IDX: Record<string, number | undefined> = { A: 0, B: 1, C: 2, D: 3 };
+                    const LETTER_IDX: Record<string, number | undefined> = {
+                        A: 0,
+                        B: 1,
+                        C: 2,
+                        D: 3,
+                    };
 
                     const submittedCards = result.selectedEvidenceIds
                         .map((letter) => {
@@ -100,16 +105,29 @@ export class SummaryScene extends Scene {
                             if (i === undefined) return "";
                             const test = caseData.evidencePool?.[i];
                             const fb = caseData.testFeedback[i];
-                            const cls = fb.quality === "essential" ? "card-good" : "card-bad";
+                            const cls =
+                                fb.quality === "essential" ?
+                                    "card-good"
+                                :   "card-bad";
                             const label = test?.label ?? letter;
                             return `<div class="ev-card ${cls}"><code>${label}</code><p>${fb.feedback}</p></div>`;
                         })
                         .join("");
 
-                    const selectedIndices = new Set(result.selectedEvidenceIds.map((l) => LETTER_IDX[l]));
+                    const selectedIndices = new Set(
+                        result.selectedEvidenceIds.map((l) => LETTER_IDX[l]),
+                    );
                     const missedCards = caseData.testFeedback
-                        .map((fb, i) => ({ fb, i, test: caseData.evidencePool?.[i] }))
-                        .filter(({ i, fb }) => !selectedIndices.has(i) && fb.quality === "essential")
+                        .map((fb, i) => ({
+                            fb,
+                            i,
+                            test: caseData.evidencePool?.[i],
+                        }))
+                        .filter(
+                            ({ i, fb }) =>
+                                !selectedIndices.has(i) &&
+                                fb.quality === "essential",
+                        )
                         .map(({ fb, test }) => {
                             const label = test?.label ?? "—";
                             return `<div class="ev-card card-missed"><code>${label}</code><p>${fb.feedback}</p></div>`;
@@ -126,7 +144,9 @@ export class SummaryScene extends Scene {
                     </div>`;
                 }
 
-                const closingEncoded = encodeURIComponent(caseData?.closingStatement ?? "");
+                const closingEncoded = encodeURIComponent(
+                    caseData?.closingStatement ?? "",
+                );
 
                 return `<div class="${rowClass}" data-case-id="${result.caseId}" data-verdict="${result.playerVerdict}" data-closing="${closingEncoded}">
                     <div class="row-hdr">
@@ -145,7 +165,6 @@ export class SummaryScene extends Scene {
         const css = `
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-/* Panel spans full screen width; only the lower section is clipped to left 660px */
 .panel{width:${SCREEN_W}px;height:${SCREEN_H}px;background:transparent;display:flex;flex-direction:column;font-family:'Google Sans Code',monospace;color:#fff;overflow:hidden}
 .hdr{background:#0f0f0f;padding:18px 32px 14px;border-bottom:1px solid #2a2a2a;flex-shrink:0}
 .htitle{font-size:30px;color:#01ff34;text-align:center;letter-spacing:4px;text-shadow:0 0 14px rgba(1,255,52,.4)}
@@ -156,7 +175,6 @@ export class SummaryScene extends Scene {
 .mlbl{font-size:11px;color:#666;letter-spacing:3px}
 .mval{font-size:48px;color:#01ff34;line-height:1.1;margin:8px 0 5px;font-weight:bold}
 .msub{font-size:12px;color:#444}
-/* Lower section: only 660px wide so Judge Compiler is visible on the right */
 .lower{width:${PANEL_W}px;flex:1;background:#1a1a1a;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid #2a2a2a}
 .llbl{font-size:10px;color:#666;letter-spacing:2px;text-align:center;padding:10px 20px 8px;flex-shrink:0}
 .clist{flex:1;overflow-y:auto;padding:0 20px;scrollbar-width:thin;scrollbar-color:#3a3a3a #1a1a1a}
@@ -220,14 +238,15 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 </div>`;
     }
 
-    // ── Stamp animation ────────────────────────────────────────────────────────
-
     private slamStamp(key: string) {
         this.stamp.setTexture(key);
         const targetScale = Math.min(200 / this.stamp.width, 1);
         this.tweens.killTweensOf(this.stamp);
 
-        this.stamp.setAlpha(1).setScale(targetScale * 3).setRotation(-0.35);
+        this.stamp
+            .setAlpha(1)
+            .setScale(targetScale * 3)
+            .setRotation(-0.35);
 
         this.tweens.add({
             targets: this.stamp,
@@ -259,7 +278,8 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
             const verdict = rowEl.dataset.verdict;
             if (verdict === "guilty" || verdict === "not guilty") {
-                const key = verdict === "guilty" ? "stamp_guilty" : "stamp_not_guilty";
+                const key =
+                    verdict === "guilty" ? "stamp_guilty" : "stamp_not_guilty";
                 this.time.delayedCall(i * PER_CASE + 550, () => {
                     this.slamStamp(key);
                 });
@@ -267,50 +287,40 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
         });
     }
 
-    // ── Scene lifecycle ────────────────────────────────────────────────────────
-
     create() {
         const manager = CaseManager.getInstance();
 
-        // DEV PREVIEW: seed fake results if scene opened directly
-        if (manager.getCaseResults().length === 0) {
-            manager.loadTutorial();
-            manager.toggleEvidence("A");
-            manager.toggleEvidence("B");
-            manager.submitVerdict("not guilty");
-            manager.advanceCase();
-            manager.toggleEvidence("A");
-            manager.toggleEvidence("C");
-            manager.submitVerdict("guilty");
-        }
-
         this.cameras.main.setBackgroundColor("#1a1a1a");
 
-        // ── DOM panel ──
         const panelDiv = document.createElement("div");
         panelDiv.innerHTML = this.buildPanel(manager);
         this.add.dom(SCREEN_W / 2, SCREEN_H / 2, panelDiv);
 
-        // Attach click handlers after DOM is in place
         const caseList = panelDiv.querySelector<HTMLElement>("#case-list");
 
         if (caseList) {
             caseList.querySelectorAll(".case-row").forEach((row) => {
                 const rowEl = row as HTMLElement;
-                rowEl.querySelector(".row-hdr")?.addEventListener("click", () => {
-                    const closing = decodeURIComponent(rowEl.dataset.closing ?? "");
-                    const wasExpanded = rowEl.classList.contains("expanded");
+                rowEl
+                    .querySelector(".row-hdr")
+                    ?.addEventListener("click", () => {
+                        const closing = decodeURIComponent(
+                            rowEl.dataset.closing ?? "",
+                        );
+                        const wasExpanded =
+                            rowEl.classList.contains("expanded");
 
-                    // Collapse all rows
-                    caseList.querySelectorAll(".case-row.expanded").forEach((el) => el.classList.remove("expanded"));
+                        caseList
+                            .querySelectorAll(".case-row.expanded")
+                            .forEach((el) => el.classList.remove("expanded"));
 
-                    if (!wasExpanded) {
-                        rowEl.classList.add("expanded");
-                        this.updateSpeechBubble(closing || DEFAULT_BUBBLE);
-                    } else {
-                        this.updateSpeechBubble(DEFAULT_BUBBLE);
-                    }
-                });
+                        if (!wasExpanded) {
+                            rowEl.classList.add("expanded");
+                            this.updateSpeechBubble(closing || DEFAULT_BUBBLE);
+                        } else {
+                            this.updateSpeechBubble(DEFAULT_BUBBLE);
+                        }
+                    });
             });
         }
 
@@ -318,20 +328,24 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
             this.scene.start("MainMenu");
         });
 
-        // ── Stamp (starts hidden, slam animation on intro) ──
-        this.stamp = this.add.image(RIGHT_CX, SCREEN_H / 2 - 60, "stamp_guilty").setAlpha(0);
+        this.stamp = this.add
+            .image(RIGHT_CX, SCREEN_H / 2 - 60, "stamp_guilty")
+            .setAlpha(0);
 
-        // ── Intro sequence: reveal rows one by one ──
-        const rowEls = Array.from(panelDiv.querySelectorAll<HTMLElement>(".case-row"));
+        const rowEls = Array.from(
+            panelDiv.querySelectorAll<HTMLElement>(".case-row"),
+        );
         this.playIntroSequence(rowEls);
 
-        // ── Judge Compiler sprite ──
-        const sprite = this.add.image(RIGHT_CX + 10, SCREEN_H - 20, "judge_compiler");
+        const sprite = this.add.image(
+            RIGHT_CX + 10,
+            SCREEN_H - 20,
+            "judge_compiler",
+        );
         const maxW = 230;
         if (sprite.width > maxW) sprite.setScale(maxW / sprite.width);
         sprite.setOrigin(0.5, 1);
 
-        // ── Speech bubble (drawn by Graphics + Text) ──
         this.bubbleBg = this.add.graphics();
 
         this.bubbleText = this.add

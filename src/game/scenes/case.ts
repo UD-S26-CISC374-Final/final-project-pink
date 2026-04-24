@@ -153,7 +153,6 @@ export class Case extends Scene {
 
             testCase.on("pointerdown", async () => {
                 if (this.typingInProgress) return;
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 const letter: string = this.letterMap[i];
                 const isSelected = this.selectedTestCases.includes(letter);
 

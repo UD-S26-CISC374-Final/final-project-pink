@@ -162,14 +162,14 @@ class CaseManager {
             points += POINTS_CORRECT_VERDICT;
         }
 
-        const letterToIndex: Record<string, number> = { A: 0, B: 1, C: 2, D: 3 };
+        const letterToIndex: Partial<Record<string, number>> = { A: 0, B: 1, C: 2, D: 3 };
         for (const letter of this.selectedEvidenceIds) {
             const index = letterToIndex[letter];
             if (index === undefined) continue;
             const feedback = currentCase.testFeedback[index];
-            if (feedback?.quality === "essential") {
+            if (feedback.quality === "essential") {
                 points += POINTS_ESSENTIAL_EVIDENCE;
-            } else if (feedback?.quality === "misleading") {
+            } else if (feedback.quality === "misleading") {
                 points += POINTS_MISLEADING_EVIDENCE;
             }
         }
