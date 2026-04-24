@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import createTextButton from "../utils/createTextButton";
 import tutorialCases from "../data/tutorial-cases.json";
+import CaseManager from "../case-manager";
 
 export class Tutorial extends Scene {
     judge: Phaser.GameObjects.Sprite;
@@ -14,8 +15,9 @@ export class Tutorial extends Scene {
 
     init() {
         this.cameras.main.setBackgroundColor("#2d2d2d");
+        CaseManager.getInstance().loadTutorial();
 
-        const savedTutorialState = localStorage.getItem("savedProgress");
+        const savedTutorialState = sessionStorage.getItem("savedProgress");
 
         const parsedSavedTutorialData =
             savedTutorialState &&

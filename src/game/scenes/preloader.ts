@@ -66,7 +66,7 @@ export class Preloader extends Scene {
         });
 
         let i = 0;
-        while (i !== tutorialCases.length - 1) {
+        while (i < tutorialCases.length - 2) {
             this.load.image(
                 `tutorial-code-${i}`,
                 `tutorial-cases-code/tutorial-${i}.png`,

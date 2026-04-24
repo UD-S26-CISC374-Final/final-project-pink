@@ -3,6 +3,7 @@ import tutorialCases from "../data/tutorial-cases.json";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import { playConfettiEffect } from "../utils/playConfettiEffect";
 import createTextButton from "../utils/createTextButton";
+import CaseManager from "../case-manager";
 
 export class Verdict extends Scene {
     constructor() {
@@ -92,10 +93,25 @@ export class Verdict extends Scene {
         );
 
         nextCaseButton.on("pointerdown", () => {
+            // Record this case's result in CaseManager using the letter system
+            const manager = CaseManager.getInstance();
+            const currentCase = tutorialCases[this.currTutorialCaseIndex];
+            while (manager.getCurrentCaseIndex() < this.currTutorialCaseIndex) {
+                manager.advanceCase();
+            }
+            manager.selectedEvidenceIds = [...this.selectedTestCases];
+            manager.submitVerdict(currentCase.correctVerdict as "guilty" | "not guilty");
+
             this.scene.stop("Verdict");
-            // TODO - add a check if the player is nearing the last tutorial case; if so, modify it so that it'll let them know they're nearing the end.
-            // TODO - add a check involving difficulty level where once the player enters 'medium', it'll let the player know they're moving on to a little more challenging cases.
-            // TODO - need to make the end tutorial scene
+
+            // Last case → go to Summary
+            if (this.currTutorialCaseIndex >= tutorialCases.length - 3) {
+                manager.markTutorialCompleted();
+                this.scene.start("Summary");
+                return;
+            }
+
+            manager.advanceCase();
 
             const nextDifficulty =
                 tutorialCases[this.currTutorialCaseIndex + 1].difficulty;
