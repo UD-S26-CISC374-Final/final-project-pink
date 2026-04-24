@@ -10,14 +10,9 @@ export function playConfettiEffect(this: Phaser.Scene) {
 
     this.add.particles(0, 0, "particleTexture", {
         emitZone: {
-            type: "random" as const,
-            source: new Phaser.Geom.Rectangle(
-                0,
-                0, // top edge
-                this.scale.width, // full width of canvas
-                1, // very thin strip
-            ),
-        },
+            type: "random",
+            source: new Phaser.Geom.Rectangle(0, 0, this.scale.width, 1),
+        } as Phaser.Types.GameObjects.Particles.EmitZoneData,
 
         speedY: { min: 200, max: 300 },
         speedX: { min: -100, max: 100 },
