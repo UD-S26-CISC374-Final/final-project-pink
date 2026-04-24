@@ -10,7 +10,7 @@ export function playConfettiEffect(this: Phaser.Scene) {
 
     this.add.particles(0, 0, "particleTexture", {
         emitZone: {
-            type: "random",
+            type: "random" as const,
             source: new Phaser.Geom.Rectangle(
                 0,
                 0, // top edge
@@ -25,7 +25,7 @@ export function playConfettiEffect(this: Phaser.Scene) {
         lifespan: { min: 2000, max: 3000 },
 
         scaleX: {
-            onUpdate: (particle, key, t) => {
+            onUpdate: (_particle, _key, t) => {
                 return Math.sin(t * Math.PI * 10);
             },
         },
