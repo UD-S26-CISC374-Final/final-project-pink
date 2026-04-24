@@ -20,7 +20,7 @@ export class Case extends Scene {
     currentTutorialCaseIndex: number;
     currTutorialCaseDesc: string;
     caseFileCodeSnippet: Phaser.GameObjects.Image;
-    programDescTextReference: Phaser.GameObjects.Text;
+    programDescTextReference: Phaser.GameObjects.Text | undefined;
     backButton: Phaser.GameObjects.Container;
     caseFileTestCases: Phaser.GameObjects.Image[] = [];
     selectedTestCases: string[] = [];
