@@ -288,6 +288,42 @@ export class Case extends Scene {
         });
     }
 
+    private showDraggableTestCases() {
+        this.add
+            .rectangle(512, 450, 200, 100, 0x0fffff)
+            .setOrigin(0.5)
+            .setInteractive({ draggable: true });
+
+        const width = 662;
+        const height = 430;
+        const x = 512 - width / 2;
+        const y = 470 - height / 2;
+
+        const bounds = new Phaser.Geom.Rectangle(x, y, width, height);
+
+        this.input.on(
+            "drag",
+            (
+                _: Phaser.Input.Pointer,
+                gameObject: Phaser.GameObjects.Shape,
+                dragX: number,
+                dragY: number,
+            ) => {
+                gameObject.x = Phaser.Math.Clamp(
+                    dragX,
+                    bounds.left,
+                    bounds.right,
+                );
+
+                gameObject.y = Phaser.Math.Clamp(
+                    dragY,
+                    bounds.top,
+                    bounds.bottom,
+                );
+            },
+        );
+    }
+
     private addTabLabels() {
         this.add.text(810, 170, "Evidence", {
             fontSize: "25px",
@@ -341,6 +377,7 @@ export class Case extends Scene {
                 :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
 
             if (this.levelDifficulty !== "hard") this.addTestCases(350);
+            if (this.levelDifficulty === "hard") this.showDraggableTestCases();
 
             await this.addAnimatedTypingText(thirdIntro, 18);
             this.showBackButton();
