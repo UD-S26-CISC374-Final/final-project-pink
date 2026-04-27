@@ -31,6 +31,9 @@ export class Tutorial extends Scene {
                 parsedSavedTutorialData.currentTutorialCaseIndex
             :   0;
 
+        console.log("Current tutorial case index:", this.index);
+        console.log(parsedSavedTutorialData);
+
         if (parsedSavedTutorialData) {
             if (this.index > 0) {
                 this.scene.start("Case", {
@@ -106,8 +109,9 @@ export class Tutorial extends Scene {
             this.judge,
             textObject.setText(firstIntro),
             firstIntro,
-            1,
-        ); // TODO - remove 1
+            undefined,
+            this,
+        );
 
         const buttonContainer = createTextButton.call(
             this,
@@ -147,8 +151,9 @@ export class Tutorial extends Scene {
                 this.judge,
                 textObject.setText(secondIntro),
                 secondIntro,
-                1,
-            ); // TODO - remove 1
+                undefined,
+                this,
+            );
 
             const thirdIntro =
                 'cout << "Great! Each file will have a program for you to examine, like shown below. If you\'re unsure what a program is trying to do, click on the pink tab to read its statement of purpose. To see the set of test cases, click on the green tab!" << endl;';
