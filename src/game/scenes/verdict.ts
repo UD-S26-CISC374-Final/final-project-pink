@@ -108,7 +108,7 @@ export class Verdict extends Scene {
             this.scene.stop("Verdict");
 
             // Last case → go to Summary
-            if (this.currTutorialCaseIndex >= tutorialCases.length - 3) {
+            if (this.currTutorialCaseIndex >= tutorialCases.length - 1) {
                 manager.markTutorialCompleted();
                 this.scene.start("Summary");
                 return;
