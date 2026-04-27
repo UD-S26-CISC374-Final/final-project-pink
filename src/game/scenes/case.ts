@@ -32,6 +32,7 @@ export class Case extends Scene {
         2: "C",
     };
     showSkipMessageTip = true;
+    levelDifficulty: "easy" | "medium" | "hard";
 
     thirdIntro =
         'cout << "These are the program\'s test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them." << endl;';
@@ -249,6 +250,44 @@ export class Case extends Scene {
         }
     }
 
+    private playTimer() {
+        let timerText = this.add.text(820, 250, "10:00", {
+            fontSize: "35px",
+            color: "#ee0808",
+        });
+
+        let timeLeft = 600; // 10 minutes in seconds is 600
+        const timerEvent = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                timerText.destroy();
+
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60)
+                    .toString()
+                    .padStart(2, "0");
+                const seconds = (timeLeft % 60).toString().padStart(2, "0");
+
+                timerText = this.add.text(820, 250, `${minutes}:${seconds}`, {
+                    fontSize: "35px",
+                    color: "#ee0808",
+                });
+
+                if (timeLeft <= 0) {
+                    timerEvent.remove();
+                    this.scene.stop("Tutorial");
+                    this.scene.start("Verdict", {
+                        selectedTestCasesIndices: [],
+                        tutorialCaseIndex: this.currentTutorialCaseIndex,
+                        isTutorial: this.isTutorial,
+                        difficulty: this.currentDifficulty,
+                    });
+                }
+            },
+            loop: true,
+        });
+    }
+
     private drawTabs() {
         const greenTab = this.add
             .rectangle(870, 190, 148, 80, 0x00ff00, 0.8)
@@ -265,6 +304,14 @@ export class Case extends Scene {
         greenTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
             if (this.currentTab === "test-cases") return;
+
+            if (
+                this.levelDifficulty === "medium" ||
+                this.levelDifficulty === "hard"
+            ) {
+                this.playTimer();
+            }
+
             this.caseFileTestCases = [];
             this.selectedTestCases = [];
 
@@ -366,6 +413,7 @@ export class Case extends Scene {
             tutorialCases[this.currentTutorialCaseIndex].description;
         this.selectedTestCases = [];
         this.currentTab = "code";
+        this.levelDifficulty = data.difficulty;
     }
 
     async create() {
