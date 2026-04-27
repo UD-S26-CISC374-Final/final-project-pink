@@ -333,7 +333,12 @@ export class Case extends Scene {
                 this.programDescTextReference.destroy();
 
             const thirdIntro =
-                "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
+                (
+                    this.levelDifficulty === "easy" ||
+                    this.levelDifficulty === "medium"
+                ) ?
+                    "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button."
+                :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
 
             if (this.levelDifficulty !== "hard") this.addTestCases(350);
 
