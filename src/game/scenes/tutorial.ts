@@ -17,7 +17,7 @@ export class Tutorial extends Scene {
         this.cameras.main.setBackgroundColor("#2d2d2d");
         CaseManager.getInstance().loadTutorial();
 
-        const savedTutorialState = sessionStorage.getItem("savedProgress");
+        const savedTutorialState = localStorage.getItem("savedProgress");
 
         const parsedSavedTutorialData =
             savedTutorialState &&
