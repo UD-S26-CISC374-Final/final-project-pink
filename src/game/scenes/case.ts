@@ -63,8 +63,9 @@ export class Case extends Scene {
             this.showBackButton();
         }
 
+        this.addTabLabels();
         this.textObject.setText("");
-        await this.addAnimatedTypingText(this.nextTutorialText); // TODO - remove 1
+        await this.addAnimatedTypingText(this.nextTutorialText);
     }
 
     private showBackButton() {
@@ -288,6 +289,18 @@ export class Case extends Scene {
         });
     }
 
+    private addTabLabels() {
+        this.add.text(810, 170, "Evidence", {
+            fontSize: "25px",
+            color: "#064b11",
+        });
+
+        this.add.text(650, 170, "Purpose", {
+            fontSize: "25px",
+            color: "#92088d",
+        });
+    }
+
     private drawTabs() {
         const greenTab = this.add
             .rectangle(870, 190, 148, 80, 0x00ff00, 0.8)
@@ -296,21 +309,18 @@ export class Case extends Scene {
             .setAlpha(0.09)
             .setInteractive();
 
-        this.add.text(810, 170, "Evidence", {
-            fontSize: "25px",
-            color: "#064b11",
-        });
+        this.addTabLabels();
+
+        if (
+            this.levelDifficulty === "medium" ||
+            this.levelDifficulty === "hard"
+        ) {
+            this.playTimer();
+        }
 
         greenTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
             if (this.currentTab === "test-cases") return;
-
-            if (
-                this.levelDifficulty === "medium" ||
-                this.levelDifficulty === "hard"
-            ) {
-                this.playTimer();
-            }
 
             this.caseFileTestCases = [];
             this.selectedTestCases = [];
@@ -338,10 +348,7 @@ export class Case extends Scene {
             .setAlpha(0.09)
             .setInteractive();
 
-        this.add.text(650, 170, "Purpose", {
-            fontSize: "25px",
-            color: "#92088d",
-        });
+        this.addTabLabels();
 
         pinkTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
