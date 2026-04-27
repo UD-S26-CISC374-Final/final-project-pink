@@ -85,7 +85,7 @@ export class Verdict extends Scene {
                 alpha: 1,
             },
             {
-                text: "Next Case",
+                text: this.currTutorialCaseIndex >= tutorialCases.length - 1 ? "Go to Summary" : "Next Case",
                 fontFamily: "Google Sans Code",
                 fontSize: 18,
                 color: "#ffffff",
