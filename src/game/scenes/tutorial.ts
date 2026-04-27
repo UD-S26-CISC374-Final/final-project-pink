@@ -39,7 +39,7 @@ export class Tutorial extends Scene {
                 this.scene.start("Case", {
                     isTutorial: true,
                     nextTutorialText:
-                        "Welcome back to the tutorial! Let's continue where you left off with a little more challenging cases. Fair warning, each case will now be timed!"  ,
+                        "Welcome back to the tutorial! Let's continue where you left off with a little more challenging cases. Fair warning, each case will now be timed!",
                     difficulty: parsedSavedTutorialData.difficulty,
                     currentTutorialCaseIndex: this.index,
                 });
@@ -81,7 +81,7 @@ export class Tutorial extends Scene {
         const textObject = this.add
             .text(512, 130, "", {
                 fontFamily: "Google Sans Code",
-                fontSize: 25,
+                fontSize: 23,
                 color: "#01ff34",
                 wordWrap: { width: 950, useAdvancedWrap: true },
             })
