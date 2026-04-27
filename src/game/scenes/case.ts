@@ -379,7 +379,7 @@ export class Case extends Scene {
                 .setOrigin(0.5);
 
             const fourthIntro =
-                'cout << "Here is the program\'s statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases." << endl;';
+                "Here is the program's statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases.";
             await this.addAnimatedTypingText(fourthIntro);
 
             this.showBackButton();
