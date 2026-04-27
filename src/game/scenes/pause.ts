@@ -58,7 +58,8 @@ export class Pause extends Scene {
             this.textObject.setText(text),
             text,
             speed,
-        ); 
+            this,
+        );
 
         this.typingInProgress = false;
 
@@ -197,8 +198,8 @@ export class Pause extends Scene {
         continueButton.on("pointerdown", () => {
             this.scene.start("Case", {
                 isTutorial: this.isTutorial,
-                nextTutorialText: tutorialCases[this.currentTutorialCaseIndex]
-                    .tutorialText,
+                nextTutorialText:
+                    tutorialCases[this.currentTutorialCaseIndex].tutorialText,
                 difficulty: this.difficulty,
                 currentTutorialCaseIndex: this.currentTutorialCaseIndex,
             });
