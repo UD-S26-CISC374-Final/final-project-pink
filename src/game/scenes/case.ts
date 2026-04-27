@@ -95,9 +95,9 @@ export class Case extends Scene {
             .setDepth(100);
 
         this.add
-            .text(390, 190, "Press 'Enter' to skip text animation", {
+            .text(390, 190, "Tip: hit 'Enter' to skip text animation!", {
                 fontFamily: "Google Sans Code",
-                fontSize: 15,
+                fontSize: 14,
                 color: "#ffffff",
             })
             .setOrigin(0.5)
