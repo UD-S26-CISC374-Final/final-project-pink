@@ -6,7 +6,6 @@ import createTextButton from "../utils/createTextButton";
 // TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
 // TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
 // TODO - change it so that if you select a test case and then de-select, instead of the text animation playing again, it just shows the text again without the animation
-// ! - need to hide the tip about pressing 'Enter' to skip the animation when the 'present to judge' button is showing
 
 export class Case extends Scene {
     constructor() {
@@ -213,26 +212,28 @@ export class Case extends Scene {
                 }
 
                 if (this.selectedTestCases.length === 2) {
-                    this.presentToJudgeButton = createTextButton.call(
-                        this,
-                        400,
-                        190,
-                        {
-                            x: 0,
-                            y: 0,
-                            width: 380,
-                            height: 40,
-                            color: 0x000000,
-                            alpha: 1,
-                        },
-                        {
-                            text: "Present Evidence to Judge Compiler",
-                            fontFamily: "Google Sans Code",
-                            fontSize: 18,
-                            color: "#ffffff",
-                        },
-                        true,
-                    );
+                    this.presentToJudgeButton = createTextButton
+                        .call(
+                            this,
+                            400,
+                            190,
+                            {
+                                x: 0,
+                                y: 0,
+                                width: 380,
+                                height: 40,
+                                color: 0x000000,
+                                alpha: 1,
+                            },
+                            {
+                                text: "Present Evidence to Judge Compiler",
+                                fontFamily: "Google Sans Code",
+                                fontSize: 18,
+                                color: "#ffffff",
+                            },
+                            true,
+                        )
+                        .setDepth(102);
                 }
 
                 this.presentToJudgeButton?.on("pointerdown", () => {
