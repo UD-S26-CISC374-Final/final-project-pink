@@ -199,7 +199,7 @@ export class Case extends Scene {
                         this.textObject.setText("");
 
                         await this.addAnimatedTypingText(
-                            'cout << "Remember: You can only select 2 test cases as evidence. Please deselect one..." << endl;',
+                            "Remember: You can only select 2 test cases as evidence. Please deselect one...",
                             22,
                             20,
                         );
