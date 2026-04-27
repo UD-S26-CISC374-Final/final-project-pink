@@ -35,8 +35,7 @@ export class Case extends Scene {
     levelDifficulty: "easy" | "medium" | "hard";
 
     thirdIntro =
-        'cout << "These are the program\'s test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them." << endl;';
-    currentDifficulty = "easy"; // TODO - in the future, will need to change this so it's not hardcoded
+        "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
 
     private async goBack() {
         if (this.typingInProgress) return;
@@ -244,7 +243,7 @@ export class Case extends Scene {
                         selectedTestCasesIndices: this.selectedTestCases,
                         tutorialCaseIndex: this.currentTutorialCaseIndex,
                         isTutorial: this.isTutorial,
-                        difficulty: this.currentDifficulty,
+                        difficulty: this.levelDifficulty,
                     });
                 });
             });
@@ -281,7 +280,7 @@ export class Case extends Scene {
                         selectedTestCasesIndices: [],
                         tutorialCaseIndex: this.currentTutorialCaseIndex,
                         isTutorial: this.isTutorial,
-                        difficulty: this.currentDifficulty,
+                        difficulty: this.levelDifficulty,
                     });
                 }
             },
