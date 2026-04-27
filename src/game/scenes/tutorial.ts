@@ -39,7 +39,7 @@ export class Tutorial extends Scene {
                 this.scene.start("Case", {
                     isTutorial: true,
                     nextTutorialText:
-                        'cout << "Welcome back to the tutorial! Let\'s continue where you left off with a little more challenging cases." << endl;',
+                        "Welcome back to the tutorial! Let's continue where you left off with a little more challenging cases. Fair warning, each case will now be timed!"  ,
                     difficulty: parsedSavedTutorialData.difficulty,
                     currentTutorialCaseIndex: this.index,
                 });
@@ -145,7 +145,7 @@ export class Tutorial extends Scene {
                 .setInteractive();
 
             const secondIntro =
-                'cout << "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It\'s up to you to determine that based on the presented evidence. Click on the case file to read your first case!" << endl;';
+                "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It's up to you to determine that based on the presented evidence. Click on the case file to read your first case!";
 
             await typewriterEffect(
                 this.judge,
@@ -156,7 +156,7 @@ export class Tutorial extends Scene {
             );
 
             const thirdIntro =
-                'cout << "Great! Each file will have a program for you to examine, like shown below. If you\'re unsure what a program is trying to do, click on the pink tab to read its statement of purpose. To see the set of test cases, click on the green tab!" << endl;';
+                "Great! Each file will have a program for you to examine, like shown below. If you're unsure what a program is trying to do, click on the pink tab to read its statement of purpose. To see the set of test cases, click on the green tab!";
 
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
