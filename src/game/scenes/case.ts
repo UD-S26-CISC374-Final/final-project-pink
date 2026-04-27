@@ -333,7 +333,7 @@ export class Case extends Scene {
                 this.programDescTextReference.destroy();
 
             const thirdIntro =
-                "cout << \"These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.\" << endl;";
+                "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
 
             this.addTestCases(350);
             await this.addAnimatedTypingText(thirdIntro, 18);
