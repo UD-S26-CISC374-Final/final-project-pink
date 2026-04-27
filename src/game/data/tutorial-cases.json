@@ -175,6 +175,78 @@
     },
     {
         "id": "case-4",
+        "difficulty": "easy",
+        "tutorialText": "",
+        "title": "The Listless Guardian",
+        "functionCode": "def get_first_item(items):\n    # BUG: Crashes if the list is empty\n    return items[0]",
+        "description": "I return the first item in any list. If the list is empty, I return 'None'.",
+        "evidenceSlots": 2,
+        "correctVerdict": "guilty",
+        "evidencePool": [
+            {
+                "id": "c5-t1",
+                "label": "get_first_item(['A', 'B']) -> 'A'",
+                "input": "['A', 'B']",
+                "expectedOutput": "A",
+                "actualOutput": "A",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c5-t2",
+                "label": "get_first_item([]) -> None",
+                "input": "[]",
+                "expectedOutput": "None",
+                "actualOutput": "IndexError: list index out of range",
+                "passes": false,
+                "showResult": true
+            },
+            {
+                "id": "c5-t3",
+                "label": "get_first_item([100]) -> 100",
+                "input": "[100]",
+                "expectedOutput": "100",
+                "actualOutput": "100",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c5-t4",
+                "label": "get_first_item(['Cat', 'Dog']) -> 'Cat'",
+                "input": "['Cat', 'Dog']",
+                "expectedOutput": "Cat",
+                "actualOutput": "Cat",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c5-t1",
+                "quality": "redundant",
+                "feedback": "Works fine when there is data, but hides the danger."
+            },
+            {
+                "testId": "c5-t2",
+                "quality": "essential",
+                "feedback": "SMOKING GUN! The function crashes completely when given an empty list."
+            },
+            {
+                "testId": "c5-t3",
+                "quality": "redundant",
+                "feedback": "Hides the lack of a safety check."
+            },
+            {
+                "testId": "c5-t4",
+                "quality": "redundant",
+                "feedback": "Just more proof that it works... until it doesn't."
+            }
+        ],
+        "missedEvidenceExplanation": "Accessing items[0] without checking the length of the list is a common cause of program crashes.",
+        "closingStatement": "Guilty! The defendant claimed to handle empty lists but actually crashed the entire court on the first empty input!"
+    },
+    {
+        "id": "case-5",
         "difficulty": "medium",
         "tutorialText": "Excellent work so far. You've moved into 'Medium' difficulty cases now. Each case will now be timed and the bugs here are a bit more specific, so pay close attention to the requirements!",
         "descTutorialText": "This function has a specific requirement for how to handle invalid inputs. Compare the expected output to the actual output very carefully.",
@@ -247,78 +319,6 @@
         "closingStatement": "cout << \"The verdict is NOT GUILTY. The function behaves exactly as specified, correctly handling both valid and invalid inputs. Case closed!\" << endl;"
     },
     {
-        "id": "case-5",
-        "difficulty": "easy",
-        "tutorialText": "",
-        "title": "The Listless Guardian",
-        "functionCode": "def get_first_item(items):\n    # BUG: Crashes if the list is empty\n    return items[0]",
-        "description": "I return the first item in any list. If the list is empty, I return 'None'.",
-        "evidenceSlots": 2,
-        "correctVerdict": "guilty",
-        "evidencePool": [
-            {
-                "id": "c5-t1",
-                "label": "first(['A', 'B']) -> 'A'",
-                "input": "['A', 'B']",
-                "expectedOutput": "A",
-                "actualOutput": "A",
-                "passes": true,
-                "showResult": true
-            },
-            {
-                "id": "c5-t2",
-                "label": "first([]) -> None",
-                "input": "[]",
-                "expectedOutput": "None",
-                "actualOutput": "IndexError: list index out of range",
-                "passes": false,
-                "showResult": true
-            },
-            {
-                "id": "c5-t3",
-                "label": "first([100]) -> 100",
-                "input": "[100]",
-                "expectedOutput": "100",
-                "actualOutput": "100",
-                "passes": true,
-                "showResult": true
-            },
-            {
-                "id": "c5-t4",
-                "label": "first(['Cat', 'Dog']) -> 'Cat'",
-                "input": "['Cat', 'Dog']",
-                "expectedOutput": "Cat",
-                "actualOutput": "Cat",
-                "passes": true,
-                "showResult": true
-            }
-        ],
-        "testFeedback": [
-            {
-                "testId": "c5-t1",
-                "quality": "redundant",
-                "feedback": "Works fine when there is data, but hides the danger."
-            },
-            {
-                "testId": "c5-t2",
-                "quality": "essential",
-                "feedback": "SMOKING GUN! The function crashes completely when given an empty list."
-            },
-            {
-                "testId": "c5-t3",
-                "quality": "redundant",
-                "feedback": "Hides the lack of a safety check."
-            },
-            {
-                "testId": "c5-t4",
-                "quality": "redundant",
-                "feedback": "Just more proof that it works... until it doesn't."
-            }
-        ],
-        "missedEvidenceExplanation": "Accessing items[0] without checking the length of the list is a common cause of program crashes.",
-        "closingStatement": "Guilty! The defendant claimed to handle empty lists but actually crashed the entire court on the first empty input!"
-    },
-    {
         "id": "case-6",
         "difficulty": "medium",
         "tutorialText": "",
@@ -330,7 +330,7 @@
         "evidencePool": [
             {
                 "id": "c6-t1",
-                "label": "check('password123') -> False",
+                "label": "check_password('password123') -> False",
                 "input": "'password123'",
                 "expectedOutput": "False",
                 "actualOutput": "True",
@@ -339,7 +339,7 @@
             },
             {
                 "id": "c6-t2",
-                "label": "check('Password123') -> True",
+                "label": "check_password('Password123') -> True",
                 "input": "'Password123'",
                 "expectedOutput": "True",
                 "actualOutput": "True",
@@ -348,7 +348,7 @@
             },
             {
                 "id": "c6-t3",
-                "label": "check('ABC') -> False",
+                "label": "check_password('ABC') -> False",
                 "input": "'ABC'",
                 "expectedOutput": "False",
                 "actualOutput": "False",
@@ -357,7 +357,7 @@
             },
             {
                 "id": "c6-t4",
-                "label": "check('short') -> False",
+                "label": "check_password('short') -> False",
                 "input": "'short'",
                 "expectedOutput": "False",
                 "actualOutput": "False",
@@ -391,7 +391,7 @@
         "closingStatement": "Guilty! The security guard was only looking at the size of the password, letting weak, lowercase passwords right through the gate!"
     },
     {
-        "id": "case-8",
+        "id": "case-7",
         "difficulty": "hard",
         "title": "The Mirror Dimension",
         "tutorialText": "Final inspection time! This function claims to perfectly reverse any string. It looks simple, but simple code can hide deep flaws. Be the investigator the Syntax Court needs!",
@@ -403,7 +403,7 @@
         "evidencePool": [
             {
                 "id": "c8-t1",
-                "label": "reverse('racecar') -> 'racecar'",
+                "label": "reverse_string('racecar') -> 'racecar'",
                 "input": "'racecar'",
                 "expectedOutput": "racecar",
                 "actualOutput": "racecar",
@@ -412,7 +412,7 @@
             },
             {
                 "id": "c8-t2",
-                "label": "reverse('') -> ''",
+                "label": "reverse_string('') -> ''",
                 "input": "''",
                 "expectedOutput": "",
                 "actualOutput": "",
@@ -421,7 +421,7 @@
             },
             {
                 "id": "c8-t3",
-                "label": "reverse('A') -> 'A'",
+                "label": "reverse_string('A') -> 'A'",
                 "input": "'A'",
                 "expectedOutput": "A",
                 "actualOutput": "A",
@@ -430,7 +430,7 @@
             },
             {
                 "id": "c8-t4",
-                "label": "reverse('Code') -> 'edoC'",
+                "label": "reverse_string('Code') -> 'edoC'",
                 "input": "'Code'",
                 "expectedOutput": "edoC",
                 "actualOutput": "edoC",
