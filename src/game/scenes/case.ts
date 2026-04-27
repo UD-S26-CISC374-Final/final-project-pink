@@ -253,6 +253,11 @@ export class Case extends Scene {
             .setAlpha(0.09)
             .setInteractive();
 
+        this.add.text(810, 170, "Evidence", {
+            fontSize: "25px",
+            color: "#064b11",
+        });
+
         greenTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
             if (this.currentTab === "test-cases") return;
@@ -276,11 +281,16 @@ export class Case extends Scene {
         });
 
         const pinkTab = this.add
-            .rectangle(700, 190, 148, 80, 0xff00ff, 0.8)
+            .rectangle(700, 150, 148, 80, 0xff00ff, 0.8)
             .setOrigin(0.5)
             .setDepth(100)
             .setAlpha(0.09)
             .setInteractive();
+
+        this.add.text(650, 170, "Purpose", {
+            fontSize: "25px",
+            color: "#92088d",
+        });
 
         pinkTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
@@ -331,6 +341,7 @@ export class Case extends Scene {
             this.textObject.setText(text),
             text,
             speed,
+            this,
         );
         this.typingInProgress = false;
     }
@@ -369,6 +380,7 @@ export class Case extends Scene {
 
         // 3. Next, we are going to introduce the user with the next tutorial's text
         this.showBackButton();
-        await this.addAnimatedTypingText(this.nextTutorialText); // TODO - remove 1
+
+        await this.addAnimatedTypingText(this.nextTutorialText);
     }
 }
