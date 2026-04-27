@@ -85,7 +85,10 @@ export class Verdict extends Scene {
                 alpha: 1,
             },
             {
-                text: this.currTutorialCaseIndex >= tutorialCases.length - 1 ? "Go to Summary" : "Next Case",
+                text:
+                    this.currTutorialCaseIndex >= tutorialCases.length - 1 ?
+                        "Go to Summary"
+                    :   "Next Case",
                 fontFamily: "Google Sans Code",
                 fontSize: 18,
                 color: "#ffffff",
@@ -118,10 +121,31 @@ export class Verdict extends Scene {
 
             const nextDifficulty =
                 tutorialCases[this.currTutorialCaseIndex + 1].difficulty;
+
+            const progressSaved = localStorage.getItem("savedProgress");
+            const savedDifficulty =
+                progressSaved ?
+                    (
+                        JSON.parse(progressSaved) as {
+                            currentTutorialCaseIndex: number;
+                            difficulty: string;
+                        }
+                    ).difficulty
+                :   null;
+
             if (
-                nextDifficulty === "medium" ||
-                this.currentDifficulty === "hard"
+                nextDifficulty === "medium" &&
+                !progressSaved &&
+                savedDifficulty !== "medium"
             ) {
+                this.scene.start("Pause", {
+                    isTutorial: this.isTutorial,
+                    nextTutorialText: `Things are going to start a little more challenging now! Before we proceed to the ${nextDifficulty} cases, would you like to take a recess and come back later? If so, hit the 'Save Progress' button. Otherwise, hit the 'Next Case' button to proceed.`,
+                    difficulty: nextDifficulty,
+                    currentTutorialCaseIndex: this.currTutorialCaseIndex,
+                });
+                return;
+            } else if (nextDifficulty === "hard") {
                 this.scene.start("Pause", {
                     isTutorial: this.isTutorial,
                     nextTutorialText: `Things are going to start a little more challenging now! Before we proceed to the ${nextDifficulty} cases, would you like to take a recess and come back later? If so, hit the 'Save Progress' button. Otherwise, hit the 'Next Case' button to proceed.`,
