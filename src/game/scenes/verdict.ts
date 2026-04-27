@@ -382,8 +382,7 @@ export class Verdict extends Scene {
                 tutorialCases[this.currTutorialCaseIndex]
                     .missedEvidenceExplanation,
                 18,
-                1,
-            ); // TODO - remove 1
+            );
             this.judge.anims.pause();
             this.judge.setFrame(1);
         }
