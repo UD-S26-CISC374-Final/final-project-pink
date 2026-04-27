@@ -65,6 +65,7 @@ export class Verdict extends Scene {
             this.textObject.setText(text),
             text,
             speed,
+            this,
         ); // TODO - replace 1 with speed
 
         this.typingInProgress = false;
@@ -100,7 +101,9 @@ export class Verdict extends Scene {
                 manager.advanceCase();
             }
             manager.selectedEvidenceIds = [...this.selectedTestCases];
-            manager.submitVerdict(currentCase.correctVerdict as "guilty" | "not guilty");
+            manager.submitVerdict(
+                currentCase.correctVerdict as "guilty" | "not guilty",
+            );
 
             this.scene.stop("Verdict");
 
@@ -130,9 +133,9 @@ export class Verdict extends Scene {
             } else {
                 this.scene.start("Case", {
                     isTutorial: this.isTutorial,
-                    nextTutorialText: tutorialCases[
-                        this.currTutorialCaseIndex + 1
-                    ].tutorialText,
+                    nextTutorialText:
+                        tutorialCases[this.currTutorialCaseIndex + 1]
+                            .tutorialText,
                     difficulty: this.currentDifficulty,
                     currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
                 });
