@@ -32,10 +32,10 @@ export class Case extends Scene {
         2: "C",
     };
     showSkipMessageTip = true;
+    levelDifficulty: "easy" | "medium" | "hard";
 
     thirdIntro =
-        'cout << "These are the program\'s test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them." << endl;';
-    currentDifficulty = "easy"; // TODO - in the future, will need to change this so it's not hardcoded
+        "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
 
     private async goBack() {
         if (this.typingInProgress) return;
@@ -62,8 +62,9 @@ export class Case extends Scene {
             this.showBackButton();
         }
 
+        this.addTabLabels();
         this.textObject.setText("");
-        await this.addAnimatedTypingText(this.nextTutorialText); // TODO - remove 1
+        await this.addAnimatedTypingText(this.nextTutorialText);
     }
 
     private showBackButton() {
@@ -94,9 +95,9 @@ export class Case extends Scene {
             .setDepth(100);
 
         this.add
-            .text(390, 190, "Press 'Enter' to skip text animation", {
+            .text(390, 190, "Tip: hit 'Enter' to skip text animation!", {
                 fontFamily: "Google Sans Code",
-                fontSize: 15,
+                fontSize: 14,
                 color: "#ffffff",
             })
             .setOrigin(0.5)
@@ -242,11 +243,61 @@ export class Case extends Scene {
                         selectedTestCasesIndices: this.selectedTestCases,
                         tutorialCaseIndex: this.currentTutorialCaseIndex,
                         isTutorial: this.isTutorial,
-                        difficulty: this.currentDifficulty,
+                        difficulty: this.levelDifficulty,
                     });
                 });
             });
         }
+    }
+
+    private playTimer() {
+        let timerText = this.add.text(820, 250, "10:00", {
+            fontSize: "35px",
+            color: "#ee0808",
+        });
+
+        let timeLeft = 600; // 10 minutes in seconds is 600
+        const timerEvent = this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                timerText.destroy();
+
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60)
+                    .toString()
+                    .padStart(2, "0");
+                const seconds = (timeLeft % 60).toString().padStart(2, "0");
+
+                timerText = this.add.text(820, 250, `${minutes}:${seconds}`, {
+                    fontSize: "35px",
+                    color: "#ee0808",
+                });
+
+                if (timeLeft <= 0) {
+                    timerEvent.remove();
+                    this.scene.stop("Tutorial");
+                    this.scene.start("Verdict", {
+                        selectedTestCasesIndices: [],
+                        tutorialCaseIndex: this.currentTutorialCaseIndex,
+                        isTutorial: this.isTutorial,
+                        difficulty: this.levelDifficulty,
+                    });
+                }
+            },
+            loop: true,
+        });
+    }
+
+    private addTabLabels() {
+        this.add.text(810, 170, "Evidence", {
+            fontSize: "25px",
+            color: "#064b11",
+        });
+
+        this.add.text(650, 170, "Purpose", {
+            fontSize: "25px",
+            color: "#92088d",
+        });
     }
 
     private drawTabs() {
@@ -257,14 +308,19 @@ export class Case extends Scene {
             .setAlpha(0.09)
             .setInteractive();
 
-        this.add.text(810, 170, "Evidence", {
-            fontSize: "25px",
-            color: "#064b11",
-        });
+        this.addTabLabels();
+
+        if (
+            this.levelDifficulty === "medium" ||
+            this.levelDifficulty === "hard"
+        ) {
+            this.playTimer();
+        }
 
         greenTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
             if (this.currentTab === "test-cases") return;
+
             this.caseFileTestCases = [];
             this.selectedTestCases = [];
 
@@ -291,10 +347,7 @@ export class Case extends Scene {
             .setAlpha(0.09)
             .setInteractive();
 
-        this.add.text(650, 170, "Purpose", {
-            fontSize: "25px",
-            color: "#92088d",
-        });
+        this.addTabLabels();
 
         pinkTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
@@ -360,12 +413,12 @@ export class Case extends Scene {
         this.add.rectangle(512, 80, 1024, 120, 0x000000, 0.8).setOrigin(0.5);
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
-        this.currentDifficulty = data.difficulty;
         this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
         this.currTutorialCaseDesc =
             tutorialCases[this.currentTutorialCaseIndex].description;
         this.selectedTestCases = [];
         this.currentTab = "code";
+        this.levelDifficulty = data.difficulty;
     }
 
     async create() {

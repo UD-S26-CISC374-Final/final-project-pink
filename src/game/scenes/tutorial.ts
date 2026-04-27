@@ -17,7 +17,7 @@ export class Tutorial extends Scene {
         this.cameras.main.setBackgroundColor("#2d2d2d");
         CaseManager.getInstance().loadTutorial();
 
-        const savedTutorialState = sessionStorage.getItem("savedProgress");
+        const savedTutorialState = localStorage.getItem("savedProgress");
 
         const parsedSavedTutorialData =
             savedTutorialState &&
@@ -31,12 +31,15 @@ export class Tutorial extends Scene {
                 parsedSavedTutorialData.currentTutorialCaseIndex
             :   0;
 
+        console.log("Current tutorial case index:", this.index);
+        console.log(parsedSavedTutorialData);
+
         if (parsedSavedTutorialData) {
             if (this.index > 0) {
                 this.scene.start("Case", {
                     isTutorial: true,
                     nextTutorialText:
-                        'cout << "Welcome back to the tutorial! Let\'s continue where you left off with a little more challenging cases." << endl;',
+                        "Welcome back to the tutorial! Let's continue where you left off with a little more challenging cases. Fair warning, each case will now be timed!",
                     difficulty: parsedSavedTutorialData.difficulty,
                     currentTutorialCaseIndex: this.index,
                 });
@@ -78,7 +81,7 @@ export class Tutorial extends Scene {
         const textObject = this.add
             .text(512, 130, "", {
                 fontFamily: "Google Sans Code",
-                fontSize: 25,
+                fontSize: 23,
                 color: "#01ff34",
                 wordWrap: { width: 950, useAdvancedWrap: true },
             })
@@ -106,8 +109,9 @@ export class Tutorial extends Scene {
             this.judge,
             textObject.setText(firstIntro),
             firstIntro,
-            1,
-        ); // TODO - remove 1
+            undefined,
+            this,
+        );
 
         const buttonContainer = createTextButton.call(
             this,
@@ -141,17 +145,18 @@ export class Tutorial extends Scene {
                 .setInteractive();
 
             const secondIntro =
-                'cout << "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It\'s up to you to determine that based on the presented evidence. Click on the case file to read your first case!" << endl;';
+                "This is a case file. It contains all the information about a case. Each case file contains the program, the purpose it claims to serve, and a series of test cases that either prove or disprove its innocence. It's up to you to determine that based on the presented evidence. Click on the case file to read your first case!";
 
             await typewriterEffect(
                 this.judge,
                 textObject.setText(secondIntro),
                 secondIntro,
-                1,
-            ); // TODO - remove 1
+                undefined,
+                this,
+            );
 
             const thirdIntro =
-                'cout << "Great! Each file will have a program for you to examine, like shown below. If you\'re unsure what a program is trying to do, click on the pink tab to read its statement of purpose. To see the set of test cases, click on the green tab!" << endl;';
+                "Great! Each file will have a program for you to examine, like shown below. If you're unsure what a program is trying to do, click on the pink tab to read its statement of purpose. To see the set of test cases, click on the green tab!";
 
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
