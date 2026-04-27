@@ -389,5 +389,78 @@
         ],
         "missedEvidenceExplanation": "To find this bug, you must test a password that is long enough but lacks an uppercase letter.",
         "closingStatement": "Guilty! The security guard was only looking at the size of the password, letting weak, lowercase passwords right through the gate!"
+    },
+    {
+        "id": "case-8",
+        "difficulty": "hard",
+        "title": "The Mirror Dimension",
+        "tutorialText": "Final inspection time! This function claims to perfectly reverse any string. It looks simple, but simple code can hide deep flaws. Be the investigator the Syntax Court needs!",
+        "descTutorialText": "Verify if the string reversal handles all cases, including empty inputs and single letters. Don't let the simplicity fool you into a 'guilty' verdict without proof!",
+        "functionCode": "def reverse_string(s):\n    if s == \"\":\n        return \"\"\n    \n    result = \"\"\n    for char in s:\n        result = char + result\n    return result",
+        "description": "I take a string and return it in reverse order. If given an empty string, I return an empty string.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "evidencePool": [
+            {
+                "id": "c8-t1",
+                "label": "reverse('racecar') -> 'racecar'",
+                "input": "'racecar'",
+                "expectedOutput": "racecar",
+                "actualOutput": "racecar",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c8-t2",
+                "label": "reverse('') -> ''",
+                "input": "''",
+                "expectedOutput": "",
+                "actualOutput": "",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c8-t3",
+                "label": "reverse('A') -> 'A'",
+                "input": "'A'",
+                "expectedOutput": "A",
+                "actualOutput": "A",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c8-t4",
+                "label": "reverse('Code') -> 'edoC'",
+                "input": "'Code'",
+                "expectedOutput": "edoC",
+                "actualOutput": "edoC",
+                "passes": true,
+                "showResult": true
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c8-t1",
+                "quality": "misleading",
+                "feedback": "This is a palindrome! Because it reads the same forward and backward, this test doesn't actually prove the reversal logic is working—it only proves the string stayed the same length."
+            },
+            {
+                "testId": "c8-t2",
+                "quality": "essential",
+                "feedback": "An essential check for any string function. It confirms the code doesn't crash and correctly identifies the 'empty' state."
+            },
+            {
+                "testId": "c8-t3",
+                "quality": "redundant",
+                "feedback": "Testing a single character is similar to testing an empty string; it’s a good safety check, but doesn't tell us if the 'looping' logic for long strings is correct."
+            },
+            {
+                "testId": "c8-t4",
+                "quality": "essential",
+                "feedback": "This is the 'smoking gun' for innocence! By using a word that isn't a palindrome, we can see the characters are being placed in the correct reverse order."
+            }
+        ],
+        "missedEvidenceExplanation": "In this trial, the defendant was actually innocent! While the loop looks basic, the line 'result = char + result' correctly builds the string backward. The trick was avoiding the 'Palindrome Trap' (racecar), which can make broken code look like it works.",
+        "closingStatement": "The verdict is NOT GUILTY. The function successfully navigates the empty string edge case and handles standard reversals without a hitch. The court apologizes for the inconvenience!"
     }
 ]
