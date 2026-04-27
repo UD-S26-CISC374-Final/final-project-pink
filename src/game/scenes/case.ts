@@ -72,7 +72,7 @@ export class Case extends Scene {
             {
                 x: 0,
                 y: 0,
-                width: 100,
+                width: 110,
                 height: 40,
                 color: 0x000000,
                 alpha: 1,
@@ -85,6 +85,21 @@ export class Case extends Scene {
             },
             true,
         );
+
+        // create container that holds text inside a rectangle letting the player know to hit 'enter' to skip text animation
+        this.add
+            .rectangle(390, 190, 350, 40, 0x000000)
+            .setOrigin(0.5)
+            .setDepth(100);
+
+        this.add
+            .text(390, 190, "Press 'Enter' to skip text animation", {
+                fontFamily: "Google Sans Code",
+                fontSize: 15,
+                color: "#ffffff",
+            })
+            .setOrigin(0.5)
+            .setDepth(101);
 
         this.backButton.on("pointerdown", async () => {
             if (this.currentTab === "code") {
@@ -256,7 +271,7 @@ export class Case extends Scene {
                 "cout << \"These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.\" << endl;";
 
             this.addTestCases(350);
-            await this.addAnimatedTypingText(thirdIntro, 18); 
+            await this.addAnimatedTypingText(thirdIntro, 18);
             this.showBackButton();
         });
 
