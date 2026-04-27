@@ -6,6 +6,8 @@ import createTextButton from "../utils/createTextButton";
 // TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
 // TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
 // TODO - change it so that if you select a test case and then de-select, instead of the text animation playing again, it just shows the text again without the animation
+// ! When the user de-selects a test case, prevent the animation from replaying and just show the text again without the animation
+// ! - need to hide the tip about pressing 'Enter' to skip the animation when the 'present to judge' button is showing
 
 export class Case extends Scene {
     constructor() {
@@ -31,6 +33,8 @@ export class Case extends Scene {
         1: "B",
         2: "C",
     };
+    showSkipMessageTip = true;
+
     thirdIntro =
         'cout << "These are the program\'s test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them." << endl;';
     currentDifficulty = "easy"; // TODO - in the future, will need to change this so it's not hardcoded
@@ -86,7 +90,6 @@ export class Case extends Scene {
             true,
         );
 
-        // create container that holds text inside a rectangle letting the player know to hit 'enter' to skip text animation
         this.add
             .rectangle(390, 190, 350, 40, 0x000000)
             .setOrigin(0.5)
@@ -186,6 +189,7 @@ export class Case extends Scene {
                     ) {
                         this.presentToJudgeButton.destroy();
                         this.presentToJudgeButton = undefined;
+                        this.showSkipMessageTip = true;
 
                         this.textObject.setText("");
                         await this.addAnimatedTypingText(this.thirdIntro, 19); // TODO - remove 1
@@ -281,7 +285,7 @@ export class Case extends Scene {
         });
 
         const pinkTab = this.add
-            .rectangle(700, 150, 148, 80, 0xff00ff, 0.8)
+            .rectangle(700, 190, 148, 80, 0xff00ff, 0.8)
             .setOrigin(0.5)
             .setDepth(100)
             .setAlpha(0.09)
