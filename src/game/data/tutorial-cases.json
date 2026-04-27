@@ -3,7 +3,7 @@
         "id": "case-1",
         "difficulty": "easy",
         "title": "The Case of Absolute Value",
-        "tutorialText": "cout << \"Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! Let's begin.\" << endl;",
+        "tutorialText": "Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! Let's begin.",
         "functionCode": "def absolute_value(n):\n if n < 0:\n  return -n\n return n",
         "description": "This function claims to return the non-negative absolute value of any number.",
         "evidenceSlots": 2,
@@ -12,26 +12,26 @@
             {
                 "testId": "c1-t1",
                 "quality": "essential",
-                "feedback": "cout << \"This test is useful because it verifies the 'positive' path of the code. It confirms that when given a normal positive number, the function returns it unchanged.\" << endl;"
+                "feedback": "This test is useful because it verifies the 'positive' path of the code. It confirms that when given a normal positive number, the function returns it unchanged."
             },
             {
                 "testId": "c1-t2",
                 "quality": "essential",
-                "feedback": "cout << \"This is a high-quality test. It forces the code to enter the 'if' block, which is the only way to prove the function can correctly handle negative inputs.\" << endl;"
+                "feedback": "This is a high-quality test. It forces the code to enter the 'if' block, which is the only way to prove the function can correctly handle negative inputs."
             },
             {
                 "testId": "c1-t3",
                 "quality": "redundant",
-                "feedback": "cout << \"This test is redundant. Since we already have a test for a positive number, adding another one doesn't reveal any new information about how the code works.\" << endl;"
+                "feedback": "This test is redundant. Since we already have a test for a positive number, adding another one doesn't reveal any new information about how the code works."
             }
         ],
-        "missedEvidenceExplanation": "cout << \"Even though your selected test cases weren't the best fit, that's okay because every case is a chance to learn. In this trial, the most important tests were at the 'boundaries.' While testing basic numbers is a good start, always look for the 'Zero' case to ensure the logic doesn't break at the edge. Below, I have explained which tests were useful, redundant, or misleading. Please review these insights before we move to the next trial.\" << endl;",
-        "closingStatement": "cout << \"The evidence shows that the function handles both positive and negative inputs correctly. Even though we didn't see every possible number, the logic holds up. I find the defendant NOT GUILTY.\" << endl;"
+        "missedEvidenceExplanation": "Even though your selected test cases weren't the best fit, that's okay because every case is a chance to learn. In this trial, the most important tests were at the 'boundaries.' While testing basic numbers is a good start, always look for the 'Zero' case to ensure the logic doesn't break at the edge. Below, I have explained which tests were useful, redundant, or misleading. Please review these insights before we move to the next trial.",
+        "closingStatement": "The evidence shows that the function handles both positive and negative inputs correctly. Even though we didn't see every possible number, the logic holds up. I find the defendant NOT GUILTY."
     },
     {
         "id": "case-2",
         "difficulty": "easy",
-        "tutorialText": "cout << \"Great job getting through your first case! Let's move on to the next one!\" << endl;",
+        "tutorialText": "Great job getting through your first case! Let's move on to the next one!",
         "title": "The False Start",
         "functionCode": "def greet(name):\n   return \"Hello\" + name",
         "description": "This function is supposed to greet a user by adding 'Hello ' before their name.",
@@ -79,32 +79,32 @@
             {
                 "testId": "c2-t1",
                 "quality": "essential",
-                "feedback": "cout << \"This test is a critical piece of evidence. It clearly demonstrates that the function fails to add a space, resulting in the name and greeting being smashed together.\" << endl;"
+                "feedback": "This test is a critical piece of evidence. It clearly demonstrates that the function fails to add a space, resulting in the name and greeting being smashed together."
             },
             {
                 "testId": "c2-t2",
                 "quality": "misleading",
-                "feedback": "cout << \"This test is misleading. Because the input itself starts with a space (' Bob'), it makes the function look like it's working even though the code is actually broken.\" << endl;"
+                "feedback": "This test is misleading. Because the input itself starts with a space (' Bob'), it makes the function look like it's working even though the code is actually broken."
             },
             {
                 "testId": "c2-t3",
                 "quality": "essential",
-                "feedback": "cout << \"This is a great edge case test. By using an empty name, we can see that the function doesn't even provide a trailing space after the word 'Hello'.\" << endl;"
+                "feedback": "This is a great edge case test. By using an empty name, we can see that the function doesn't even provide a trailing space after the word 'Hello'."
             },
             {
                 "testId": "c2-t4",
                 "quality": "redundant",
-                "feedback": "cout << \"This test is redundant. We already proved the missing space error with 'Alice', so testing 'World' doesn't give the jury any new information.\" << endl;"
+                "feedback": "This test is redundant. We already proved the missing space error with 'Alice', so testing 'World' doesn't give the jury any new information."
             }
         ],
-        "missedEvidenceExplanation": "cout << \"Even if your evidence wasn't a perfect fit, remember that the best lawyers learn from every trial. In this case, we saw a 'misleading' test where a space in the input ( ' Bob') accidentally covered up a bug in the code. To truly catch a bug, you need 'clean' evidence that doesn't do the function's work for it. Please review the test details below to see how each piece of evidence influenced the final verdict.\" << endl;",
-        "closingStatement": "cout << \"The verdict is GUILTY. The function failed to include the required space character, relying on the user to fix the formatting themselves. The defendant is sentenced to the Debugging Ward!\" << endl;"
+        "missedEvidenceExplanation": "Even if your evidence wasn't a perfect fit, remember that the best lawyers learn from every trial. In this case, we saw a 'misleading' test where a space in the input ( ' Bob') accidentally covered up a bug in the code. To truly catch a bug, you need 'clean' evidence that doesn't do the function's work for it. Please review the test details below to see how each piece of evidence influenced the final verdict.",
+        "closingStatement": "The verdict is GUILTY. The function failed to include the required space character, relying on the user to fix the formatting themselves. The defendant is sentenced to the Debugging Ward!"
     },
     {
         "id": "case-3",
         "difficulty": "easy",
-        "tutorialText": "cout << \"You're gaining confidence in the courtroom! Let's see how you handle a function with a more subtle logic gap.\" << endl;",
-        "descTutorialText": "cout << \"This function claims to handle both even and odd numbers. Review the evidence carefully to see if it actually delivers on that promise.\" << endl;",
+        "tutorialText": "You're gaining confidence in the courtroom! Let's see how you handle a function with a more subtle logic gap.",
+        "descTutorialText": "This function claims to handle both even and odd numbers. Review the evidence carefully to see if it actually delivers on that promise.",
         "title": "The One-Track Mind",
         "functionCode": "def is_even(n):\n    if n % 2 == 0:\n        return True\n    # BUG: Missing the else statement or a default return\n    # Python returns 'None' if no return is hit",
         "description": "I check if a number is even. I return True for evens and False for odds.",
@@ -152,32 +152,32 @@
             {
                 "testId": "c3-t1",
                 "quality": "redundant",
-                "feedback": "cout << \"This test doesn't help uncover the bug. The function already handles even numbers correctly, so testing '2' doesn't reveal the missing logic for odd numbers.\" << endl;"
+                "feedback": "This test doesn't help uncover the bug. The function already handles even numbers correctly, so testing '2' doesn't reveal the missing logic for odd numbers."
             },
             {
                 "testId": "c3-t2",
                 "quality": "essential",
-                "feedback": "cout << \"This is critical evidence. It reveals that when the function receives an odd number like '3', it fails to return 'False' and instead returns 'None'.\" << endl;"
+                "feedback": "This is critical evidence. It reveals that when the function receives an odd number like '3', it fails to return 'False' and instead returns 'None'."
             },
             {
                 "testId": "c3-t3",
                 "quality": "redundant",
-                "feedback": "cout << \"This test also focuses on an already-working path. While correct, it doesn't help expose the missing behavior for odd numbers.\" << endl;"
+                "feedback": "This test also focuses on an already-working path. While correct, it doesn't help expose the missing behavior for odd numbers."
             },
             {
                 "testId": "c3-t4",
                 "quality": "essential",
-                "feedback": "cout << \"This is strong evidence. It confirms the function has no handling for odd numbers, returning 'None' instead of 'False'.\" << endl;"
+                "feedback": "This is strong evidence. It confirms the function has no handling for odd numbers, returning 'None' instead of 'False'."
             }
         ],
-        "missedEvidenceExplanation": "cout << \"Even if your evidence wasn't a perfect fit, you're learning an important lesson about code coverage. In this case, the function was so focused on 'Even' numbers that it completely ignored the 'Odd' path. Always look for tests that check every possible outcome—if you only test for success, you'll never see where the code fails. Please review the details below.\" << endl;",
-        "closingStatement": "cout << \"The verdict is GUILTY. The defendant only did half of its job! By failing to provide a path for odd numbers, it left the program in an uncertain state. Case closed!\" << endl;"
+        "missedEvidenceExplanation": "Even if your evidence wasn't a perfect fit, you're learning an important lesson about code coverage. In this case, the function was so focused on 'Even' numbers that it completely ignored the 'Odd' path. Always look for tests that check every possible outcome—if you only test for success, you'll never see where the code fails. Please review the details below.",
+        "closingStatement": "The verdict is GUILTY. The defendant only did half of its job! By failing to provide a path for odd numbers, it left the program in an uncertain state. Case closed!"
     },
     {
         "id": "case-4",
         "difficulty": "medium",
-        "tutorialText": "cout << \"Excellent work so far. You've moved into 'Medium' difficulty cases now. The bugs here are a bit more specific, so pay close attention to the requirements!\" << endl;",
-        "descTutorialText": "cout << \"This function has a specific requirement for how to handle invalid inputs. Compare the expected output to the actual output very carefully.\" << endl;",
+        "tutorialText": "Excellent work so far. You've moved into 'Medium' difficulty cases now. Each case will now be timed and the bugs here are a bit more specific, so pay close attention to the requirements!",
+        "descTutorialText": "This function has a specific requirement for how to handle invalid inputs. Compare the expected output to the actual output very carefully.",
         "title": "The Overzealous Adder",
         "functionCode": "def add_positive_only(a, b):\n    if a > 0 and b > 0:\n        return a + b\n    return \"Error\"",
         "description": "I add two positive numbers. If either is 0 or less, I return 'Error'.",
