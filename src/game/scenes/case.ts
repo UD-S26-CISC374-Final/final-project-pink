@@ -413,7 +413,6 @@ export class Case extends Scene {
         this.add.rectangle(512, 80, 1024, 120, 0x000000, 0.8).setOrigin(0.5);
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
-        this.currentDifficulty = data.difficulty;
         this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
         this.currTutorialCaseDesc =
             tutorialCases[this.currentTutorialCaseIndex].description;
