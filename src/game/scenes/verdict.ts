@@ -125,7 +125,7 @@ export class Verdict extends Scene {
                 this.scene.start("Pause", {
                     isTutorial: this.isTutorial,
                     nextTutorialText:
-                        "cout << \"Things are going to start a little more challenging now! Before we proceed, would you like to take a recess and come back later? If so, hit the 'Save Progress' button. Otherwise, hit the 'Next Case' button to proceed.\" << endl;",
+                        "Things are going to start a little more challenging now! Before we proceed, would you like to take a recess and come back later? If so, hit the 'Save Progress' button. Otherwise, hit the 'Next Case' button to proceed.",
                     difficulty: nextDifficulty,
                     currentTutorialCaseIndex: this.currTutorialCaseIndex,
                 });
@@ -226,7 +226,7 @@ export class Verdict extends Scene {
                         this.playJudgeAnimation("happy");
 
                         await this.addAnimatedTypingText(
-                            'cout << "Great work—you\'ve reviewed all the evidence! I hope my explanations helped you better understand how to distinguish strong test cases from weaker ones. With that said, I declare this program to be..." << endl;',
+                            "Great work—you've reviewed all the evidence! I hope my explanations helped you better understand how to distinguish strong test cases from weaker ones. With that said, I declare this program to be...",
                             20,
                         );
 
@@ -366,7 +366,7 @@ export class Verdict extends Scene {
             this.showTestCaseReasonings("happy");
 
             await this.addAnimatedTypingText(
-                'cout << "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It\'s important you do so before moving on." << endl;',
+                "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on.",
                 20,
                 25,
             );
