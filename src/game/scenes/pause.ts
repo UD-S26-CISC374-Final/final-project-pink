@@ -190,7 +190,7 @@ export class Pause extends Scene {
             this.showMainMenuButton();
 
             await this.addAnimatedTypingText(
-                "Progress saved! Next time you come back, you\'ll continue from where you left off.",
+                "Progress saved! Next time you come back, you'll continue from where you left off.",
                 20,
             );
         });
