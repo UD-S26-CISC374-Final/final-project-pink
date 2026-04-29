@@ -106,11 +106,11 @@ export class Case extends Scene {
         this.add
             .text(
                 95,
-                164,
+                165,
                 "Tip: hold space or press enter to skip text animation",
                 {
                     fontFamily: "Google Sans Code",
-                    fontSize: 10,
+                    fontSize: 12,
                     color: "#000000",
                 },
             )
