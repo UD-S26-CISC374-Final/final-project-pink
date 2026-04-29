@@ -105,16 +105,16 @@ export class Case extends Scene {
 
         this.add
             .text(
-                8,
-                8,
+                95,
+                164,
                 "Tip: hold space or press enter to skip text animation",
                 {
                     fontFamily: "Google Sans Code",
                     fontSize: 10,
-                    color: "#aaaaaa",
+                    color: "#000000",
                 },
             )
-            .setOrigin(0, 0)
+            .setOrigin(0, 1)
             .setDepth(101);
 
         this.backButton.on("pointerdown", async () => {
@@ -176,7 +176,9 @@ export class Case extends Scene {
         });
 
         this.clickableTestCases();
+    }
 
+    private createEvidenceButton() {
         if (this.presentToJudgeButton) this.presentToJudgeButton.destroy();
         this.evidenceReady = false;
         this.presentToJudgeButton = createTextButton
@@ -373,6 +375,7 @@ export class Case extends Scene {
                 testCasesAlreadyShown,
             );
             this.showBackButton();
+            this.createEvidenceButton();
         });
 
         const pinkTab = this.add
