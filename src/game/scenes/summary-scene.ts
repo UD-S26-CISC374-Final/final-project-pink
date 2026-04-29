@@ -21,7 +21,6 @@ export class SummaryScene extends Scene {
 
     preload() {
         this.load.setPath("assets");
-        this.load.image("judge_compiler", "judge_compiler.PNG");
         this.load.image("stamp_guilty", "guilty.png");
         this.load.image("stamp_not_guilty", "not_guilty.png");
     }
@@ -340,7 +339,7 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
         const sprite = this.add.image(
             RIGHT_CX + 10,
             SCREEN_H - 20,
-            "judge_compiler",
+            "judge-compiler",
         );
         const maxW = 230;
         if (sprite.width > maxW) sprite.setScale(maxW / sprite.width);
