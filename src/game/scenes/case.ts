@@ -33,6 +33,7 @@ export class Case extends Scene {
     };
     showSkipMessageTip = true;
     levelDifficulty: "easy" | "medium" | "hard";
+    tabDialogueShown: Set<"code" | "explanation" | "test-cases"> = new Set();
 
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
@@ -64,7 +65,13 @@ export class Case extends Scene {
 
         this.addTabLabels();
         this.textObject.setText("");
-        await this.addAnimatedTypingText(this.nextTutorialText);
+        const codeAlreadyShown = this.tabDialogueShown.has("code");
+        await this.addAnimatedTypingText(
+            this.nextTutorialText,
+            21,
+            undefined,
+            codeAlreadyShown,
+        );
     }
 
     private showBackButton() {
@@ -336,7 +343,15 @@ export class Case extends Scene {
                 "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
 
             this.addTestCases(350);
-            await this.addAnimatedTypingText(thirdIntro, 18);
+            const testCasesAlreadyShown =
+                this.tabDialogueShown.has("test-cases");
+            this.tabDialogueShown.add("test-cases");
+            await this.addAnimatedTypingText(
+                thirdIntro,
+                18,
+                undefined,
+                testCasesAlreadyShown,
+            );
             this.showBackButton();
         });
 
@@ -374,7 +389,15 @@ export class Case extends Scene {
 
             const fourthIntro =
                 'cout << "Here is the program\'s statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases." << endl;';
-            await this.addAnimatedTypingText(fourthIntro);
+            const explanationAlreadyShown =
+                this.tabDialogueShown.has("explanation");
+            this.tabDialogueShown.add("explanation");
+            await this.addAnimatedTypingText(
+                fourthIntro,
+                21,
+                undefined,
+                explanationAlreadyShown,
+            );
 
             this.showBackButton();
         });
@@ -384,6 +407,7 @@ export class Case extends Scene {
         text: string,
         fontSize: number = 21,
         speed?: number,
+        instant?: boolean,
     ) {
         this.typingInProgress = true;
 
@@ -392,6 +416,12 @@ export class Case extends Scene {
             color: "#01ff34",
             wordWrap: { width: 800 },
         });
+
+        if (instant) {
+            this.textObject.setText(text);
+            this.typingInProgress = false;
+            return;
+        }
 
         await typewriterEffect(
             null,
@@ -419,6 +449,7 @@ export class Case extends Scene {
         this.selectedTestCases = [];
         this.currentTab = "code";
         this.levelDifficulty = data.difficulty;
+        this.tabDialogueShown = new Set();
     }
 
     async create() {
@@ -439,5 +470,6 @@ export class Case extends Scene {
         this.showBackButton();
 
         await this.addAnimatedTypingText(this.nextTutorialText);
+        this.tabDialogueShown.add("code");
     }
 }
