@@ -289,6 +289,8 @@ export class Case extends Scene {
     }
 
     private showDraggableTestCases() {
+        // 512, 470, 860, 530
+
         this.add
             .rectangle(512, 450, 200, 100, 0x0fffff)
             .setOrigin(0.5)
@@ -320,6 +322,53 @@ export class Case extends Scene {
                     bounds.top,
                     bounds.bottom,
                 );
+            },
+        );
+
+        const textString = "assert(_____________, _____________)";
+        const fontSize = 22;
+        const charWidth = fontSize * 0.6; // Approximate width for Courier/Monospace
+        const startX = 512 - (textString.length * charWidth) / 2; // Center alignment math
+
+        this.add
+            .text(512, 670, textString, {
+                fontSize: `${fontSize}px`,
+                fontFamily: "Courier", // Essential for alignment
+                color: "#ffffff",
+            })
+            .setOrigin(0.5);
+
+        // Create zones for each underscore
+        for (let i = 0; i < textString.length; i++) {
+            if (textString[i] === "_") {
+                // Calculate X based on character index
+                const zoneX = startX + i * charWidth + charWidth / 2;
+
+                // Create the individual zone
+                this.add
+                    .zone(zoneX, 670, charWidth, fontSize)
+                    .setRectangleDropZone(charWidth, fontSize);
+
+                // Optional: Debugging graphics to see the zones
+                /*
+const graphics = this.add.graphics();
+graphics.lineStyle(2, 0xffff00);
+graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
+*/
+            }
+        }
+
+        this.input.on(
+            "drop",
+            (
+                _: Phaser.Input.Pointer,
+                gameObject: Phaser.GameObjects.Shape,
+                dropZone: Phaser.GameObjects.Zone,
+            ) => {
+                gameObject.x = dropZone.x;
+                gameObject.y = dropZone.y;
+
+                // You can add logic here to check if the correct test cases were placed in the correct zones and provide feedback accordingly
             },
         );
     }
