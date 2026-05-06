@@ -129,24 +129,10 @@ export default function showDraggableTestCases(
     scene: Phaser.Scene,
     tutorialCaseIndex: number,
     isTutorial: boolean,
+    container: HTMLDivElement,
 ) {
-    const SCREEN_W = 860;
-    const SCREEN_H = 520;
-
     tutorialCaseIndexGlobal = tutorialCaseIndex;
     isTutorialGlobal = isTutorial;
-
-    const container = document.createElement("div");
-    container.id = "draggable-area";
-
-    Object.assign(container.style, {
-        position: "relative",
-        width: `${SCREEN_W}px`,
-        height: `${SCREEN_H}px`,
-        marginTop: "205px",
-        marginLeft: "78px",
-        overflow: "hidden",
-    });
 
     const testCasesContainer = document.createElement("div");
     testCasesContainer.id = "test-cases-container";
@@ -349,7 +335,5 @@ export default function showDraggableTestCases(
 
         draggableDivsContainer.appendChild(draggableDiv);
     }
-
-    scene.add.dom(0, 0, container).setOrigin(0, 0);
 }
 // Had help from ChatGPT to implement this dragging logic
