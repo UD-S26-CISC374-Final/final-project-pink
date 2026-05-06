@@ -82,6 +82,10 @@ export class Preloader extends Scene {
         }
 
         this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
+        this.load.font(
+            "Cinzel",
+            "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap",
+        );
     }
 
     create() {
