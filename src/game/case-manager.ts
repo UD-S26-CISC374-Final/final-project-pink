@@ -162,15 +162,35 @@ class CaseManager {
             points += POINTS_CORRECT_VERDICT;
         }
 
+        const letters = ["A", "B", "C", "D"];
         const letterToIndex: Partial<Record<string, number>> = { A: 0, B: 1, C: 2, D: 3 };
-        for (const letter of this.selectedEvidenceIds) {
-            const index = letterToIndex[letter];
-            if (index === undefined) continue;
-            const feedback = currentCase.testFeedback[index];
-            if (feedback.quality === "essential") {
-                points += POINTS_ESSENTIAL_EVIDENCE;
-            } else if (feedback.quality === "misleading") {
-                points += POINTS_MISLEADING_EVIDENCE;
+
+        if (currentCase.requiredBranches) {
+            for (const letter of this.selectedEvidenceIds) {
+                const index = letterToIndex[letter];
+                if (index === undefined) continue;
+                const fb = currentCase.testFeedback[index] as { logicBranch?: string; misleading?: boolean };
+                if (!fb.logicBranch) continue;
+                if (fb.misleading) {
+                    points += POINTS_MISLEADING_EVIDENCE;
+                } else {
+                    const branchCoveredByOther = currentCase.testFeedback.some((f, j) => {
+                        const tf = f as { logicBranch?: string };
+                        return j !== index && tf.logicBranch === fb.logicBranch && this.selectedEvidenceIds.includes(letters[j]);
+                    });
+                    if (!branchCoveredByOther) points += POINTS_ESSENTIAL_EVIDENCE;
+                }
+            }
+        } else {
+            for (const letter of this.selectedEvidenceIds) {
+                const index = letterToIndex[letter];
+                if (index === undefined) continue;
+                const feedback = currentCase.testFeedback[index];
+                if (feedback.quality === "essential") {
+                    points += POINTS_ESSENTIAL_EVIDENCE;
+                } else if (feedback.quality === "misleading") {
+                    points += POINTS_MISLEADING_EVIDENCE;
+                }
             }
         }
 
@@ -202,15 +222,10 @@ class CaseManager {
         return this.caseResults.reduce((total, result) => {
             const c = this.cases.find((cas) => cas.id === result.caseId);
             if (!c) return total;
-            const essentialCount = c.testFeedback.filter(
-                (f) => f.quality === "essential",
-            ).length;
-            const scoringEssential = Math.min(essentialCount, c.evidenceSlots);
-            return (
-                total +
-                POINTS_CORRECT_VERDICT +
-                scoringEssential * POINTS_ESSENTIAL_EVIDENCE
-            );
+            const maxEssential = c.requiredBranches ?
+                Math.min(c.requiredBranches.length, c.evidenceSlots)
+            :   Math.min(c.testFeedback.filter((f) => f.quality === "essential").length, c.evidenceSlots);
+            return total + POINTS_CORRECT_VERDICT + maxEssential * POINTS_ESSENTIAL_EVIDENCE;
         }, 0);
     }
 
