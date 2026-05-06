@@ -5,7 +5,7 @@
         "title": "The Case of Absolute Value",
         "tutorialText": "Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! Let's begin.",
         "functionCode": "def absolute_value(n):\n if n < 0:\n  return -n\n return n",
-        "description": "This function claims to return the non-negative absolute value of any number.",
+        "description": "I return the non-negative absolute value of any number.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
         "requiredBranches": ["positive", "negative"],
@@ -13,7 +13,7 @@
             {
                 "testId": "c1-t1",
                 "logicBranch": "positive",
-                "feedback": "This test verifies the 'positive' path. It confirms that when given a normal positive number, the function returns it unchanged—no negation needed."
+                "feedback": "This test verifies the 'positive' path. It confirms that when given a normal positive number, the function returns it unchanged. No negation needed."
             },
             {
                 "testId": "c1-t2",
@@ -23,10 +23,10 @@
             {
                 "testId": "c1-t3",
                 "logicBranch": "positive",
-                "feedback": "This also covers the positive-number path with a different value. Valid on its own, but if you've already selected Test A, both tests check the same branch—the negative path remains untested."
+                "feedback": "This test covers the positive-number path. Valid on its own, but if you've already selected Test A, both tests check the same branch and one is redundant."
             }
         ],
-        "missedEvidenceExplanation": "The function has two paths: positive numbers and negative numbers. Tests A and C both check the positive branch—you only need one to cover it. The key is pairing a positive-number test with a negative-number test to verify both sides of the logic.",
+        "missedEvidenceExplanation": "The function has two paths: positive numbers and negative numbers. Tests A and C both check the positive branch, so you only need one to cover it. The key is pairing a positive-number test with a negative-number test to verify both sides of the logic.",
         "closingStatement": "The evidence shows that the function handles both positive and negative inputs correctly. Even though we didn't see every possible number, the logic holds up. I find the defendant NOT GUILTY."
     },
     {
@@ -35,7 +35,7 @@
         "tutorialText": "Great job getting through your first case! Let's move on to the next one!",
         "title": "The False Start",
         "functionCode": "def greet(name):\n   return \"Hello\" + name",
-        "description": "This function is supposed to greet a user by adding 'Hello ' before their name.",
+        "description": "I greet a user by name. I return a string that starts with 'Hello ' followed by the name.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
         "requiredBranches": ["normal-name", "empty-name"],
@@ -81,13 +81,13 @@
             {
                 "testId": "c2-t1",
                 "logicBranch": "normal-name",
-                "feedback": "This test clearly demonstrates the missing space—the name and greeting are smashed together without the required separator."
+                "feedback": "This test is a critical piece of evidence. It clearly demonstrates that the function fails to add a space, resulting in the name and greeting being smashed together."
             },
             {
                 "testId": "c2-t2",
                 "logicBranch": "prefixed-name",
                 "misleading": true,
-                "feedback": "This test is misleading. Because the input starts with a space (' Bob'), the function appears to work correctly—but only because the caller accidentally did the function's job for it."
+                "feedback": "This test is misleading. Because the input itself starts with a space (' Bob'), it makes the function look like it is working even though the code is actually broken."
             },
             {
                 "testId": "c2-t3",
@@ -100,7 +100,7 @@
                 "feedback": "This also exposes the missing-space bug with a different name. It's valid evidence, but if you've already selected Test A, both tests reveal the same flaw."
             }
         ],
-        "missedEvidenceExplanation": "The best evidence here targets two different failure modes. A normal name (like 'Alice') shows the space is missing entirely. An empty name shows the function doesn't even output a trailing space. Watch out for the pre-spaced input—it hides the bug entirely.",
+        "missedEvidenceExplanation": "The best evidence here targets two different failure modes. A normal name (like 'Alice') shows the space is missing entirely. An empty name shows the function does not even output a trailing space. Watch out for the pre-spaced input, which hides the bug entirely.",
         "closingStatement": "The verdict is GUILTY. The function failed to include the required space character, relying on the user to fix the formatting themselves. The defendant is sentenced to the Debugging Ward!"
     },
     {
@@ -161,7 +161,7 @@
             {
                 "testId": "c3-t2",
                 "logicBranch": "odd",
-                "feedback": "Critical evidence: when given an odd number, the function hits no return statement and yields None instead of False—exposing the missing else branch."
+                "feedback": "This is critical evidence. It reveals that when the function receives an odd number like '3', it fails to return 'False' and instead returns 'None'."
             },
             {
                 "testId": "c3-t3",
@@ -257,7 +257,7 @@
         "descTutorialText": "This function has a specific requirement for how to handle invalid inputs. Compare the expected output to the actual output very carefully.",
         "title": "The Overzealous Adder",
         "functionCode": "def add_positive_only(a, b):\n    if a > 0 and b > 0:\n        return a + b\n    return \"Error\"",
-        "description": "I add two positive numbers. If either is 0 or less, I return 'Error'.",
+        "description": "I take two numbers and return their sum. If either input is zero or less, I return 'Error' instead.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
         "requiredBranches": ["both-positive", "negative-input", "zero-input"],
@@ -308,12 +308,12 @@
             {
                 "testId": "c4-t2",
                 "logicBranch": "negative-input",
-                "feedback": "This confirms the function correctly returns 'Error' when a negative number is passed in—the invalid-input branch works as specified."
+                "feedback": "This is an essential test. It confirms that negative inputs are handled correctly by returning 'Error'."
             },
             {
                 "testId": "c4-t3",
                 "logicBranch": "zero-input",
-                "feedback": "This verifies that zero is treated as invalid input and correctly triggers the 'Error' return—a subtle but important edge case."
+                "feedback": "This test is very useful. It verifies that zero is treated as invalid input and correctly returns 'Error'."
             },
             {
                 "testId": "c4-t4",
@@ -321,7 +321,7 @@
                 "feedback": "This also confirms the function correctly adds two positive numbers. Valid evidence, but if you've already selected Test A, both tests cover the same positive-sum branch."
             }
         ],
-        "missedEvidenceExplanation": "This function is actually correct—there's no bug here! To prove innocence, your evidence needs to cover all three branches: the happy path (two positive numbers summed correctly), a negative input returning 'Error', and a zero input also returning 'Error'. Together, these confirm the function behaves exactly as specified.",
+        "missedEvidenceExplanation": "This function is actually correct, there is no bug here! To prove innocence, your evidence needs to cover all three branches: the happy path (two positive numbers summed correctly), a negative input returning 'Error', and a zero input also returning 'Error'. Together, these confirm the function behaves exactly as specified.",
         "closingStatement": "The verdict is NOT GUILTY. The function behaves exactly as specified, correctly handling both valid and invalid inputs. Case closed!"
     },
     {
@@ -382,7 +382,7 @@
                 "testId": "c6-t2",
                 "logicBranch": "long-with-uppercase",
                 "misleading": true,
-                "feedback": "This test is misleading. The password legitimately meets both criteria, so the function returns the right answer—but this can't tell you whether the uppercase check is actually implemented."
+                "feedback": "This test is misleading. This password is valid, so the function appears to work. This test cannot tell you whether the uppercase check is actually implemented."
             },
             {
                 "testId": "c6-t3",
@@ -395,7 +395,7 @@
                 "feedback": "This also tests the short-password path. Valid on its own, but if you've already selected Test C, both tests confirm the same length-check behavior."
             }
         ],
-        "missedEvidenceExplanation": "To find this bug, you need a long password with no uppercase letters—that's the only input that can prove the uppercase check is missing. A short password only tests the length rule, which actually works.",
+        "missedEvidenceExplanation": "To find this bug, you need a long password with no uppercase letters. That is the only input that can prove the uppercase check is missing. A short password only tests the length rule, which actually works.",
         "closingStatement": "Guilty! The security guard was only looking at the size of the password, letting weak, lowercase passwords right through the gate!"
     },
     {
@@ -452,7 +452,7 @@
                 "testId": "c8-t1",
                 "logicBranch": "palindrome",
                 "misleading": true,
-                "feedback": "This is a palindrome—it reads the same forward and backward! This test can't prove the reversal logic works because the result looks identical either way."
+                "feedback": "This is a palindrome! Because it reads the same forward and backward, this test does not actually prove the reversal logic is working. It only proves the string stayed the same length."
             },
             {
                 "testId": "c8-t2",
@@ -462,7 +462,7 @@
             {
                 "testId": "c8-t3",
                 "logicBranch": "single-char",
-                "feedback": "A useful sanity check—a single character reversed is itself. Not required for full coverage, but it's a solid additional verification of the loop's edge behavior."
+                "feedback": "Testing a single character is a good safety check, but it does not tell us if the looping logic for longer strings is correct. It is valid coverage for an additional edge case."
             },
             {
                 "testId": "c8-t4",
@@ -470,7 +470,7 @@
                 "feedback": "The key test: by using a non-palindrome, we can actually verify the characters are placed in the correct reverse order."
             }
         ],
-        "missedEvidenceExplanation": "While the loop looks basic, the line 'result = char + result' correctly builds the string backward. The trick is avoiding the 'Palindrome Trap'—racecar looks the same either way, so it can't prove the reversal is working. You need a non-palindrome to confirm the logic, plus the empty-string case to confirm the edge case is handled.",
+        "missedEvidenceExplanation": "While the loop looks basic, the line 'result = char + result' correctly builds the string backward. The trick is avoiding the 'Palindrome Trap'. The word 'racecar' looks the same either way, so it cannot prove the reversal is working. You need a non-palindrome to confirm the logic, plus the empty-string case to confirm the edge case is handled.",
         "closingStatement": "The verdict is NOT GUILTY. The function successfully navigates the empty string edge case and handles standard reversals without a hitch. The court apologizes for the inconvenience!"
     }
 ]
