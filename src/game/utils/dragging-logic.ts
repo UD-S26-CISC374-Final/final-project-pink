@@ -1,3 +1,63 @@
+function showPresentToJudgeButton(testCases: string[]) {
+    const button = document.createElement("button");
+    button.textContent = "Present Evidence to Judge Compiler";
+    Object.assign(button.style, {
+        marginTop: "20px",
+        padding: "10px 20px",
+        fontSize: "16px",
+        fontFamily: "Google Sans Code",
+        backgroundColor: "#00ff00",
+        color: "#000000",
+        border: "none",
+        borderRadius: "6px",
+        cursor: "pointer",
+    });
+
+    button.addEventListener("click", () => {
+        console.log("Presented Test Cases:", testCases);
+    });
+
+    const container = document.querySelector("#draggable-area");
+    if (container) {
+        container.appendChild(button);
+    }
+}
+
+function trackTestCases() {
+    const constructedTestCases: string[] = [];
+    const constructedTestCasesContainer = document.querySelector(
+        "#test-cases-container",
+    );
+
+    if (!constructedTestCasesContainer) return;
+
+    let completedCount = 0;
+
+    constructedTestCasesContainer
+        .querySelectorAll("[id^='test-case']")
+        .forEach((testCaseDiv) => {
+            let filledBlankCount = 0;
+
+            testCaseDiv.querySelectorAll("div").forEach((zone) => {
+                const zoneText = zone.querySelector("div")?.textContent;
+                if (zoneText) filledBlankCount++;
+            });
+
+            if (filledBlankCount === 2) {
+                completedCount++;
+                constructedTestCases.push(
+                    testCaseDiv.textContent.replace(",", ", "),
+                );
+            }
+        });
+
+    if (completedCount === constructedTestCasesContainer.children.length) {
+        console.log("All test cases complete");
+        showPresentToJudgeButton(constructedTestCases);
+    } else {
+        console.log("Incomplete test cases");
+    }
+}
 export default function showDraggableTestCases(scene: Phaser.Scene) {
     const SCREEN_W = 860;
     const SCREEN_H = 520;
@@ -14,8 +74,8 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
         overflow: "hidden",
     });
 
-    // --- TEST CASES WRAPPER ---
     const testCasesContainer = document.createElement("div");
+    testCasesContainer.id = "test-cases-container";
     Object.assign(testCasesContainer.style, {
         width: "100%",
         height: "30%",
@@ -32,8 +92,9 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
 
     container.appendChild(testCasesContainer);
 
-    const createDropZone = () => {
+    const createDropZone = (id: string) => {
         const zone = document.createElement("div");
+        zone.id = id;
         Object.assign(zone.style, {
             minWidth: "100px",
             height: "40px",
@@ -49,6 +110,7 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
 
     const createTestCase = () => {
         const row = document.createElement("div");
+        row.id = `test-case-${testCasesContainer.children.length + 1}`;
         Object.assign(row.style, {
             display: "flex",
             alignItems: "center",
@@ -67,8 +129,12 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
         const close = document.createElement("span");
         close.textContent = ")";
 
-        const zone1 = createDropZone();
-        const zone2 = createDropZone();
+        const zone1 = createDropZone(
+            `case${testCasesContainer.children.length + 1}-zone1`,
+        );
+        const zone2 = createDropZone(
+            `case${testCasesContainer.children.length + 1}-zone2`,
+        );
 
         row.appendChild(open);
         row.appendChild(zone1);
@@ -97,7 +163,6 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
         display: "flex",
         flexWrap: "wrap",
         gap: "10px",
-        border: "1px solid #ff00ff",
         padding: "10px",
         overflowY: "auto",
         alignItems: "flex-start",
@@ -105,7 +170,22 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
 
     container.appendChild(draggableDivsContainer);
 
-    for (let i = 0; i < 5; i++) {
+    const testCasePool = [
+        "reverse_string('abc')",
+        "reverse_string('aaa')",
+        "resahp",
+        "cba",
+        "aaa",
+        "reverse_string('')",
+        "reverse_string('hello')",
+        "54321",
+        "olleh",
+        "''",
+        "reverse_string('phaser')",
+        "reverse_string('12345')",
+    ];
+
+    for (let i = 0; i < testCasePool.length; i++) {
         const draggableDiv = document.createElement("div");
 
         Object.assign(draggableDiv.style, {
@@ -124,7 +204,7 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
             userSelect: "none",
         });
 
-        draggableDiv.textContent = `Drag me ${i + 1}!`;
+        draggableDiv.textContent = testCasePool[i];
 
         draggableDiv.addEventListener("mousedown", (e: MouseEvent) => {
             e.preventDefault();
@@ -178,6 +258,9 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
                             });
 
                             dropped = true;
+
+                            trackTestCases();
+
                             break;
                         }
                     }
@@ -205,4 +288,4 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
 
     scene.add.dom(0, 0, container).setOrigin(0, 0);
 }
-// Had help from ChatGPT to implement this dragging logic 
+// Had help from ChatGPT to implement this dragging logic
