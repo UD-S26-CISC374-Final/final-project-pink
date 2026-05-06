@@ -1,9 +1,16 @@
 import createTextButton from "./createTextButton";
+let tutorialCaseIndexGlobal = 0;
+let isTutorialGlobal = false;
+let presentToJudgeButtonGlobal: Phaser.GameObjects.Container | undefined =
+    undefined;
 
-function showPresentToJudgeButton(testCases: string[], scene: Phaser.Scene) {
-    createTextButton
+function showPresentToJudgeButton(
+    testCases: string[],
+    currentScene: Phaser.Scene,
+) {
+    presentToJudgeButtonGlobal = createTextButton
         .call(
-            scene,
+            currentScene,
             400,
             190,
             {
@@ -23,6 +30,22 @@ function showPresentToJudgeButton(testCases: string[], scene: Phaser.Scene) {
             true,
         )
         .setDepth(102);
+
+    presentToJudgeButtonGlobal.on("pointerdown", () => {
+        console.log({
+            selectedTestCasesIndices: [],
+            tutorialCaseIndex: tutorialCaseIndexGlobal,
+            isTutorial: isTutorialGlobal,
+            difficulty: "hard",
+        });
+        // currentScene.scene.stop("Tutorial");
+        // currentScene.scene.start("Verdict", {
+        //     selectedTestCasesIndices: [],
+        //     tutorialCaseIndex: tutorialCaseIndexGlobal,
+        //     isTutorial: isTutorialGlobal,
+        //     difficulty: "hard",
+        // });
+    });
 }
 
 function trackTestCases(scene: Phaser.Scene) {
@@ -51,18 +74,26 @@ function trackTestCases(scene: Phaser.Scene) {
                     testCaseDiv.textContent.replace(",", ", "),
                 );
             }
+
+            presentToJudgeButtonGlobal?.destroy();
         });
 
     if (completedCount === constructedTestCasesContainer.children.length) {
         console.log("All test cases complete");
         showPresentToJudgeButton(constructedTestCases, scene);
-    } else {
-        console.log("Incomplete test cases");
     }
 }
-export default function showDraggableTestCases(scene: Phaser.Scene) {
+
+export default function showDraggableTestCases(
+    scene: Phaser.Scene,
+    tutorialCaseIndex: number,
+    isTutorial: boolean,
+) {
     const SCREEN_W = 860;
     const SCREEN_H = 520;
+
+    tutorialCaseIndexGlobal = tutorialCaseIndex;
+    isTutorialGlobal = isTutorial;
 
     const container = document.createElement("div");
     container.id = "draggable-area";
@@ -278,6 +309,8 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
                         top: "0px",
                         zIndex: "",
                     });
+
+                    presentToJudgeButtonGlobal?.destroy();
                 }
             };
 
