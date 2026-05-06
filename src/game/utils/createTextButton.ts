@@ -48,7 +48,7 @@ export default function createTextButton(
 
     buttonContainer.add([buttonBackground, buttonText]);
 
-    buttonContainer.setSize(buttonText.width, buttonText.height);
+    buttonContainer.setSize(width, height);
     buttonContainer.setInteractive();
 
     if (enableTween) {
