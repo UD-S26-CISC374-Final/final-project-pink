@@ -297,26 +297,26 @@
             {
                 "testId": "c4-t1",
                 "quality": "misleading",
-                "feedback": "cout << \"This test is misleading. While it passes, it only checks the 'happy path' and ignores how the function handles invalid inputs.\" << endl;"
+                "feedback": "This test is misleading. While it passes, it only checks the 'happy path' and ignores how the function handles invalid inputs."
             },
             {
                 "testId": "c4-t2",
                 "quality": "essential",
-                "feedback": "cout << \"This is an essential test. It confirms that negative inputs are handled correctly by returning 'Error'.\" << endl;"
+                "feedback": "This is an essential test. It confirms that negative inputs are handled correctly by returning 'Error'."
             },
             {
                 "testId": "c4-t3",
                 "quality": "essential",
-                "feedback": "cout << \"This test is very useful. It verifies that zero is treated as invalid input and correctly returns 'Error'.\" << endl;"
+                "feedback": "This test is very useful. It verifies that zero is treated as invalid input and correctly returns 'Error'."
             },
             {
                 "testId": "c4-t4",
                 "quality": "redundant",
-                "feedback": "cout << \"This test is redundant. We already know the function can add positive numbers; additional examples don't help validate edge cases.\" << endl;"
+                "feedback": "This test is redundant. We already know the function can add positive numbers; additional examples don't help validate edge cases."
             }
         ],
-        "missedEvidenceExplanation": "cout << \"In this case, there was no bug in the function itself. All inputs, including edge cases like zero and negative numbers, are handled according to the specification. Sometimes, the real challenge is verifying correctness rather than finding faults.\" << endl;",
-        "closingStatement": "cout << \"The verdict is NOT GUILTY. The function behaves exactly as specified, correctly handling both valid and invalid inputs. Case closed!\" << endl;"
+        "missedEvidenceExplanation": "In this case, there was no bug in the function itself. All inputs, including edge cases like zero and negative numbers, are handled according to the specification. Sometimes, the real challenge is verifying correctness rather than finding faults.",
+        "closingStatement": "The verdict is NOT GUILTY. The function behaves exactly as specified, correctly handling both valid and invalid inputs. Case closed!"
     },
     {
         "id": "case-6",
