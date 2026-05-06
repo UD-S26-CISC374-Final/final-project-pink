@@ -1,29 +1,31 @@
-function showPresentToJudgeButton(testCases: string[]) {
-    const button = document.createElement("button");
-    button.textContent = "Present Evidence to Judge Compiler";
-    Object.assign(button.style, {
-        marginTop: "-500px",
-        padding: "10px 20px",
-        fontSize: "16px",
-        fontFamily: "Google Sans Code",
-        backgroundColor: "#00ff00",
-        color: "#000000",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer",
-    });
+import createTextButton from "./createTextButton";
 
-    button.addEventListener("click", () => {
-        console.log("Presented Test Cases:", testCases);
-    });
-
-    const container = document.querySelector("#draggable-area");
-    if (container) {
-        container.appendChild(button);
-    }
+function showPresentToJudgeButton(testCases: string[], scene: Phaser.Scene) {
+    createTextButton
+        .call(
+            scene,
+            400,
+            190,
+            {
+                x: 0,
+                y: 0,
+                width: 380,
+                height: 40,
+                color: 0x000000,
+                alpha: 1,
+            },
+            {
+                text: "Present Evidence to Judge Compiler",
+                fontFamily: "Google Sans Code",
+                fontSize: 18,
+                color: "#ffffff",
+            },
+            true,
+        )
+        .setDepth(102);
 }
 
-function trackTestCases() {
+function trackTestCases(scene: Phaser.Scene) {
     const constructedTestCases: string[] = [];
     const constructedTestCasesContainer = document.querySelector(
         "#test-cases-container",
@@ -53,7 +55,7 @@ function trackTestCases() {
 
     if (completedCount === constructedTestCasesContainer.children.length) {
         console.log("All test cases complete");
-        showPresentToJudgeButton(constructedTestCases);
+        showPresentToJudgeButton(constructedTestCases, scene);
     } else {
         console.log("Incomplete test cases");
     }
@@ -259,7 +261,7 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
 
                             dropped = true;
 
-                            trackTestCases();
+                            trackTestCases(scene);
 
                             break;
                         }
