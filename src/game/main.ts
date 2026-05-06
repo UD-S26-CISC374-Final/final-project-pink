@@ -8,6 +8,7 @@ import { Case } from "./scenes/case";
 import { Verdict } from "./scenes/verdict";
 import { Pause } from "./scenes/pause";
 import { SummaryScene } from "./scenes/summary-scene";
+import { Level } from "./scenes/level";
 
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -23,6 +24,7 @@ const config: Phaser.Types.Core.GameConfig = {
         MainMenu,
         GameOver,
         Tutorial,
+        Level,
         Case,
         Verdict,
         Pause,
