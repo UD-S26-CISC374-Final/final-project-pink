@@ -13,7 +13,11 @@ export interface UnitTest {
 
 export interface TestFeedback {
     testId: string;
-    quality: "essential" | "redundant" | "misleading";
+    // Branch-based system (used in tutorial cases)
+    logicBranch?: string;
+    misleading?: true;
+    // Legacy quality system (used in easy/medium/hard cases)
+    quality?: "essential" | "redundant" | "misleading";
     feedback: string; // What judge compiler will say about this test
 }
 
@@ -28,6 +32,7 @@ export interface Case {
     evidenceSlots: number; // evidence card slots available
     evidencePool?: UnitTest[]; // All the tests that the player can choose from
     correctVerdict: Verdict;
+    requiredBranches?: string[]; // Used with logicBranch system; branches player must cover
     testFeedback: TestFeedback[];
     missedEvidenceExplanation: string;
     closingStatement: string;
