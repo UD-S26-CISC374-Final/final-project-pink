@@ -33,6 +33,7 @@ export class Case extends Scene {
         2: "C",
     };
     showSkipMessageTip = true;
+    dragDom: Phaser.GameObjects.DOMElement | undefined;
     levelDifficulty: "easy" | "medium" | "hard";
     tabDialogueShown: Set<"code" | "explanation" | "test-cases"> = new Set();
     evidenceReady: boolean = false;
@@ -394,7 +395,6 @@ export class Case extends Scene {
                 this.dragDom = this.add.dom(0, 0, container).setOrigin(0, 0);
             }
 
-            this.addTestCases(350);
             const testCasesAlreadyShown =
                 this.tabDialogueShown.has("test-cases");
             this.tabDialogueShown.add("test-cases");
