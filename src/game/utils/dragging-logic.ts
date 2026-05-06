@@ -1,4 +1,7 @@
 import createTextButton from "./createTextButton";
+import tutorialCases from "../data/tutorial-cases.json";
+import type { UnitTest } from "../data/types";
+
 let tutorialCaseIndexGlobal = 0;
 let isTutorialGlobal = false;
 let presentToJudgeButtonGlobal: Phaser.GameObjects.Container | undefined =
@@ -8,6 +11,14 @@ function showPresentToJudgeButton(
     testCases: string[],
     currentScene: Phaser.Scene,
 ) {
+    const indices = testCases.map((testCase) => {
+        const x =
+            tutorialCases[tutorialCaseIndexGlobal].evidencePool
+                ?.map((tc) => tc.label)
+                .indexOf(testCase) ?? -1;
+
+        return x;
+    });
     presentToJudgeButtonGlobal = createTextButton
         .call(
             currentScene,
@@ -33,14 +44,14 @@ function showPresentToJudgeButton(
 
     presentToJudgeButtonGlobal.on("pointerdown", () => {
         console.log({
-            selectedTestCasesIndices: [],
+            selectedTestCasesIndices: indices,
             tutorialCaseIndex: tutorialCaseIndexGlobal,
             isTutorial: isTutorialGlobal,
             difficulty: "hard",
         });
         // currentScene.scene.stop("Tutorial");
         // currentScene.scene.start("Verdict", {
-        //     selectedTestCasesIndices: [],
+        //     selectedTestCasesIndices: indices,
         //     tutorialCaseIndex: tutorialCaseIndexGlobal,
         //     isTutorial: isTutorialGlobal,
         //     difficulty: "hard",
@@ -82,6 +93,23 @@ function trackTestCases(scene: Phaser.Scene) {
         console.log("All test cases complete");
         showPresentToJudgeButton(constructedTestCases, scene);
     }
+}
+
+function getPool() {
+    if (isTutorialGlobal) {
+        const testCase = tutorialCases[tutorialCaseIndexGlobal];
+        const testCasePool =
+            testCase.evidencePool?.flatMap((tc: UnitTest) => {
+                return tc.label
+                    .replace(/^assert\((.*)\)$/, "$1")
+                    .split(",")
+                    .map((part) => part.trim());
+            }) || [];
+        console.log("Test case pool:", testCasePool);
+        return testCasePool;
+    }
+
+    return [];
 }
 
 export default function showDraggableTestCases(
@@ -203,20 +231,8 @@ export default function showDraggableTestCases(
 
     container.appendChild(draggableDivsContainer);
 
-    const testCasePool = [
-        "reverse_string('abc')",
-        "reverse_string('aaa')",
-        "resahp",
-        "cba",
-        "aaa",
-        "reverse_string('')",
-        "reverse_string('hello')",
-        "54321",
-        "olleh",
-        "''",
-        "reverse_string('phaser')",
-        "reverse_string('12345')",
-    ];
+    const testCasePool = getPool();
+    console.log("Test case pool in showDraggableTestCases:", testCasePool);
 
     for (let i = 0; i < testCasePool.length; i++) {
         const draggableDiv = document.createElement("div");
