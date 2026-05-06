@@ -2,7 +2,7 @@ function showPresentToJudgeButton(testCases: string[]) {
     const button = document.createElement("button");
     button.textContent = "Present Evidence to Judge Compiler";
     Object.assign(button.style, {
-        marginTop: "20px",
+        marginTop: "-500px",
         padding: "10px 20px",
         fontSize: "16px",
         fontFamily: "Google Sans Code",
