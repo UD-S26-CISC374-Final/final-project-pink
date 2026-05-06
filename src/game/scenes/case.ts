@@ -1,8 +1,18 @@
 import { Scene } from "phaser";
+import type { Case as ICase } from "../data/types";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
-import tutorialCases from "../data/tutorial-cases.json";
+import tutorialCasesJSON from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
 import showDraggableTestCases from "../utils/dragging-logic";
+import easyCasesJSON from "../data/easy-cases.json";
+import mediumCasesJSON from "../data/medium-cases.json";
+import hardCasesJSON from "../data/hard-cases.json";
+import { codeToHtml } from "shiki";
+
+const easyCases = easyCasesJSON as ICase[];
+const mediumCases = mediumCasesJSON as ICase[];
+const hardCases = hardCasesJSON as ICase[];
+const tutorialCases = tutorialCasesJSON as ICase[];
 
 // TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
 // TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
@@ -34,9 +44,13 @@ export class Case extends Scene {
     };
     showSkipMessageTip = true;
     dragDom: Phaser.GameObjects.DOMElement | undefined;
+    caseDom: Phaser.GameObjects.DOMElement | undefined;
+    evidenceDom: Phaser.GameObjects.DOMElement | undefined;
     levelDifficulty: "easy" | "medium" | "hard";
     tabDialogueShown: Set<"code" | "explanation" | "test-cases"> = new Set();
     evidenceReady: boolean = false;
+    SCREEN_W = 860;
+    SCREEN_H = 520;
 
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
@@ -136,9 +150,47 @@ export class Case extends Scene {
         });
     }
 
+    private getCaseData(): {
+        feedback: {
+            testId: string;
+            quality: string;
+            feedback: string;
+        }[];
+        case: string;
+    } {
+        if (this.isTutorial) {
+            return {
+                feedback:
+                    tutorialCases[this.currentTutorialCaseIndex]?.testFeedback,
+                case: tutorialCases[this.currentTutorialCaseIndex]
+                    ?.functionCode,
+            };
+        }
+
+        if (this.levelDifficulty === "easy") {
+            return {
+                feedback:
+                    easyCases[this.currentTutorialCaseIndex]?.testFeedback,
+                case: easyCases[this.currentTutorialCaseIndex]?.functionCode,
+            };
+        }
+
+        if (this.levelDifficulty === "medium") {
+            return {
+                feedback:
+                    mediumCases[this.currentTutorialCaseIndex]?.testFeedback,
+                case: mediumCases[this.currentTutorialCaseIndex]?.functionCode,
+            };
+        }
+
+        return {
+            feedback: hardCases[this.currentTutorialCaseIndex]?.testFeedback,
+            case: hardCases[this.currentTutorialCaseIndex]?.functionCode,
+        };
+    }
+
     private addTestCases(startY: number = 380, marginY: number = 15) {
-        const testFeedback =
-            tutorialCases[this.currentTutorialCaseIndex].testFeedback;
+        const { feedback: testFeedback } = this.getCaseData();
         const centerX = 512; // Your current horizontal center
         const columnWidth = 400; // How far apart the two columns should be
         const scale = 0.2;
@@ -356,7 +408,7 @@ export class Case extends Scene {
             this.textObject.setText("");
             this.currentTab = "test-cases";
             this.backButton.destroy();
-            this.caseFileCodeSnippet.destroy();
+            this.caseDom?.destroy();
 
             if (this.programDescTextReference)
                 this.programDescTextReference.destroy();
@@ -371,15 +423,13 @@ export class Case extends Scene {
 
             if (this.levelDifficulty !== "hard") this.addTestCases(350);
             if (this.levelDifficulty === "hard") {
-                const SCREEN_W = 860;
-                const SCREEN_H = 520;
                 const container: HTMLDivElement = document.createElement("div");
                 container.id = "draggable-area";
 
                 Object.assign(container.style, {
                     position: "relative",
-                    width: `${SCREEN_W}px`,
-                    height: `${SCREEN_H}px`,
+                    width: `${this.SCREEN_W}px`,
+                    height: `${this.SCREEN_H}px`,
                     marginTop: "205px",
                     marginLeft: "78px",
                     overflow: "hidden",
@@ -423,7 +473,7 @@ export class Case extends Scene {
             if (this.presentToJudgeButton) this.presentToJudgeButton.destroy();
             if (this.dragDom) this.dragDom.destroy();
 
-            this.caseFileCodeSnippet.destroy();
+            this.caseDom?.destroy();
             this.currentTab = "explanation";
             this.backButton.destroy();
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
@@ -514,14 +564,63 @@ export class Case extends Scene {
             .setDisplaySize(920, 600);
         this.drawTabs();
 
-        // 2. Next, we will display the code snippet for the case file
-        this.caseFileCodeSnippet = this.add
-            .image(512, 450, `tutorial-code-${this.currentTutorialCaseIndex}`)
-            .setDisplaySize(920, 600)
-            .setScale(0.26)
-            .setDepth(10);
+        // 2. Next, we'll create a Phaser DOM overlay to render the code snippet with syntax highlighting using PrismJS
+        const container: HTMLDivElement = document.createElement("div");
+        container.id = "question-area";
+        const { case: caseData } = this.getCaseData();
 
-        // 3. Next, we are going to introduce the user with the next tutorial's text
+        const codeContainer = document.createElement("div");
+
+        Object.assign(codeContainer.style, {
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontFamily: "'Google Sans Code', 'Fira Code', monospace",
+            fontSize: "20px",
+            backgroundColor: "#0d1117",
+            borderRadius: "8px",
+            border: "1px solid #30363d",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+            width: "fit-content",
+            maxWidth: "90%",
+            maxHeight: "90%",
+            overflow: "auto",
+        });
+
+        // 2. Generate the HTML from Shiki
+        const codeHTML = await codeToHtml(caseData, {
+            lang: "python",
+            theme: "github-dark",
+        });
+
+        // 3. Inject and Clean Up
+        codeContainer.innerHTML = codeHTML;
+
+        // 4. Target the Shiki-generated <pre> to ensure it feels "integrated"
+        const preTag = codeContainer.querySelector("pre");
+        if (preTag) {
+            preTag.style.margin = "0";
+            preTag.style.padding = "18px";
+            preTag.style.lineHeight = "1.6";
+            preTag.style.backgroundColor = "transparent";
+        }
+
+        // 5. Add to Phaser's DOM parent
+        container.appendChild(codeContainer);
+
+        Object.assign(container.style, {
+            position: "relative",
+            width: `${this.SCREEN_W}px`,
+            height: `${this.SCREEN_H}px`,
+            marginTop: "205px",
+            marginLeft: "78px",
+            overflow: "hidden",
+        });
+
+        this.caseDom = this.add.dom(0, 0, container).setOrigin(0, 0);
+
+        // 6. Next, we are going to introduce the user with the next tutorial's text
         this.showBackButton();
 
         await this.addAnimatedTypingText(this.nextTutorialText);
