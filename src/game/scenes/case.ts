@@ -34,7 +34,8 @@ export class Case extends Scene {
     };
     showSkipMessageTip = true;
     levelDifficulty: "easy" | "medium" | "hard";
-    dragDom: Phaser.GameObjects.DOMElement | undefined;
+    tabDialogueShown: Set<"code" | "explanation" | "test-cases"> = new Set();
+    evidenceReady: boolean = false;
 
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
@@ -45,6 +46,12 @@ export class Case extends Scene {
 
         if (this.caseFileTestCases.length)
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
+
+        if (this.presentToJudgeButton) {
+            this.presentToJudgeButton.destroy();
+            this.presentToJudgeButton = undefined;
+        }
+        this.evidenceReady = false;
 
         this.caseFileCodeSnippet = this.add
             .image(
@@ -67,7 +74,13 @@ export class Case extends Scene {
 
         this.addTabLabels();
         this.textObject.setText("");
-        await this.addAnimatedTypingText(this.nextTutorialText);
+        const codeAlreadyShown = this.tabDialogueShown.has("code");
+        await this.addAnimatedTypingText(
+            this.nextTutorialText,
+            21,
+            undefined,
+            codeAlreadyShown,
+        );
     }
 
     private showBackButton() {
@@ -93,17 +106,17 @@ export class Case extends Scene {
         );
 
         this.add
-            .rectangle(390, 190, 350, 40, 0x000000)
-            .setOrigin(0.5)
-            .setDepth(100);
-
-        this.add
-            .text(390, 190, "Tip: hit 'Enter' to skip text animation!", {
-                fontFamily: "Google Sans Code",
-                fontSize: 14,
-                color: "#ffffff",
-            })
-            .setOrigin(0.5)
+            .text(
+                95,
+                165,
+                "Tip: hold space or press enter to skip text animation",
+                {
+                    fontFamily: "Google Sans Code",
+                    fontSize: 12,
+                    color: "#000000",
+                },
+            )
+            .setOrigin(0, 1)
             .setDepth(101);
 
         this.backButton.on("pointerdown", async () => {
@@ -167,6 +180,44 @@ export class Case extends Scene {
         this.clickableTestCases();
     }
 
+    private createEvidenceButton() {
+        if (this.presentToJudgeButton) this.presentToJudgeButton.destroy();
+        this.evidenceReady = false;
+        this.presentToJudgeButton = createTextButton
+            .call(
+                this,
+                400,
+                190,
+                {
+                    x: 0,
+                    y: 0,
+                    width: 380,
+                    height: 40,
+                    color: 0x000000,
+                    alpha: 1,
+                },
+                {
+                    text: "Select the TWO best test cases",
+                    fontFamily: "Google Sans Code",
+                    fontSize: 18,
+                    color: "#ffffff",
+                },
+                true,
+            )
+            .setDepth(102);
+
+        this.presentToJudgeButton.on("pointerdown", () => {
+            if (!this.evidenceReady) return;
+            this.scene.stop("Tutorial");
+            this.scene.start("Verdict", {
+                selectedTestCasesIndices: this.selectedTestCases,
+                tutorialCaseIndex: this.currentTutorialCaseIndex,
+                isTutorial: this.isTutorial,
+                difficulty: this.levelDifficulty,
+            });
+        });
+    }
+
     private clickableTestCases() {
         for (let i = 0; i < this.caseFileTestCases.length; i++) {
             const testCase = this.caseFileTestCases[i];
@@ -186,12 +237,11 @@ export class Case extends Scene {
                         this.selectedTestCases.length < 2 &&
                         this.presentToJudgeButton
                     ) {
-                        this.presentToJudgeButton.destroy();
-                        this.presentToJudgeButton = undefined;
-                        this.showSkipMessageTip = true;
-
-                        this.textObject.setText("");
-                        await this.addAnimatedTypingText(this.thirdIntro, 19); // TODO - remove 1
+                        this.evidenceReady = false;
+                        (
+                            this.presentToJudgeButton
+                                .list[1] as Phaser.GameObjects.Text
+                        ).setText("Select the TWO best test cases");
                     }
                 } else {
                     if (this.selectedTestCases.length >= 2) {
@@ -201,6 +251,7 @@ export class Case extends Scene {
                             "Remember: You can only select 2 test cases as evidence. Please deselect one...",
                             22,
                             20,
+                            true,
                         );
 
                         this.reminderMessageReference = this.textObject;
@@ -211,40 +262,18 @@ export class Case extends Scene {
                     testCase.setAlpha(0.5);
                 }
 
-                if (this.selectedTestCases.length === 2) {
-                    this.presentToJudgeButton = createTextButton
-                        .call(
-                            this,
-                            400,
-                            190,
-                            {
-                                x: 0,
-                                y: 0,
-                                width: 380,
-                                height: 40,
-                                color: 0x000000,
-                                alpha: 1,
-                            },
-                            {
-                                text: "Present Evidence to Judge Compiler",
-                                fontFamily: "Google Sans Code",
-                                fontSize: 18,
-                                color: "#ffffff",
-                            },
-                            true,
-                        )
-                        .setDepth(102);
+                if (
+                    this.selectedTestCases.length === 2 &&
+                    this.presentToJudgeButton
+                ) {
+                    this.evidenceReady = true;
+                    (
+                        this.presentToJudgeButton
+                            .list[1] as Phaser.GameObjects.Text
+                    )
+                        .setText("Present Evidence to Judge Compiler")
+                        .setColor("#ffffff");
                 }
-
-                this.presentToJudgeButton?.on("pointerdown", () => {
-                    this.scene.stop("Tutorial");
-                    this.scene.start("Verdict", {
-                        selectedTestCasesIndices: this.selectedTestCases,
-                        tutorialCaseIndex: this.currentTutorialCaseIndex,
-                        isTutorial: this.isTutorial,
-                        difficulty: this.levelDifficulty,
-                    });
-                });
             });
         }
     }
@@ -365,8 +394,18 @@ export class Case extends Scene {
                 this.dragDom = this.add.dom(0, 0, container).setOrigin(0, 0);
             }
 
-            await this.addAnimatedTypingText(thirdIntro, 18);
+            this.addTestCases(350);
+            const testCasesAlreadyShown =
+                this.tabDialogueShown.has("test-cases");
+            this.tabDialogueShown.add("test-cases");
+            await this.addAnimatedTypingText(
+                thirdIntro,
+                18,
+                undefined,
+                testCasesAlreadyShown,
+            );
             this.showBackButton();
+            this.createEvidenceButton();
         });
 
         const pinkTab = this.add
@@ -403,8 +442,16 @@ export class Case extends Scene {
                 .setOrigin(0.5);
 
             const fourthIntro =
-                "Here is the program's statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases.";
-            await this.addAnimatedTypingText(fourthIntro);
+                'cout << "Here is the program\'s statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases." << endl;';
+            const explanationAlreadyShown =
+                this.tabDialogueShown.has("explanation");
+            this.tabDialogueShown.add("explanation");
+            await this.addAnimatedTypingText(
+                fourthIntro,
+                21,
+                undefined,
+                explanationAlreadyShown,
+            );
 
             this.showBackButton();
         });
@@ -414,6 +461,7 @@ export class Case extends Scene {
         text: string,
         fontSize: number = 21,
         speed?: number,
+        instant?: boolean,
     ) {
         this.typingInProgress = true;
 
@@ -422,6 +470,12 @@ export class Case extends Scene {
             color: "#01ff34",
             wordWrap: { width: 800 },
         });
+
+        if (instant) {
+            this.textObject.setText(text);
+            this.typingInProgress = false;
+            return;
+        }
 
         await typewriterEffect(
             null,
@@ -449,6 +503,8 @@ export class Case extends Scene {
         this.selectedTestCases = [];
         this.currentTab = "code";
         this.levelDifficulty = data.difficulty;
+        this.tabDialogueShown = new Set();
+        this.evidenceReady = false;
     }
 
     async create() {
@@ -469,5 +525,6 @@ export class Case extends Scene {
         this.showBackButton();
 
         await this.addAnimatedTypingText(this.nextTutorialText);
+        this.tabDialogueShown.add("code");
     }
 }

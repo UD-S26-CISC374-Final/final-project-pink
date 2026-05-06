@@ -51,6 +51,7 @@ export class Verdict extends Scene {
         text: string,
         fontSize: number = 21,
         speed: number = 30,
+        instant?: boolean,
     ) {
         this.typingInProgress = true;
 
@@ -60,13 +61,19 @@ export class Verdict extends Scene {
             wordWrap: { width: 800 },
         });
 
+        if (instant) {
+            this.textObject.setText(text);
+            this.typingInProgress = false;
+            return;
+        }
+
         await typewriterEffect(
             null,
             this.textObject.setText(text),
             text,
             speed,
             this,
-        ); // TODO - replace 1 with speed
+        );
 
         this.typingInProgress = false;
     }
@@ -186,6 +193,12 @@ export class Verdict extends Scene {
             testCaseImage.on("pointerdown", async () => {
                 if (this.typingInProgress) return;
 
+                const letter = Object.keys(this.answerMapping).find(
+                    (key) => this.answerMapping[key] === i,
+                ) as string;
+                const alreadyReviewed =
+                    this.currReviewedEvidence.includes(letter);
+
                 testCaseImage.setAlpha(0.6);
                 this.textObject.setText("");
 
@@ -195,7 +208,12 @@ export class Verdict extends Scene {
                     this.playJudgeAnimation("sad");
                 }
 
-                await this.addAnimatedTypingText(feedbackObj.feedback);
+                await this.addAnimatedTypingText(
+                    feedbackObj.feedback,
+                    21,
+                    30,
+                    alreadyReviewed,
+                );
 
                 if (mood === "happy") {
                     this.judge.anims.pause();
@@ -204,13 +222,8 @@ export class Verdict extends Scene {
                     this.judge.anims.pause();
                     this.judge.setFrame(1);
                 }
-                testCaseImage.setAlpha(1);
 
-                const letter = Object.keys(this.answerMapping).find(
-                    (key) => this.answerMapping[key] === i,
-                ) as string;
-
-                if (this.currReviewedEvidence.includes(letter)) return;
+                if (alreadyReviewed) return;
                 this.currReviewedEvidence.push(letter);
 
                 if (
