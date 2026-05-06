@@ -9,7 +9,7 @@ export class MainMenu extends Scene implements ChangeableScene {
     logo: GameObjects.Image;
     title: GameObjects.Text;
     logoTween: Phaser.Tweens.Tween | null;
-    gamemode: "Level1" | "Tutorial";
+    gamemode: "Level" | "Tutorial";
 
     constructor() {
         super("MainMenu");
@@ -64,7 +64,7 @@ export class MainMenu extends Scene implements ChangeableScene {
         if (this.gamemode === "Tutorial") {
             this.scene.start("Tutorial");
         } else {
-            this.scene.start("Level1");
+            this.scene.start("Level");
         }
     }
 }
