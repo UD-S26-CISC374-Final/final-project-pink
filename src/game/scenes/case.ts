@@ -342,7 +342,7 @@ export class Case extends Scene {
                 :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
 
             if (this.levelDifficulty !== "hard") this.addTestCases(350);
-            if (this.levelDifficulty === "hard") showDraggableTestCases(this);
+            if (this.levelDifficulty === "hard") showDraggableTestCases(this, this.currentTutorialCaseIndex, this.isTutorial);
 
             await this.addAnimatedTypingText(thirdIntro, 18);
             this.showBackButton();
