@@ -403,7 +403,7 @@
         "evidencePool": [
             {
                 "id": "c8-t1",
-                "label": "reverse_string('racecar') -> 'racecar'",
+                "label": "assert(reverse_string('racecar'), 'racecar')",
                 "input": "'racecar'",
                 "expectedOutput": "racecar",
                 "actualOutput": "racecar",
@@ -412,7 +412,7 @@
             },
             {
                 "id": "c8-t2",
-                "label": "reverse_string('') -> ''",
+                "label": "assert(reverse_string(''), '')",
                 "input": "''",
                 "expectedOutput": "",
                 "actualOutput": "",
@@ -421,7 +421,7 @@
             },
             {
                 "id": "c8-t3",
-                "label": "reverse_string('A') -> 'A'",
+                "label": "assert(reverse_string('A'), 'A')",
                 "input": "'A'",
                 "expectedOutput": "A",
                 "actualOutput": "A",
@@ -430,7 +430,7 @@
             },
             {
                 "id": "c8-t4",
-                "label": "reverse_string('Code') -> 'edoC'",
+                "label": "assert(reverse_string('Code'), 'edoC')",
                 "input": "'Code'",
                 "expectedOutput": "edoC",
                 "actualOutput": "edoC",
@@ -460,7 +460,7 @@
                 "feedback": "This is the 'smoking gun' for innocence! By using a word that isn't a palindrome, we can see the characters are being placed in the correct reverse order."
             }
         ],
-        "missedEvidenceExplanation": "In this trial, the defendant was actually innocent! While the loop looks basic, the line 'result = char + result' correctly builds the string backward. The trick was avoiding the 'Palindrome Trap' (racecar), which can make broken code look like it works.",
+        "missedEvidenceExplanation": "While the loop looks basic, the line 'result = char + result' correctly builds the string backward. The trick was avoiding the 'Palindrome Trap' (racecar), which can make broken code look like it works.",
         "closingStatement": "The verdict is NOT GUILTY. The function successfully navigates the empty string edge case and handles standard reversals without a hitch. The court apologizes for the inconvenience!"
     }
 ]
