@@ -11,8 +11,84 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
         height: `${SCREEN_H}px`,
         marginTop: "205px",
         marginLeft: "78px",
-        border: "2px solid #00ff00",
+        overflow: "hidden",
     });
+
+    // --- TEST CASES WRAPPER ---
+    const testCasesContainer = document.createElement("div");
+    Object.assign(testCasesContainer.style, {
+        width: "100%",
+        height: "30%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        gap: "12px",
+        fontFamily: "Google Sans Code",
+        color: "#ffffff",
+        position: "absolute",
+        bottom: "0",
+        fontSize: "20px",
+    });
+
+    container.appendChild(testCasesContainer);
+
+    const createDropZone = () => {
+        const zone = document.createElement("div");
+        Object.assign(zone.style, {
+            minWidth: "100px",
+            height: "40px",
+            border: "2px dashed #00ff00",
+            borderRadius: "6px",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 10px",
+        });
+        return zone;
+    };
+
+    const createTestCase = () => {
+        const row = document.createElement("div");
+        Object.assign(row.style, {
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            marginLeft: "20px",
+            width: "fit-content",
+            padding: "5px",
+        });
+
+        const open = document.createElement("span");
+        open.textContent = "assert(";
+
+        const comma = document.createElement("span");
+        comma.textContent = ",";
+
+        const close = document.createElement("span");
+        close.textContent = ")";
+
+        const zone1 = createDropZone();
+        const zone2 = createDropZone();
+
+        row.appendChild(open);
+        row.appendChild(zone1);
+        row.appendChild(comma);
+        row.appendChild(zone2);
+        row.appendChild(close);
+
+        return { row, zone1, zone2 };
+    };
+
+    const testCases: Array<{ zone1: HTMLDivElement; zone2: HTMLDivElement }> =
+        [];
+
+    for (let i = 0; i < 2; i++) {
+        const tc = createTestCase();
+        testCasesContainer.appendChild(tc.row);
+        testCases.push({ zone1: tc.zone1, zone2: tc.zone2 });
+    }
+
+    container.appendChild(testCasesContainer);
 
     const draggableDivsContainer = document.createElement("div");
     Object.assign(draggableDivsContainer.style, {
@@ -27,8 +103,9 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
         alignItems: "flex-start",
     });
 
-    const numDraggableDivs = 5;
-    for (let i = 0; i < numDraggableDivs; i++) {
+    container.appendChild(draggableDivsContainer);
+
+    for (let i = 0; i < 5; i++) {
         const draggableDiv = document.createElement("div");
 
         Object.assign(draggableDiv.style, {
@@ -39,57 +116,93 @@ export default function showDraggableTestCases(scene: Phaser.Scene) {
             alignItems: "center",
             fontFamily: "Google Sans Code",
             fontSize: "14px",
-            cursor: "move",
+            cursor: "grab",
             position: "relative",
             padding: "6px 10px",
             borderRadius: "6px",
             whiteSpace: "nowrap",
+            userSelect: "none",
         });
 
-        draggableDiv.id = `draggable-div-${i}`;
         draggableDiv.textContent = `Drag me ${i + 1}!`;
-        draggableDivsContainer.appendChild(draggableDiv);
-    }
 
-    let offsetX = 0;
-    let offsetY = 0;
-
-    draggableDivsContainer.querySelectorAll("div").forEach((draggableDiv) => {
         draggableDiv.addEventListener("mousedown", (e: MouseEvent) => {
-            offsetX = 0;
-            offsetY = 0;
             e.preventDefault();
 
+            const containerRect = container.getBoundingClientRect();
             const rect = draggableDiv.getBoundingClientRect();
 
-            offsetX = e.clientX - rect.left;
-            offsetY = e.clientY - rect.top;
+            const offsetX = e.clientX - rect.left;
+            const offsetY = e.clientY - rect.top;
 
-            const containerRect =
-                draggableDivsContainer.getBoundingClientRect();
+            draggableDiv.style.position = "absolute";
+            draggableDiv.style.zIndex = "9999";
 
-            const mouseMoveHandler = (e: MouseEvent) => {
+            const onMouseMove = (e: MouseEvent) => {
                 const x = e.clientX - containerRect.left - offsetX;
                 const y = e.clientY - containerRect.top - offsetY;
-
-                draggableDiv.style.position = "absolute";
-
-                if (x <= -5 || y <= -5 || x >= 764 || y >= 480) return;
 
                 draggableDiv.style.left = `${x}px`;
                 draggableDiv.style.top = `${y}px`;
             };
 
-            const mouseUpHandler = () => {
-                document.removeEventListener("mousemove", mouseMoveHandler);
-                document.removeEventListener("mouseup", mouseUpHandler);
+            const onMouseUp = () => {
+                document.removeEventListener("mousemove", onMouseMove);
+                document.removeEventListener("mouseup", onMouseUp);
+
+                const dragRect = draggableDiv.getBoundingClientRect();
+                const dragCenterX = dragRect.left + dragRect.width / 2;
+                const dragCenterY = dragRect.top + dragRect.height / 2;
+
+                let dropped = false;
+
+                for (const tc of testCases) {
+                    for (const zone of [tc.zone1, tc.zone2]) {
+                        const dropRect = zone.getBoundingClientRect();
+
+                        const isOver =
+                            dragCenterX > dropRect.left &&
+                            dragCenterX < dropRect.right &&
+                            dragCenterY > dropRect.top &&
+                            dragCenterY < dropRect.bottom;
+
+                        if (isOver) {
+                            zone.appendChild(draggableDiv);
+
+                            Object.assign(draggableDiv.style, {
+                                position: "static",
+                                left: "",
+                                top: "",
+                                zIndex: "",
+                                cursor: "grab",
+                            });
+
+                            dropped = true;
+                            break;
+                        }
+                    }
+                    if (dropped) break;
+                }
+
+                if (!dropped) {
+                    draggableDivsContainer.appendChild(draggableDiv);
+
+                    Object.assign(draggableDiv.style, {
+                        position: "relative",
+                        left: "0px",
+                        top: "0px",
+                        zIndex: "",
+                    });
+                }
             };
 
-            document.addEventListener("mousemove", mouseMoveHandler);
-            document.addEventListener("mouseup", mouseUpHandler);
+            document.addEventListener("mousemove", onMouseMove);
+            document.addEventListener("mouseup", onMouseUp);
         });
-    });
 
-    container.appendChild(draggableDivsContainer);
+        draggableDivsContainer.appendChild(draggableDiv);
+    }
+
     scene.add.dom(0, 0, container).setOrigin(0, 0);
 }
+// Had help from ChatGPT to implement this dragging logic 
