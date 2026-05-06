@@ -173,13 +173,80 @@ export class Verdict extends Scene {
         });
     }
 
+    private computeTestQuality(
+        idx: number,
+        testFeedback: Array<{ logicBranch: string; misleading?: boolean }>,
+        selectedLetters: string[],
+        letters: string[],
+        requiredBranches: string[],
+    ): "essential" | "redundant" | "misleading" | "missed" | "neutral" {
+        const fb = testFeedback[idx];
+        const wasSelected = selectedLetters.includes(letters[idx]);
+
+        if (fb.misleading) return wasSelected ? "misleading" : "neutral";
+
+        const branchCoveredByOther = testFeedback.some(
+            (f, j) =>
+                j !== idx &&
+                f.logicBranch === fb.logicBranch &&
+                selectedLetters.includes(letters[j]),
+        );
+
+        if (wasSelected) return branchCoveredByOther ? "redundant" : "essential";
+
+        return requiredBranches.includes(fb.logicBranch) && !branchCoveredByOther ? "missed" : "neutral";
+    }
+
     showTestCaseReasonings(mood: "happy" | "sad") {
-        const tutorialTestFeedback =
-            tutorialCases[this.currTutorialCaseIndex].testFeedback;
+        const currentCase = tutorialCases[this.currTutorialCaseIndex];
+        const tutorialTestFeedback = currentCase.testFeedback as Array<{ logicBranch: string; misleading?: boolean; feedback: string; testId: string }>;
+        const requiredBranches = (currentCase as unknown as { requiredBranches: string[] }).requiredBranches;
+        const LETTERS = ["A", "B", "C", "D"];
 
         for (let i = 0; i < tutorialTestFeedback.length; i++) {
             const feedbackObj = tutorialTestFeedback[i];
+            const letter = LETTERS[i];
+            const wasSelected = this.selectedTestCases.includes(letter);
             const yPosition = 200 + i * 120;
+
+            const quality = this.computeTestQuality(
+                i,
+                tutorialTestFeedback,
+                this.selectedTestCases,
+                LETTERS,
+                requiredBranches,
+            );
+
+            let borderColor: number;
+            let badgeText: string;
+            let badgeColor: string;
+
+            if (wasSelected) {
+                if (quality === "essential") {
+                    borderColor = 0x01ff34;
+                    badgeText = "+5 pts";
+                    badgeColor = "#01ff34";
+                } else if (quality === "misleading") {
+                    borderColor = 0xff4444;
+                    badgeText = "-5 pts";
+                    badgeColor = "#ff4444";
+                } else {
+                    borderColor = 0xffcc00;
+                    badgeText = "0 pts";
+                    badgeColor = "#ffcc00";
+                }
+            } else {
+                if (quality === "missed") {
+                    borderColor = 0xff8800;
+                    badgeText = "missed";
+                    badgeColor = "#ff8800";
+                } else {
+                    borderColor = 0x444444;
+                    badgeText = "";
+                    badgeColor = "#666666";
+                }
+            }
+
             const testCaseImage = this.add
                 .image(
                     40,
@@ -188,14 +255,49 @@ export class Verdict extends Scene {
                 )
                 .setOrigin(0, 0)
                 .setScale(0.2)
-                .setInteractive();
+                .setInteractive()
+                .setDepth(1);
+
+            const W = testCaseImage.displayWidth;
+            const H = testCaseImage.displayHeight;
+
+            const backlight = this.add.graphics().setDepth(0);
+            backlight.fillStyle(borderColor, 0.18);
+            backlight.fillRect(36, yPosition - 4, W + 8, H + 8);
+            backlight.fillStyle(borderColor, 0.28);
+            backlight.fillRect(40, yPosition, W, H);
+
+            this.add
+                .text(
+                    40,
+                    yPosition - 18,
+                    wasSelected ? `${letter}  SELECTED` : letter,
+                    {
+                        fontFamily: "Google Sans Code",
+                        fontSize: "12px",
+                        color: wasSelected ? "#ffffff" : "#888888",
+                        backgroundColor: "#0a0a0a",
+                        padding: { x: 4, y: 2 },
+                    },
+                )
+                .setDepth(2);
+
+            if (badgeText) {
+                this.add
+                    .text(40 + W, yPosition, badgeText, {
+                        fontFamily: "Google Sans Code",
+                        fontSize: "12px",
+                        color: badgeColor,
+                        backgroundColor: "#0a0a0a",
+                        padding: { x: 4, y: 2 },
+                    })
+                    .setOrigin(1, 0)
+                    .setDepth(2);
+            }
 
             testCaseImage.on("pointerdown", async () => {
                 if (this.typingInProgress) return;
 
-                const letter = Object.keys(this.answerMapping).find(
-                    (key) => this.answerMapping[key] === i,
-                ) as string;
                 const alreadyReviewed =
                     this.currReviewedEvidence.includes(letter);
 
@@ -426,23 +528,20 @@ export class Verdict extends Scene {
 
     private async checkUserSelections() {
         const currentTestCase = tutorialCases[this.currTutorialCaseIndex];
-        let numCorrect = 0;
-        let numEssential = 0;
         const letters = ["A", "B", "C", "D"];
-        for (let i = 0; i < currentTestCase.testFeedback.length; i++) {
-            if (currentTestCase.testFeedback[i].quality === "essential") {
-                numEssential++;
-                // if (this.answerMapping[this.selectedTestCases[i]] === i)
-                // if (this.answerMapping[letters[i]] === i)
-                if (this.selectedTestCases.includes(letters[i])) numCorrect++;
+        const testFeedback = currentTestCase.testFeedback as Array<{ logicBranch: string; misleading?: boolean }>;
+        const requiredBranches = (currentTestCase as unknown as { requiredBranches: string[] }).requiredBranches;
+
+        const coveredBranches = new Set<string>();
+        for (let i = 0; i < testFeedback.length; i++) {
+            const fb = testFeedback[i];
+            if (!fb.misleading && this.selectedTestCases.includes(letters[i])) {
+                coveredBranches.add(fb.logicBranch);
             }
         }
 
-        if (numCorrect < numEssential) {
-            await this.showJudgeAnimation("sad");
-        } else {
-            await this.showJudgeAnimation("happy");
-        }
+        const allCovered = requiredBranches.every((b) => coveredBranches.has(b));
+        await this.showJudgeAnimation(allCovered ? "happy" : "sad");
     }
 
     async create() {
