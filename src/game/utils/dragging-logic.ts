@@ -19,6 +19,7 @@ function showPresentToJudgeButton(
 
         return x;
     });
+
     presentToJudgeButtonGlobal = createTextButton
         .call(
             currentScene,
@@ -43,19 +44,13 @@ function showPresentToJudgeButton(
         .setDepth(102);
 
     presentToJudgeButtonGlobal.on("pointerdown", () => {
-        console.log({
+        currentScene.scene.stop("Tutorial");
+        currentScene.scene.start("Verdict", {
             selectedTestCasesIndices: indices,
             tutorialCaseIndex: tutorialCaseIndexGlobal,
             isTutorial: isTutorialGlobal,
             difficulty: "hard",
         });
-        // currentScene.scene.stop("Tutorial");
-        // currentScene.scene.start("Verdict", {
-        //     selectedTestCasesIndices: indices,
-        //     tutorialCaseIndex: tutorialCaseIndexGlobal,
-        //     isTutorial: isTutorialGlobal,
-        //     difficulty: "hard",
-        // });
     });
 }
 
