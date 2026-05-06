@@ -105,8 +105,21 @@ function getPool() {
                     .split(",")
                     .map((part) => part.trim());
             }) || [];
-        console.log("Test case pool:", testCasePool);
-        return testCasePool;
+
+        // randomize them so that the correct ones aren't always in the same spot
+        const randomizedPool: string[] = [];
+        let current = 0;
+        const numPieces = testCasePool.length;
+        while (current !== numPieces) {
+            let randomIndex = Math.floor(Math.random() * numPieces);
+            if (!randomizedPool[randomIndex]) {
+                randomizedPool[randomIndex] = testCasePool[current];
+                current++;
+            }
+            randomIndex = Math.floor(Math.random() * numPieces);
+        }
+
+        return randomizedPool;
     }
 
     return [];
