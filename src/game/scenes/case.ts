@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import tutorialCases from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
+import showDraggableTestCases from "../utils/dragging-logic";
 
 // TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
 // TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
@@ -288,90 +289,77 @@ export class Case extends Scene {
         });
     }
 
-    private showDraggableTestCases() {
-        // 512, 470, 860, 530
+    // private showDraggableTestCases() {
+    //     const SCREEN_W = 860;
+    //     const SCREEN_H = 520;
 
-        this.add
-            .rectangle(512, 450, 200, 100, 0x0fffff)
-            .setOrigin(0.5)
-            .setInteractive({ draggable: true });
+    //     const container = document.createElement("div");
+    //     container.id = "draggable-area";
 
-        const width = 662;
-        const height = 430;
-        const x = 512 - width / 2;
-        const y = 470 - height / 2;
+    //     Object.assign(container.style, {
+    //         position: "relative",
+    //         width: `${SCREEN_W}px`,
+    //         height: `${SCREEN_H}px`,
+    //         marginTop: "205px",
+    //         marginLeft: "78px",
+    //         border: "2px solid #00ff00",
+    //     });
 
-        const bounds = new Phaser.Geom.Rectangle(x, y, width, height);
+    //     const draggableDiv1 = document.createElement("div");
+    //     const draggableDiv2 = document.createElement("div");
 
-        this.input.on(
-            "drag",
-            (
-                _: Phaser.Input.Pointer,
-                gameObject: Phaser.GameObjects.Shape,
-                dragX: number,
-                dragY: number,
-            ) => {
-                gameObject.x = Phaser.Math.Clamp(
-                    dragX,
-                    bounds.left,
-                    bounds.right,
-                );
+    //     Object.assign(draggableDiv1.style, draggableDiv2.style, {
+    //         width: "100px",
+    //         height: "50px",
+    //         backgroundColor: "#ff00ff",
+    //         color: "#ffffff",
+    //         display: "flex",
+    //         justifyContent: "center",
+    //         alignItems: "center",
+    //         fontFamily: "Google Sans Code",
+    //         fontSize: "14px",
+    //         cursor: "move",
+    //         position: "absolute",
+    //         left: "0px",
+    //         top: "0px",
+    //     });
 
-                gameObject.y = Phaser.Math.Clamp(
-                    dragY,
-                    bounds.top,
-                    bounds.bottom,
-                );
-            },
-        );
+    //     draggableDiv1.textContent = "Drag me!";
+    //     draggableDiv2.textContent = "Drag me too!";
 
-        const textString = "assert(_____________, _____________)";
-        const fontSize = 22;
-        const charWidth = fontSize * 0.6; // Approximate width for Courier/Monospace
-        const startX = 512 - (textString.length * charWidth) / 2; // Center alignment math
+    //     let offsetX: number, offsetY: number;
 
-        this.add
-            .text(512, 670, textString, {
-                fontSize: `${fontSize}px`,
-                fontFamily: "Courier", // Essential for alignment
-                color: "#ffffff",
-            })
-            .setOrigin(0.5);
+    //     const mouseMoveHandler = (e: MouseEvent) => {
+    //         const containerRect = container.getBoundingClientRect();
 
-        // Create zones for each underscore
-        for (let i = 0; i < textString.length; i++) {
-            if (textString[i] === "_") {
-                // Calculate X based on character index
-                const zoneX = startX + i * charWidth + charWidth / 2;
+    //         const x = e.clientX - containerRect.left - offsetX;
+    //         const y = e.clientY - containerRect.top - offsetY;
 
-                // Create the individual zone
-                this.add
-                    .zone(zoneX, 670, charWidth, fontSize)
-                    .setRectangleDropZone(charWidth, fontSize);
+    //         if (x <= -5 || y <= -5 || x >= 764 || y >= 480) return;
 
-                // Optional: Debugging graphics to see the zones
-                /*
-const graphics = this.add.graphics();
-graphics.lineStyle(2, 0xffff00);
-graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.hitArea.height / 2, zone.input.hitArea.width, zone.input.hitArea.height);
-*/
-            }
-        }
+    //         // get the current div being dragged and move it
+    //         draggableDiv1.style.left = `${x}px`;
+    //         draggableDiv1.style.top = `${y}px`;
+    //     };
 
-        this.input.on(
-            "drop",
-            (
-                _: Phaser.Input.Pointer,
-                gameObject: Phaser.GameObjects.Shape,
-                dropZone: Phaser.GameObjects.Zone,
-            ) => {
-                gameObject.x = dropZone.x;
-                gameObject.y = dropZone.y;
+    //     const mouseUpHandler = () => {
+    //         document.removeEventListener("mousemove", mouseMoveHandler);
+    //         document.removeEventListener("mouseup", mouseUpHandler);
+    //     };
 
-                // You can add logic here to check if the correct test cases were placed in the correct zones and provide feedback accordingly
-            },
-        );
-    }
+    //     draggableDiv1.addEventListener("mousedown", (e) => {
+    //         const rect = draggableDiv1.getBoundingClientRect();
+
+    //         offsetX = e.clientX - rect.left;
+    //         offsetY = e.clientY - rect.top;
+
+    //         document.addEventListener("mousemove", mouseMoveHandler);
+    //         document.addEventListener("mouseup", mouseUpHandler);
+    //     });
+
+    //     container.appendChild(draggableDiv1);
+    //     this.add.dom(0, 0, container).setOrigin(0, 0);
+    // }
 
     private addTabLabels() {
         this.add.text(810, 170, "Evidence", {
@@ -426,7 +414,7 @@ graphics.strokeRect(zone.x - zone.input.hitArea.width / 2, zone.y - zone.input.h
                 :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
 
             if (this.levelDifficulty !== "hard") this.addTestCases(350);
-            if (this.levelDifficulty === "hard") this.showDraggableTestCases();
+            if (this.levelDifficulty === "hard") showDraggableTestCases(this);
 
             await this.addAnimatedTypingText(thirdIntro, 18);
             this.showBackButton();
