@@ -1,18 +1,10 @@
 import { Scene } from "phaser";
-import type { Case as ICase, UnitTest } from "../data/types";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
-import tutorialCasesJSON from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
 import showDraggableTestCases from "../utils/dragging-logic";
-import easyCasesJSON from "../data/easy-cases.json";
-import mediumCasesJSON from "../data/medium-cases.json";
-import hardCasesJSON from "../data/hard-cases.json";
 import { codeToHtml } from "shiki";
-
-const easyCases = easyCasesJSON as ICase[];
-const mediumCases = mediumCasesJSON as ICase[];
-const hardCases = hardCasesJSON as ICase[];
-const tutorialCases = tutorialCasesJSON as ICase[];
+import getCaseData from "../utils/getCaseData";
+import tutorialCases from "../data/tutorial-cases.json";
 
 // TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
 // TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
@@ -60,7 +52,11 @@ export class Case extends Scene {
         if (this.dragDom) this.dragDom.destroy();
         if (this.evidenceDom) this.evidenceDom.destroy();
 
-        this.getCaseData();
+        getCaseData(
+            this.isTutorial,
+            this.levelDifficulty,
+            this.currentTutorialCaseIndex,
+        );
 
         if (this.caseFileTestCases.length)
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
@@ -94,7 +90,11 @@ export class Case extends Scene {
     }
 
     async generateStyledCodeSnippet(
-        caseData: string = this.getCaseData().case,
+        caseData: string = getCaseData(
+            this.isTutorial,
+            this.levelDifficulty,
+            this.currentTutorialCaseIndex,
+        ).case,
     ) {
         const container: HTMLDivElement = document.createElement("div");
         container.id = "question-area";
@@ -203,47 +203,12 @@ export class Case extends Scene {
         });
     }
 
-    private getCaseData(): {
-        feedback: UnitTest[];
-        case: string;
-    } {
-        if (this.isTutorial) {
-            return {
-                feedback:
-                    tutorialCases[this.currentTutorialCaseIndex]
-                        ?.evidencePool || [],
-                case: tutorialCases[this.currentTutorialCaseIndex]
-                    ?.functionCode,
-            };
-        }
-
-        if (this.levelDifficulty === "easy") {
-            return {
-                feedback:
-                    easyCases[this.currentTutorialCaseIndex]?.evidencePool ||
-                    [],
-                case: easyCases[this.currentTutorialCaseIndex]?.functionCode,
-            };
-        }
-
-        if (this.levelDifficulty === "medium") {
-            return {
-                feedback:
-                    mediumCases[this.currentTutorialCaseIndex]?.evidencePool ||
-                    [],
-                case: mediumCases[this.currentTutorialCaseIndex]?.functionCode,
-            };
-        }
-
-        return {
-            feedback:
-                hardCases[this.currentTutorialCaseIndex]?.evidencePool || [],
-            case: hardCases[this.currentTutorialCaseIndex]?.functionCode,
-        };
-    }
-
     private async addTestCases() {
-        const { feedback: testFeedback } = this.getCaseData();
+        const { feedback: testFeedback } = getCaseData(
+            this.isTutorial,
+            this.levelDifficulty,
+            this.currentTutorialCaseIndex,
+        );
 
         const container = document.createElement("div");
         Object.assign(container.style, {
@@ -344,7 +309,11 @@ export class Case extends Scene {
     }
 
     private clickableTestCases() {
-        const { feedback: testFeedback } = this.getCaseData();
+        const { feedback: testFeedback } = getCaseData(
+            this.isTutorial,
+            this.levelDifficulty,
+            this.currentTutorialCaseIndex,
+        );
 
         testFeedback.forEach((test, i) => {
             const card = this.evidenceDom?.getChildByID(test.id) as HTMLElement;
