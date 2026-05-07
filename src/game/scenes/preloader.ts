@@ -65,22 +65,6 @@ export class Preloader extends Scene {
             frameHeight: 32,
         });
 
-        let i = 0;
-        while (i < tutorialCases.length) {
-            this.load.image(
-                `tutorial-code-${i}`,
-                `tutorial-cases-code/tutorial-${i}.png`,
-            );
-
-            for (let j = 1; j <= tutorialCases[i].testFeedback.length; j++) {
-                this.load.image(
-                    `tutorial-${i}-t${j}`,
-                    `tutorial-cases-code/test-cases/tutorial-${i}-t${j}.png`,
-                );
-            }
-            i++;
-        }
-
         this.load.audio("theme-music", ["audio/game-music.mp3"]);
 
         this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
