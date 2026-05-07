@@ -13,13 +13,14 @@ function showPresentToJudgeButton(
     testCases: string[],
     currentScene: Phaser.Scene,
 ) {
-    const letters = testCases.map((testCase) => {
-        const numIdx =
-            tutorialCases[tutorialCaseIndexGlobal].evidencePool
-                ?.map((tc) => tc.label)
-                .indexOf(testCase) ?? -1;
-        return numIdx >= 0 ? EVIDENCE_LETTERS[numIdx] : null;
-    }).filter((l): l is string => l !== null);
+    const letters = testCases
+        .map((testCase) => {
+            const pool = tutorialCases[tutorialCaseIndexGlobal].evidencePool;
+            const numIdx = pool?.map((tc) => tc.label).indexOf(testCase) ?? -1;
+
+            return numIdx >= 0 ? EVIDENCE_LETTERS[numIdx] : null;
+        })
+        .filter((l): l is string => l !== null);
 
     presentToJudgeButtonGlobal = createTextButton
         .call(
@@ -100,7 +101,7 @@ function getPool() {
                     .replace(/^assert\((.*)\)$/, "$1")
                     .split(",")
                     .map((part) => part.trim());
-            }) || [];
+            }) ?? [];
 
         // randomize them so that the correct ones aren't always in the same spot
         const randomizedPool: string[] = [];
