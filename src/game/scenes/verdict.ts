@@ -29,6 +29,8 @@ export class Verdict extends Scene {
     judge: Phaser.GameObjects.Sprite;
     showVerdictText = false;
     currentDifficulty: "easy" | "medium" | "hard" = "easy";
+    private functionOverlay: Phaser.GameObjects.DOMElement | undefined;
+    private dimmer: Phaser.GameObjects.DOMElement | undefined;
 
     init(data: {
         selectedTestCasesIndices: string[];
@@ -564,6 +566,117 @@ export class Verdict extends Scene {
         await this.showJudgeAnimation(allCovered ? "happy" : "sad");
     }
 
+    private async drawFunctionTab() {
+        const { case: functionCode } = getCaseData(
+            this.isTutorial,
+            this.currentDifficulty,
+            this.currTutorialCaseIndex,
+        );
+
+        const codeHTML = await codeToHtml(functionCode, {
+            lang: "python",
+            theme: "github-dark",
+        });
+
+        let open = false;
+        let overlayEl: HTMLDivElement | null = null;
+        let dimEl: HTMLDivElement | null = null;
+
+        const FILL = 0x001144;
+        const FILL_HOVER = 0x002288;
+
+        const close = () => {
+            if (!open) return;
+            open = false;
+            if (overlayEl) overlayEl.style.opacity = "0";
+            if (dimEl) dimEl.style.backgroundColor = "rgba(0,0,0,0)";
+            this.time.delayedCall(250, () => {
+                this.functionOverlay?.destroy();
+                this.functionOverlay = undefined;
+                this.dimmer?.destroy();
+                this.dimmer = undefined;
+                overlayEl = null;
+                dimEl = null;
+            });
+        };
+
+        // Solid tab pinned to bottom of screen
+        const tab = this.add
+            .rectangle(160, 768, 148, 48, FILL)
+            .setStrokeStyle(1.5, 0x4488ff)
+            .setOrigin(0.5, 1)
+            .setDepth(10)
+            .setInteractive();
+
+        this.add
+            .text(160, 744, "Function", {
+                fontSize: "25px",
+                color: "#4488ff",
+            })
+            .setOrigin(0.5)
+            .setDepth(11);
+
+        tab.on("pointerover", () => tab.setFillStyle(FILL_HOVER));
+        tab.on("pointerout", () => tab.setFillStyle(FILL));
+
+        tab.on("pointerdown", () => {
+            if (open) { close(); return; }
+            open = true;
+
+            // DOM dimmer so it covers DOM evidence cards and stamp (canvas rect can't dim DOM)
+            const dimDiv = document.createElement("div");
+            dimEl = dimDiv;
+            Object.assign(dimDiv.style, {
+                width: "1024px",
+                height: "768px",
+                backgroundColor: "rgba(0,0,0,0)",
+                transition: "background-color 0.25s ease",
+                cursor: "pointer",
+            });
+            dimDiv.addEventListener("click", close);
+            this.dimmer = this.add.dom(0, 0, dimDiv).setOrigin(0, 0).setDepth(110);
+
+            // Function code centered as a modal (depth 120, above dimmer and stamp)
+            const overlay = document.createElement("div");
+            overlayEl = overlay;
+            Object.assign(overlay.style, {
+                width: "600px",
+                maxHeight: "480px",
+                overflowY: "auto",
+                backgroundColor: "#0d1117",
+                border: "2px solid #4488ff",
+                borderRadius: "8px",
+                padding: "16px",
+                boxSizing: "border-box",
+                opacity: "0",
+                transition: "opacity 0.25s ease",
+                scrollbarWidth: "thin",
+                scrollbarColor: "#4488ff #0d1117",
+            });
+
+            overlay.innerHTML = codeHTML;
+            const pre = overlay.querySelector("pre");
+            if (pre) {
+                Object.assign(pre.style, {
+                    margin: "0",
+                    backgroundColor: "transparent",
+                    fontSize: "13px",
+                    fontFamily: "'Fira Code', 'Google Sans Code', monospace",
+                });
+            }
+
+            this.functionOverlay = this.add
+                .dom(512, 384, overlay)
+                .setOrigin(0.5, 0.5)
+                .setDepth(120);
+
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                dimDiv.style.backgroundColor = "rgba(0,0,0,0.75)";
+                overlay.style.opacity = "1";
+            }));
+        });
+    }
+
     async create() {
         if (!this.textures.exists("confettiParticle")) {
             const texture = this.textures.createCanvas(
@@ -581,6 +694,7 @@ export class Verdict extends Scene {
             texture?.refresh();
         }
 
+        void this.drawFunctionTab();
         await this.checkUserSelections();
     }
 }
