@@ -1,5 +1,4 @@
 import { Scene } from "phaser";
-import tutorialCases from "../data/tutorial-cases.json";
 
 export class Preloader extends Scene {
     constructor() {
