@@ -140,17 +140,58 @@ export class Verdict extends Scene {
                     playConfettiEffect.call(this);
                 }
 
-                const stamp = this.add
-                    .sprite(830, 290, stampKey)
-                    .setOrigin(0.5)
-                    .setScale(0);
-                this.tweens.add({
-                    targets: stamp,
-                    scale: 3.5,
-                    angle: 13,
-                    duration: 500,
-                    ease: "Bounce.easeOut",
+                // Inject bounce keyframes once
+                if (!document.getElementById("stamp-keyframes")) {
+                    const style = document.createElement("style");
+                    style.id = "stamp-keyframes";
+                    style.textContent = `
+                        @keyframes stampBounce {
+                            0%   { transform: scale(0)    rotate(13deg); }
+                            60%  { transform: scale(4.0)  rotate(13deg); }
+                            75%  { transform: scale(3.1)  rotate(13deg); }
+                            90%  { transform: scale(3.7)  rotate(13deg); }
+                            100% { transform: scale(3.5)  rotate(13deg); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+
+                // Zero-size wrapper so Phaser's fixed container doesn't clip the scaled stamp.
+                // Three levels: wrapper (Phaser anchor) → center (translate -50%/-50%) → anim (scale/rotate).
+                // Keeping centering and animation on separate elements avoids CSS transform conflicts.
+                const stampWrapper = document.createElement("div");
+                Object.assign(stampWrapper.style, {
+                    width: "0",
+                    height: "0",
+                    overflow: "visible",
                 });
+
+                // centerDiv handles translate(-50%,-50%) centering; animDiv handles the bounce.
+                // Kept on separate elements so they don't overwrite each other's CSS transform.
+                const centerDiv = document.createElement("div");
+                Object.assign(centerDiv.style, {
+                    position: "absolute",
+                    left: "0",
+                    top: "0",
+                    transform: "translate(-50%, -50%)",
+                });
+
+                const animDiv = document.createElement("div");
+                Object.assign(animDiv.style, {
+                    width: "128px",
+                    height: "32px",
+                    backgroundImage: `url('assets/sprites/${stampKey}.png')`,
+                    backgroundSize: "192px 32px",
+                    backgroundPosition: "0 0",
+                    backgroundRepeat: "no-repeat",
+                    imageRendering: "pixelated",
+                    transformOrigin: "center",
+                    animation: "stampBounce 0.5s ease-out forwards",
+                });
+
+                centerDiv.appendChild(animDiv);
+                stampWrapper.appendChild(centerDiv);
+                this.add.dom(850, 290, stampWrapper).setOrigin(0, 0).setDepth(100);
 
                 this.typingInProgress = false;
 
@@ -261,13 +302,13 @@ export class Verdict extends Scene {
 
         const container = document.createElement("div");
         Object.assign(container.style, {
-            width: `1024px`,
+            width: `660px`,
             height: `768px`,
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start", // Align to the left (or 'center' if preferred)
+            alignItems: "flex-start",
             paddingTop: "220px",
-            paddingLeft: "60px", // Give some breathing room from the edge
+            paddingLeft: "60px",
             pointerEvents: "none",
         });
 
