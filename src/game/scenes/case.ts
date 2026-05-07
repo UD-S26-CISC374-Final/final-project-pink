@@ -384,12 +384,12 @@ export class Case extends Scene {
     }
 
     private playTimer() {
-        let timerText = this.add.text(820, 250, "10:00", {
+        let timerText = this.add.text(820, 250, "06:00", {
             fontSize: "35px",
             color: "#ee0808",
         });
 
-        let timeLeft = 600; // 10 minutes in seconds is 600
+        let timeLeft = 360; // 6 minutes in seconds is 360
         const timerEvent = this.time.addEvent({
             delay: 1000,
             callback: () => {
