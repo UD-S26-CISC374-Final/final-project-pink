@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import type { Case as ICase } from "../data/types";
+import type { Case as ICase, UnitTest } from "../data/types";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import tutorialCasesJSON from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
@@ -58,6 +58,9 @@ export class Case extends Scene {
     private async goBack() {
         if (this.typingInProgress) return;
         if (this.dragDom) this.dragDom.destroy();
+        if (this.evidenceDom) this.evidenceDom.destroy();
+
+        this.getCaseData();
 
         if (this.caseFileTestCases.length)
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
@@ -201,17 +204,15 @@ export class Case extends Scene {
     }
 
     private getCaseData(): {
-        feedback: {
-            testId: string;
-            quality: string;
-            feedback: string;
-        }[];
+        feedback: UnitTest[];
         case: string;
     } {
         if (this.isTutorial) {
+            console.log(tutorialCases[this.currentTutorialCaseIndex]);
             return {
                 feedback:
-                    tutorialCases[this.currentTutorialCaseIndex]?.testFeedback,
+                    tutorialCases[this.currentTutorialCaseIndex]
+                        ?.evidencePool || [],
                 case: tutorialCases[this.currentTutorialCaseIndex]
                     ?.functionCode,
             };
@@ -220,7 +221,8 @@ export class Case extends Scene {
         if (this.levelDifficulty === "easy") {
             return {
                 feedback:
-                    easyCases[this.currentTutorialCaseIndex]?.testFeedback,
+                    easyCases[this.currentTutorialCaseIndex]?.evidencePool ||
+                    [],
                 case: easyCases[this.currentTutorialCaseIndex]?.functionCode,
             };
         }
@@ -228,59 +230,79 @@ export class Case extends Scene {
         if (this.levelDifficulty === "medium") {
             return {
                 feedback:
-                    mediumCases[this.currentTutorialCaseIndex]?.testFeedback,
+                    mediumCases[this.currentTutorialCaseIndex]?.evidencePool ||
+                    [],
                 case: mediumCases[this.currentTutorialCaseIndex]?.functionCode,
             };
         }
 
         return {
-            feedback: hardCases[this.currentTutorialCaseIndex]?.testFeedback,
+            feedback:
+                hardCases[this.currentTutorialCaseIndex]?.evidencePool || [],
             case: hardCases[this.currentTutorialCaseIndex]?.functionCode,
         };
     }
 
-    private addTestCases(startY: number = 380, marginY: number = 15) {
+    private async addTestCases() {
         const { feedback: testFeedback } = this.getCaseData();
-        const centerX = 512; // Your current horizontal center
-        const columnWidth = 400; // How far apart the two columns should be
-        const scale = 0.2;
 
-        // Gemini provided the grid formatting logic below:
-        testFeedback.forEach((_, i) => {
-            // Determine column (0 or 1) and row (0, 1, 2...)
-            const col = i % 2;
-            const row = Math.floor(i / 2);
-
-            // Calculate X: Offset left for col 0, right for col 1
-            const xPos =
-                col === 0 ?
-                    centerX - columnWidth / 2
-                :   centerX + columnWidth / 2;
-
-            // Get texture to calculate height dynamically
-            const texture = this.textures.get(
-                `tutorial-${this.currentTutorialCaseIndex}-t${i + 1}`,
-            );
-            const source = texture.getSourceImage();
-            const scaledHeight = source.height * scale;
-
-            // Calculate Y: Start position + (height of image + margin) * row index
-            const yPos = startY + row * (scaledHeight + marginY);
-
-            const testCase = this.add
-                .image(
-                    xPos,
-                    yPos,
-                    `tutorial-${this.currentTutorialCaseIndex}-t${i + 1}`,
-                )
-                .setScale(scale)
-                .setDepth(10)
-                .setInteractive();
-
-            this.caseFileTestCases.push(testCase);
+        const container = document.createElement("div");
+        Object.assign(container.style, {
+            position: "relative",
+            width: `${this.SCREEN_W}px`,
+            height: `${this.SCREEN_H}px`,
+            marginTop: "205px",
+            marginLeft: "78px",
+            overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
         });
 
-        this.clickableTestCases();
+        const gridDiv = document.createElement("div");
+        Object.assign(gridDiv.style, {
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            columnGap: "40px",
+            rowGap: "24px",
+            width: "90%",
+            boxSizing: "border-box",
+            margin: "20% auto",
+        });
+
+        for (const test of testFeedback) {
+            const card = document.createElement("div");
+
+            Object.assign(card.style, {
+                backgroundColor: "#0d1117",
+                borderRadius: "8px",
+                padding: "12px 20px",
+                display: "flex",
+                alignItems: "center",
+                border: "1px solid #333",
+            });
+
+            const codeHTML = await codeToHtml(test.label, {
+                lang: "python",
+                theme: "github-dark",
+            });
+
+            card.innerHTML = codeHTML;
+
+            const pre = card.querySelector("pre");
+            if (pre) {
+                pre.style.margin = "0";
+                pre.style.backgroundColor = "transparent";
+                pre.style.fontSize = "15px";
+                pre.style.fontFamily = "'Fira Code', monospace";
+            }
+
+            gridDiv.appendChild(card);
+        }
+
+        container.appendChild(gridDiv);
+        this.evidenceDom = this.add.dom(0, 0, container).setOrigin(0, 0);
+        // this.clickableTestCases();
     }
 
     private createEvidenceButton() {
@@ -471,7 +493,7 @@ export class Case extends Scene {
                     "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button."
                 :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
 
-            if (this.levelDifficulty !== "hard") this.addTestCases(350);
+            if (this.levelDifficulty !== "hard") await this.addTestCases();
             if (this.levelDifficulty === "hard") {
                 const container: HTMLDivElement = document.createElement("div");
                 container.id = "draggable-area";
@@ -522,6 +544,7 @@ export class Case extends Scene {
             if (this.currentTab === "explanation") return;
             if (this.presentToJudgeButton) this.presentToJudgeButton.destroy();
             if (this.dragDom) this.dragDom.destroy();
+            if (this.evidenceDom) this.evidenceDom.destroy();
 
             this.caseDom?.destroy();
             this.currentTab = "explanation";
