@@ -81,6 +81,8 @@ export class Preloader extends Scene {
             i++;
         }
 
+        this.load.audio("theme-music", ["audio/game-music.mp3"]);
+
         this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
         this.load.image("gavel", "gavel.png");
         const courtImages = [
