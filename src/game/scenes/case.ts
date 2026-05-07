@@ -208,7 +208,6 @@ export class Case extends Scene {
         case: string;
     } {
         if (this.isTutorial) {
-            console.log(tutorialCases[this.currentTutorialCaseIndex]);
             return {
                 feedback:
                     tutorialCases[this.currentTutorialCaseIndex]
@@ -272,6 +271,7 @@ export class Case extends Scene {
 
         for (const test of testFeedback) {
             const card = document.createElement("div");
+            card.id = test.id;
 
             Object.assign(card.style, {
                 backgroundColor: "#0d1117",
@@ -302,7 +302,7 @@ export class Case extends Scene {
 
         container.appendChild(gridDiv);
         this.evidenceDom = this.add.dom(0, 0, container).setOrigin(0, 0);
-        // this.clickableTestCases();
+        this.clickableTestCases();
     }
 
     private createEvidenceButton() {
@@ -344,63 +344,74 @@ export class Case extends Scene {
     }
 
     private clickableTestCases() {
-        for (let i = 0; i < this.caseFileTestCases.length; i++) {
-            const testCase = this.caseFileTestCases[i];
+        const { feedback: testFeedback } = this.getCaseData();
 
-            testCase.on("pointerdown", async () => {
+        testFeedback.forEach((test, i) => {
+            const card = this.evidenceDom?.getChildByID(test.id) as HTMLElement;
+
+            card.style.cursor = "pointer";
+
+            card.addEventListener("click", () => {
                 if (this.typingInProgress) return;
+
                 const letter: string = this.letterMap[i];
                 const isSelected = this.selectedTestCases.includes(letter);
 
-                if (isSelected) {
-                    this.selectedTestCases = this.selectedTestCases.filter(
-                        (test) => test !== letter,
-                    );
-                    testCase.setAlpha(1);
+                const handleSelection = async () => {
+                    if (isSelected) {
+                        this.selectedTestCases = this.selectedTestCases.filter(
+                            (t) => t !== letter,
+                        );
+                        card.style.opacity = "1";
+
+                        if (
+                            this.selectedTestCases.length < 2 &&
+                            this.presentToJudgeButton
+                        ) {
+                            this.evidenceReady = false;
+                            (
+                                this.presentToJudgeButton
+                                    .list[1] as Phaser.GameObjects.Text
+                            ).setText("Select the TWO best test cases");
+                        }
+                    } else {
+                        if (this.selectedTestCases.length >= 2) {
+                            this.textObject.setText("");
+
+                            await this.addAnimatedTypingText(
+                                "Remember: You can only select 2 test cases as evidence. Please deselect one...",
+                                22,
+                                20,
+                                true,
+                            );
+
+                            this.reminderMessageReference = this.textObject;
+                            return;
+                        }
+
+                        this.selectedTestCases.push(letter);
+                        card.style.opacity = "0.5";
+                    }
 
                     if (
-                        this.selectedTestCases.length < 2 &&
+                        this.selectedTestCases.length === 2 &&
                         this.presentToJudgeButton
                     ) {
-                        this.evidenceReady = false;
+                        this.evidenceReady = true;
                         (
                             this.presentToJudgeButton
                                 .list[1] as Phaser.GameObjects.Text
-                        ).setText("Select the TWO best test cases");
+                        )
+                            .setText("Present Evidence to Judge Compiler")
+                            .setColor("#ffffff");
                     }
-                } else {
-                    if (this.selectedTestCases.length >= 2) {
-                        this.textObject.setText("");
+                };
 
-                        await this.addAnimatedTypingText(
-                            "Remember: You can only select 2 test cases as evidence. Please deselect one...",
-                            22,
-                            20,
-                            true,
-                        );
-
-                        this.reminderMessageReference = this.textObject;
-                        return;
-                    }
-
-                    this.selectedTestCases.push(letter);
-                    testCase.setAlpha(0.5);
-                }
-
-                if (
-                    this.selectedTestCases.length === 2 &&
-                    this.presentToJudgeButton
-                ) {
-                    this.evidenceReady = true;
-                    (
-                        this.presentToJudgeButton
-                            .list[1] as Phaser.GameObjects.Text
-                    )
-                        .setText("Present Evidence to Judge Compiler")
-                        .setColor("#ffffff");
-                }
+                handleSelection().catch((err) =>
+                    console.error("Selection error:", err),
+                );
             });
-        }
+        });
     }
 
     private playTimer() {
