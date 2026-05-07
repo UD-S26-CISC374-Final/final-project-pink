@@ -12,75 +12,14 @@ const GOLD = "#D4A843";
 const DARK_GOLD = "#8B6914";
 const CREAM = "#F5F0E8";
 const PANEL_BG = 0x1a1008;
+const COURT_BROWN = 0x2d1a0a;
 
-export class MainMenu extends Scene implements ChangeableScene {
+export class MainMenuPlain extends Scene implements ChangeableScene {
     title: GameObjects.Text;
     gamemode: "Level1" | "Tutorial";
 
     constructor() {
-        super("MainMenu");
-    }
-
-    private setupBackground() {
-        this.add
-            .image(512, 384, "court_darker")
-            .setDisplaySize(1024, 768)
-            .setDepth(0);
-
-        const flickerKeys = [
-            "court_darker_lights_bright",
-            "court_dark_back_lights_off",
-            "court_dark_left_lights_off",
-            "court_dark_3_lights_on",
-            "court_other_2_lights_off",
-        ];
-
-        const flickerImgs = flickerKeys.map(key =>
-            this.add
-                .image(512, 384, key)
-                .setDisplaySize(1024, 768)
-                .setDepth(1)
-                .setAlpha(0),
-        );
-
-        const scheduleFlicker = () => {
-            const delay =
-                Math.random() < 0.25
-                    ? Phaser.Math.Between(80, 350)
-                    : Phaser.Math.Between(500, 7000);
-
-            this.time.delayedCall(delay, () => {
-                const steps = Phaser.Math.Between(3, 18);
-                const sequence: Array<Phaser.GameObjects.Image | null> = [
-                    flickerImgs[Phaser.Math.Between(0, flickerImgs.length - 1)],
-                ];
-                for (let i = 1; i < steps; i++) {
-                    sequence.push(
-                        Math.random() < 0.4
-                            ? null
-                            : flickerImgs[Phaser.Math.Between(0, flickerImgs.length - 1)],
-                    );
-                }
-
-                let t = 0;
-                for (let i = 0; i < sequence.length; i++) {
-                    t += Phaser.Math.Between(20, 220);
-                    const img = sequence[i];
-                    const prev = i > 0 ? sequence[i - 1] : null;
-                    this.time.delayedCall(t, () => {
-                        if (prev && prev !== img) prev.setAlpha(0);
-                        if (img) img.setAlpha(1);
-                    });
-                }
-
-                this.time.delayedCall(t + 50, () => {
-                    flickerImgs.forEach(f => f.setAlpha(0));
-                    scheduleFlicker();
-                });
-            });
-        };
-
-        this.time.delayedCall(Phaser.Math.Between(500, 1500), scheduleFlicker);
+        super("MainMenuPlain");
     }
 
     private drawGavel() {
@@ -124,7 +63,8 @@ export class MainMenu extends Scene implements ChangeableScene {
     }
 
     create() {
-        this.setupBackground();
+        this.add.rectangle(512, 384, 1024, 768, COURT_BROWN).setDepth(0);
+
         this.drawGavel();
 
         this.title = this.add
