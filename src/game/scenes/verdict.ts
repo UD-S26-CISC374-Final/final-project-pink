@@ -1,10 +1,12 @@
 import { Scene } from "phaser";
 import tutorialCases from "../data/tutorial-cases.json";
-import type { Case } from "../data/types";
+import type { Case, TestFeedback } from "../data/types";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import { playConfettiEffect } from "../utils/playConfettiEffect";
 import createTextButton from "../utils/createTextButton";
 import CaseManager from "../case-manager";
+import { codeToHtml } from "shiki/bundle/web";
+import getCaseData from "../utils/getCaseData";
 
 export class Verdict extends Scene {
     constructor() {
@@ -20,7 +22,7 @@ export class Verdict extends Scene {
         D: 3,
     };
     isTutorial: boolean = false;
-    textObject: Phaser.GameObjects.Text;
+    textObject: Phaser.GameObjects.Text | undefined;
     typingInProgress: boolean = false;
     totalEvidenceCases: number;
     currReviewedEvidence: string[] = [];
@@ -54,49 +56,56 @@ export class Verdict extends Scene {
         speed: number = 30,
         instant?: boolean,
     ) {
+        if (!this.scene.isActive()) return;
+
         this.typingInProgress = true;
 
-        this.textObject = this.add.text(100, 30, "", {
-            fontSize: `${fontSize}px`,
-            color: "#01ff34",
-            wordWrap: { width: 800 },
-        });
-
-        if (instant) {
-            this.textObject.setText(text);
+        if (!this.sys.isActive()) {
             this.typingInProgress = false;
             return;
         }
 
-        await typewriterEffect(
-            null,
-            this.textObject.setText(text),
-            text,
-            speed,
-            this,
-        );
+        if (!this.textObject || !this.textObject.active) {
+            this.textObject = this.add.text(100, 30, "", {
+                fontSize: `${fontSize}px`,
+                color: "#01ff34",
+                wordWrap: { width: 800 },
+            });
+        } else {
+            this.textObject.destroy();
+
+            this.textObject = this.add.text(100, 30, "", {
+                fontSize: `${fontSize}px`,
+                color: "#01ff34",
+                wordWrap: { width: 800 },
+            });
+        }
+
+        if (instant) {
+            if (this.textObject.active) {
+                this.textObject.setText(text);
+            }
+            this.typingInProgress = false;
+            return;
+        }
+
+        try {
+            await typewriterEffect(null, this.textObject, text, speed, this);
+        } catch (e) {
+            console.warn("Typewriter effect interrupted:", e);
+        }
 
         this.typingInProgress = false;
     }
 
     private showNextCaseButton() {
-        const nextCaseButton = createTextButton.call(
+        const revealButton = createTextButton.call(
             this,
             850,
             190,
+            { x: 0, y: 0, width: 160, height: 40, color: 0x000000, alpha: 1 },
             {
-                x: 0,
-                y: 0,
-                width: 160,
-                height: 40,
-                color: 0x000000,
-                alpha: 1,
-            },
-            {
-                text:
-                    this.currTutorialCaseIndex >= tutorialCases.length - 1 ?
-                        "Go to Summary"
-                    :   "Next Case",
+                text: "Reveal Verdict",
                 fontFamily: "Google Sans Code",
                 fontSize: 18,
                 color: "#ffffff",
@@ -104,13 +113,87 @@ export class Verdict extends Scene {
             true,
         );
 
-        nextCaseButton.on("pointerdown", () => {
-            // Record this case's result in CaseManager using the letter system
+        revealButton.on("pointerdown", async () => {
+            if (this.typingInProgress) return;
+
+            revealButton.destroy();
+
+            const currentCase = tutorialCases[this.currTutorialCaseIndex];
+            const verdict = currentCase.correctVerdict; // "guilty" or "not guilty"
+
+            this.textObject?.setText("");
+            this.playJudgeAnimation(verdict === "not guilty" ? "happy" : "sad");
+
+            await this.addAnimatedTypingText(
+                "Great work—you've reviewed all the evidence! With that said, I declare this program to be...",
+                20,
+                30,
+            );
+
+            this.typingInProgress = true;
+
+            this.time.delayedCall(800, async () => {
+                const isInnocent = verdict === "not guilty";
+                const stampKey = isInnocent ? "innocent" : "guilty";
+
+                if (isInnocent) {
+                    playConfettiEffect.call(this);
+                }
+
+                const stamp = this.add
+                    .sprite(830, 290, stampKey)
+                    .setOrigin(0.5)
+                    .setScale(0);
+                this.tweens.add({
+                    targets: stamp,
+                    scale: 3.5,
+                    angle: 13,
+                    duration: 500,
+                    ease: "Bounce.easeOut",
+                });
+
+                this.typingInProgress = false;
+
+                // 3. Play the closing statement
+                await this.addAnimatedTypingText(
+                    currentCase.closingStatement,
+                    20,
+                    30,
+                );
+
+                // 4. Finally, create the "Next Case" button after the sequence is done
+                this.createNewNextButton();
+            });
+        });
+    }
+
+    private createNewNextButton() {
+        const isLastCase =
+            this.currTutorialCaseIndex >= tutorialCases.length - 1;
+
+        const nextButton = createTextButton.call(
+            this,
+            850,
+            190,
+            { x: 0, y: 0, width: 160, height: 40, color: 0x000000, alpha: 1 },
+            {
+                text: isLastCase ? "Go to Summary" : "Next Case",
+                fontFamily: "Google Sans Code",
+                fontSize: 18,
+                color: "#ffffff",
+            },
+            true,
+        );
+
+        nextButton.on("pointerdown", () => {
             const manager = CaseManager.getInstance();
             const currentCase = tutorialCases[this.currTutorialCaseIndex];
+
+            // Sync manager state
             while (manager.getCurrentCaseIndex() < this.currTutorialCaseIndex) {
                 manager.advanceCase();
             }
+
             manager.selectedEvidenceIds = [...this.selectedTestCases];
             manager.submitVerdict(
                 currentCase.correctVerdict as "guilty" | "not guilty",
@@ -118,56 +201,17 @@ export class Verdict extends Scene {
 
             this.scene.stop("Verdict");
 
-            // Last case → go to Summary
-            if (this.currTutorialCaseIndex >= tutorialCases.length - 1) {
+            if (isLastCase) {
                 manager.markTutorialCompleted();
                 this.scene.start("Summary");
-                return;
-            }
-
-            manager.advanceCase();
-
-            const nextDifficulty =
-                tutorialCases[this.currTutorialCaseIndex + 1].difficulty;
-
-            const progressSaved = localStorage.getItem("savedProgress");
-            const savedDifficulty =
-                progressSaved ?
-                    (
-                        JSON.parse(progressSaved) as {
-                            currentTutorialCaseIndex: number;
-                            difficulty: string;
-                        }
-                    ).difficulty
-                :   null;
-
-            if (
-                nextDifficulty === "medium" &&
-                !progressSaved &&
-                savedDifficulty !== "medium"
-            ) {
-                this.scene.start("Pause", {
-                    isTutorial: this.isTutorial,
-                    nextTutorialText: `Things are going to start a little more challenging now! Before we proceed to the ${nextDifficulty} cases, would you like to take a recess and come back later? If so, hit the 'Save Progress' button. Otherwise, hit the 'Next Case' button to proceed.`,
-                    difficulty: nextDifficulty,
-                    currentTutorialCaseIndex: this.currTutorialCaseIndex,
-                });
-                return;
-            } else if (nextDifficulty === "hard") {
-                this.scene.start("Pause", {
-                    isTutorial: this.isTutorial,
-                    nextTutorialText: `Things are going to start a little more challenging now! Before we proceed to the ${nextDifficulty} cases, would you like to take a recess and come back later? If so, hit the 'Save Progress' button. Otherwise, hit the 'Next Case' button to proceed.`,
-                    difficulty: nextDifficulty,
-                    currentTutorialCaseIndex: this.currTutorialCaseIndex,
-                });
-                return;
             } else {
+                manager.advanceCase();
+                const nextCase = tutorialCases[this.currTutorialCaseIndex + 1];
+
                 this.scene.start("Case", {
                     isTutorial: this.isTutorial,
-                    nextTutorialText:
-                        tutorialCases[this.currTutorialCaseIndex + 1]
-                            .tutorialText,
-                    difficulty: this.currentDifficulty,
+                    nextTutorialText: nextCase.tutorialText,
+                    difficulty: nextCase.difficulty,
                     currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
                 });
             }
@@ -176,7 +220,7 @@ export class Verdict extends Scene {
 
     private computeTestQuality(
         idx: number,
-        testFeedback: Array<{ logicBranch: string; misleading?: boolean }>,
+        testFeedback: TestFeedback[],
         selectedLetters: string[],
         letters: string[],
         requiredBranches: string[],
@@ -193,23 +237,53 @@ export class Verdict extends Scene {
                 selectedLetters.includes(letters[j]),
         );
 
-        if (wasSelected) return branchCoveredByOther ? "redundant" : "essential";
+        if (wasSelected)
+            return branchCoveredByOther ? "redundant" : "essential";
 
-        return requiredBranches.includes(fb.logicBranch) && !branchCoveredByOther ? "missed" : "neutral";
+        return (
+                requiredBranches.includes(fb.logicBranch || "") &&
+                    !branchCoveredByOther
+            ) ?
+                "missed"
+            :   "neutral";
     }
 
-    showTestCaseReasonings(mood: "happy" | "sad") {
+    async showTestCaseReasonings(mood: "happy" | "sad") {
+        const { feedback, currCaseData } = getCaseData(
+            this.isTutorial,
+            this.currentDifficulty,
+            this.currTutorialCaseIndex,
+        );
         const currentCase = tutorialCases[this.currTutorialCaseIndex];
-        const tutorialTestFeedback = currentCase.testFeedback as Array<{ logicBranch: string; misleading?: boolean; feedback: string; testId: string }>;
+        const tutorialTestFeedback = currCaseData;
         const requiredBranches = (currentCase as Case).requiredBranches ?? [];
         const LETTERS = ["A", "B", "C", "D"];
 
-        for (let i = 0; i < tutorialTestFeedback.length; i++) {
-            const feedbackObj = tutorialTestFeedback[i];
+        const container = document.createElement("div");
+        Object.assign(container.style, {
+            width: `1024px`,
+            height: `768px`,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start", // Align to the left (or 'center' if preferred)
+            paddingTop: "220px",
+            paddingLeft: "60px", // Give some breathing room from the edge
+            pointerEvents: "none",
+        });
+
+        // 1. Changed from Grid to Flex Column for vertical stacking
+        const stackDiv = document.createElement("div");
+        Object.assign(stackDiv.style, {
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px", // Vertical spacing between cards
+            width: "600px", // Fixed width for the stack
+            pointerEvents: "auto",
+        });
+
+        for (let i = 0; i < feedback.length; i++) {
             const letter = LETTERS[i];
             const wasSelected = this.selectedTestCases.includes(letter);
-            const yPosition = 200 + i * 120;
-
             const quality = this.computeTestQuality(
                 i,
                 tutorialTestFeedback,
@@ -218,232 +292,130 @@ export class Verdict extends Scene {
                 requiredBranches,
             );
 
-            let borderColor: number;
-            let badgeText: string;
-            let badgeColor: string;
+            let borderColor = "#444444";
+            let badgeText = "";
+            let badgeColor = "#666666";
 
             if (wasSelected) {
                 if (quality === "essential") {
-                    borderColor = 0x01ff34;
+                    borderColor = "#01ff34";
                     badgeText = "+5 pts";
                     badgeColor = "#01ff34";
                 } else if (quality === "misleading") {
-                    borderColor = 0xff4444;
+                    borderColor = "#ff4444";
                     badgeText = "-5 pts";
                     badgeColor = "#ff4444";
                 } else {
-                    borderColor = 0xffcc00;
+                    borderColor = "#ffcc00";
                     badgeText = "0 pts";
                     badgeColor = "#ffcc00";
                 }
-            } else {
-                if (quality === "missed") {
-                    borderColor = 0xff8800;
-                    badgeText = "missed";
-                    badgeColor = "#ff8800";
-                } else {
-                    borderColor = 0x444444;
-                    badgeText = "";
-                    badgeColor = "#666666";
-                }
+            } else if (quality === "missed") {
+                borderColor = "#ff8800";
+                badgeText = "missed";
+                badgeColor = "#ff8800";
             }
 
-            const testCaseImage = this.add
-                .image(
-                    40,
-                    yPosition,
-                    `tutorial-${this.currTutorialCaseIndex}-t${i + 1}`,
-                )
-                .setOrigin(0, 0)
-                .setScale(0.2)
-                .setInteractive()
-                .setDepth(1);
+            const card = document.createElement("div");
+            Object.assign(card.style, {
+                backgroundColor: "#0d1117",
+                borderRadius: "8px",
+                padding: "25px 15px 25px 15px",
+                border: `2px solid ${borderColor}`,
+                position: "relative",
+                cursor: "pointer",
+                transition: "transform 0.1s, opacity 0.2s",
+                opacity: "0.9",
+                width: "100%", // Take up full width of stackDiv
+                boxSizing: "border-box",
+            });
 
-            const W = testCaseImage.displayWidth;
-            const H = testCaseImage.displayHeight;
+            const codeHTML = await codeToHtml(feedback[i].label, {
+                lang: "python",
+                theme: "github-dark",
+            });
+            card.innerHTML = codeHTML;
 
-            const backlight = this.add.graphics().setDepth(0);
-            backlight.fillStyle(borderColor, 0.18);
-            backlight.fillRect(36, yPosition - 4, W + 8, H + 8);
-            backlight.fillStyle(borderColor, 0.28);
-            backlight.fillRect(40, yPosition, W, H);
-
-            this.add
-                .text(
-                    40,
-                    yPosition - 18,
-                    wasSelected ? `${letter}  SELECTED` : letter,
-                    {
-                        fontFamily: "Google Sans Code",
-                        fontSize: "12px",
-                        color: wasSelected ? "#ffffff" : "#888888",
-                        backgroundColor: "#0a0a0a",
-                        padding: { x: 4, y: 2 },
-                    },
-                )
-                .setDepth(2);
+            const label = document.createElement("div");
+            label.innerText = wasSelected ? `${letter} SELECTED` : letter;
+            Object.assign(label.style, {
+                position: "absolute",
+                top: "-12px",
+                left: "10px",
+                fontSize: "10px",
+                backgroundColor: "#0a0a0a",
+                color: wasSelected ? "#ffffff" : "#888888",
+                padding: "2px 6px",
+                fontFamily: "'Google Sans Code', monospace",
+            });
 
             if (badgeText) {
-                this.add
-                    .text(40 + W, yPosition, badgeText, {
-                        fontFamily: "Google Sans Code",
-                        fontSize: "12px",
-                        color: badgeColor,
-                        backgroundColor: "#0a0a0a",
-                        padding: { x: 4, y: 2 },
-                    })
-                    .setOrigin(1, 0)
-                    .setDepth(2);
+                const badge = document.createElement("div");
+                badge.innerText = badgeText;
+                Object.assign(badge.style, {
+                    position: "absolute",
+                    bottom: "-12px",
+                    right: "10px",
+                    fontSize: "10px",
+                    backgroundColor: "#0a0a0a",
+                    color: badgeColor,
+                    padding: "2px 6px",
+                    fontFamily: "'Google Sans Code', monospace",
+                    border: `1px solid ${badgeColor}`,
+                });
+                card.appendChild(badge);
             }
 
-            testCaseImage.on("pointerdown", async () => {
-                if (this.typingInProgress) return;
+            card.appendChild(label);
 
-                const alreadyReviewed =
-                    this.currReviewedEvidence.includes(letter);
+            const pre = card.querySelector("pre");
+            if (pre) {
+                pre.style.margin = "0";
+                pre.style.backgroundColor = "transparent";
+                pre.style.fontSize = "14px";
+                pre.style.fontFamily = "'Fira Code', monospace";
+            }
 
-                testCaseImage.setAlpha(0.6);
-                this.textObject.setText("");
+            // 2. Wrap async logic to satisfy ESLint
+            card.addEventListener("click", () => {
+                const runSelection = async () => {
+                    if (this.typingInProgress) return;
 
-                if (mood === "happy") {
-                    this.playJudgeAnimation("happy");
-                } else {
-                    this.playJudgeAnimation("sad");
-                }
+                    card.style.opacity = "0.5";
+                    const alreadyReviewed =
+                        this.currReviewedEvidence.includes(letter);
 
-                await this.addAnimatedTypingText(
-                    feedbackObj.feedback,
-                    21,
-                    30,
-                    alreadyReviewed,
-                );
+                    this.playJudgeAnimation(mood);
 
-                if (mood === "happy") {
-                    this.judge.anims.pause();
-                    this.judge.setFrame(0);
-                } else {
-                    this.judge.anims.pause();
-                    this.judge.setFrame(1);
-                }
-
-                if (alreadyReviewed) return;
-                this.currReviewedEvidence.push(letter);
-
-                if (
-                    this.currReviewedEvidence.length === this.totalEvidenceCases
-                ) {
-                    const revealVerdictButton = createTextButton.call(
-                        this,
-                        850,
-                        190,
-                        {
-                            x: 0,
-                            y: 0,
-                            width: 160,
-                            height: 40,
-                            color: 0x000000,
-                            alpha: 1,
-                        },
-                        {
-                            text: "Reveal Verdict",
-                            fontFamily: "Google Sans Code",
-                            fontSize: 18,
-                            color: "#ffffff",
-                        },
-                        true,
+                    await this.addAnimatedTypingText(
+                        tutorialTestFeedback[i].feedback,
+                        21,
+                        30,
+                        alreadyReviewed,
                     );
 
                     this.judge.anims.pause();
-                    this.judge.setFrame(0);
+                    this.judge.setFrame(mood === "happy" ? 0 : 1);
 
-                    revealVerdictButton.on("pointerdown", async () => {
-                        if (this.typingInProgress) return;
-
-                        revealVerdictButton.destroy();
-
-                        this.textObject.setText("");
-                        this.playJudgeAnimation("happy");
-
-                        await this.addAnimatedTypingText(
-                            "Great work—you've reviewed all the evidence! I hope my explanations helped you better understand how to distinguish strong test cases from weaker ones. With that said, I declare this program to be...",
-                            20,
-                        );
-
+                    if (!alreadyReviewed) {
+                        this.currReviewedEvidence.push(letter);
                         if (
-                            tutorialCases[this.currTutorialCaseIndex]
-                                .correctVerdict === "not guilty"
+                            this.currReviewedEvidence.length ===
+                            this.totalEvidenceCases
                         ) {
-                            this.playJudgeAnimation("happy");
-
-                            this.typingInProgress = true;
-
-                            this.time.delayedCall(1000, async () => {
-                                this.textObject.setText("");
-
-                                playConfettiEffect.call(this);
-
-                                this.tweens.add({
-                                    targets: this.add
-                                        .sprite(830, 290, "innocent")
-                                        .setOrigin(0.5),
-                                    scale: 3.5,
-                                    duration: 500,
-                                    ease: "Bounce.easeOut",
-                                    angle: 13,
-                                });
-
-                                this.playJudgeAnimation("happy");
-
-                                this.typingInProgress = false;
-                                await this.addAnimatedTypingText(
-                                    tutorialCases[this.currTutorialCaseIndex]
-                                        .closingStatement,
-                                );
-                                this.judge.anims.pause();
-                                this.judge.setFrame(0);
-
-                                this.showNextCaseButton();
-                            });
-
-                            this.judge.anims.pause();
-                            this.judge.setFrame(0);
-                        } else {
-                            this.playJudgeAnimation("sad");
-                            this.typingInProgress = true;
-
-                            this.time.delayedCall(1000, async () => {
-                                this.textObject.setText("");
-
-                                this.tweens.add({
-                                    targets: this.add
-                                        .sprite(830, 290, "guilty")
-                                        .setOrigin(0.5),
-                                    scale: 3.5,
-                                    duration: 500,
-                                    ease: "Bounce.easeOut",
-                                    angle: 13,
-                                });
-
-                                this.playJudgeAnimation("sad");
-
-                                this.typingInProgress = false;
-                                await this.addAnimatedTypingText(
-                                    tutorialCases[this.currTutorialCaseIndex]
-                                        .closingStatement,
-                                );
-
-                                this.judge.anims.pause();
-                                this.judge.setFrame(1);
-                                this.showNextCaseButton();
-                            });
-
-                            this.judge.anims.pause();
-                            this.judge.setFrame(1);
+                            this.showVerdictText = true;
+                            this.showNextCaseButton();
                         }
-                    });
-                }
+                    }
+                };
+                runSelection().catch(console.error);
             });
+
+            stackDiv.appendChild(card);
         }
+
+        container.appendChild(stackDiv);
+        this.add.dom(0, 0, container).setOrigin(0, 0);
     }
 
     private playJudgeAnimation(mood: "happy" | "sad") {
@@ -502,7 +474,7 @@ export class Verdict extends Scene {
         if (mood === "happy") {
             this.playJudgeAnimation("happy");
 
-            this.showTestCaseReasonings("happy");
+            await this.showTestCaseReasonings("happy");
 
             await this.addAnimatedTypingText(
                 "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on.",
@@ -515,7 +487,7 @@ export class Verdict extends Scene {
         } else {
             this.playJudgeAnimation("sad");
 
-            this.showTestCaseReasonings("sad");
+            await this.showTestCaseReasonings("sad");
 
             await this.addAnimatedTypingText(
                 tutorialCases[this.currTutorialCaseIndex]
@@ -530,8 +502,12 @@ export class Verdict extends Scene {
     private async checkUserSelections() {
         const currentTestCase = tutorialCases[this.currTutorialCaseIndex];
         const letters = ["A", "B", "C", "D"];
-        const testFeedback = currentTestCase.testFeedback as Array<{ logicBranch: string; misleading?: boolean }>;
-        const requiredBranches = (currentTestCase as Case).requiredBranches ?? [];
+        const testFeedback = currentTestCase.testFeedback as Array<{
+            logicBranch: string;
+            misleading?: boolean;
+        }>;
+        const requiredBranches =
+            (currentTestCase as Case).requiredBranches ?? [];
 
         const coveredBranches = new Set<string>();
         for (let i = 0; i < testFeedback.length; i++) {
@@ -541,11 +517,29 @@ export class Verdict extends Scene {
             }
         }
 
-        const allCovered = requiredBranches.every((b) => coveredBranches.has(b));
+        const allCovered = requiredBranches.every((b) =>
+            coveredBranches.has(b),
+        );
         await this.showJudgeAnimation(allCovered ? "happy" : "sad");
     }
 
     async create() {
+        if (!this.textures.exists("confettiParticle")) {
+            const texture = this.textures.createCanvas(
+                "confettiParticle",
+                10,
+                10,
+            );
+
+            const ctx = texture?.getContext();
+            if (ctx) {
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, 10, 10);
+            }
+
+            texture?.refresh();
+        }
+
         await this.checkUserSelections();
     }
 }

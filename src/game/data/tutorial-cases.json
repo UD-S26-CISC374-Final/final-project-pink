@@ -9,21 +9,88 @@
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
         "requiredBranches": ["positive", "negative"],
+        "evidencePool": [
+            {
+                "id": "c1-t1",
+                "label": "assert(absolute_value(5), 5)",
+                "input": "5",
+                "expectedOutput": "5",
+                "actualOutput": "5",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c1-t2",
+                "label": "assert(absolute_value(-3), 3)",
+                "input": "-3",
+                "expectedOutput": "3",
+                "actualOutput": "3",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c1-t3",
+                "label": "assert(absolute_value(0), 0)",
+                "input": "0",
+                "expectedOutput": "0",
+                "actualOutput": "0",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c1-t4",
+                "label": "assert(absolute_value(-100), 100)",
+                "input": "-100",
+                "expectedOutput": "100",
+                "actualOutput": "100",
+                "passes": true,
+                "showResult": true
+            }
+        ],
         "testFeedback": [
             {
                 "testId": "c1-t1",
+                "label": "assert(absolute_value(5), 5)",
+                "input": "5",
+                "expectedOutput": "5",
+                "actualOutput": "5",
+                "passes": true,
+                "showResult": true,
                 "logicBranch": "positive",
                 "feedback": "This test verifies the 'positive' path. It confirms that when given a normal positive number, the function returns it unchanged. No negation needed."
             },
             {
                 "testId": "c1-t2",
+                "label": "assert(absolute_value(-3), 3)",
+                "input": "-3",
+                "expectedOutput": "3",
+                "actualOutput": "3",
+                "passes": true,
+                "showResult": true,
                 "logicBranch": "negative",
                 "feedback": "This test forces the code into the 'if' block, proving the function correctly negates a negative input to return its absolute value."
             },
             {
                 "testId": "c1-t3",
+                "label": "assert(absolute_value(0), 0)",
+                "input": "0",
+                "expectedOutput": "0",
+                "actualOutput": "0",
+                "passes": true,
+                "showResult": true,
                 "logicBranch": "positive",
                 "feedback": "This test covers the positive-number path. Valid on its own, but if you've already selected Test A, both tests check the same branch and one is redundant."
+            },
+            {
+                "testId": "c1-t4",
+                "label": "assert(absolute_value(-100), 100)",
+                "input": "-100",
+                "expectedOutput": "100",
+                "actualOutput": "100",
+                "passes": true,
+                "showResult": true,
+                "logicBranch": "negative",
+                "feedback": "This also covers the negative-number path. Valid on its own, but if you've already selected Test B, both tests check the same branch and one is redundant."
             }
         ],
         "missedEvidenceExplanation": "The function has two paths: positive numbers and negative numbers. Tests A and C both check the positive branch, so you only need one to cover it. The key is pairing a positive-number test with a negative-number test to verify both sides of the logic.",
@@ -42,7 +109,7 @@
         "evidencePool": [
             {
                 "id": "c2-t1",
-                "label": "greet('Alice') -> 'Hello Alice'",
+                "label": "assert(greet('Alice'), 'Hello Alice')",
                 "input": "'Alice'",
                 "expectedOutput": "Hello Alice",
                 "actualOutput": "HelloAlice",
@@ -51,7 +118,7 @@
             },
             {
                 "id": "c2-t2",
-                "label": "greet(' Bob') -> 'Hello Bob'",
+                "label": "assert(greet(' Bob'), 'Hello Bob')",
                 "input": "' Bob'",
                 "expectedOutput": "Hello Bob",
                 "actualOutput": "Hello Bob",
@@ -60,7 +127,7 @@
             },
             {
                 "id": "c2-t3",
-                "label": "greet('') -> 'Hello '",
+                "label": "assert(greet(''), 'Hello ')",
                 "input": "''",
                 "expectedOutput": "Hello ",
                 "actualOutput": "Hello",
@@ -69,7 +136,7 @@
             },
             {
                 "id": "c2-t4",
-                "label": "greet('World') -> 'Hello World'",
+                "label": "assert(greet('World'), 'Hello World')",
                 "input": "'World'",
                 "expectedOutput": "Hello World",
                 "actualOutput": "HelloWorld",
@@ -80,22 +147,46 @@
         "testFeedback": [
             {
                 "testId": "c2-t1",
+                "label": "assert(greet('Alice'), 'Hello Alice')",
+                "input": "'Alice'",
+                "expectedOutput": "Hello Alice",
+                "actualOutput": "HelloAlice",
+                "passes": false,
+                "showResult": true,
                 "logicBranch": "normal-name",
                 "feedback": "This test is a critical piece of evidence. It clearly demonstrates that the function fails to add a space, resulting in the name and greeting being smashed together."
             },
             {
                 "testId": "c2-t2",
+                "label": "assert(greet(' Bob'), 'Hello Bob')",
+                "input": "' Bob'",
+                "expectedOutput": "Hello Bob",
+                "actualOutput": "Hello Bob",
+                "passes": true,
+                "showResult": true,
                 "logicBranch": "prefixed-name",
                 "misleading": true,
                 "feedback": "This test is misleading. Because the input itself starts with a space (' Bob'), it makes the function look like it is working even though the code is actually broken."
             },
             {
                 "testId": "c2-t3",
+                "label": "assert(greet(''), 'Hello ')",
+                "input": "''",
+                "expectedOutput": "Hello ",
+                "actualOutput": "Hello",
+                "passes": false,
+                "showResult": true,
                 "logicBranch": "empty-name",
                 "feedback": "An important edge case: an empty name reveals the function doesn't even output a trailing space after 'Hello', exposing a second consequence of the missing space."
             },
             {
                 "testId": "c2-t4",
+                "label": "assert(greet('World'), 'Hello World')",
+                "input": "'World'",
+                "expectedOutput": "Hello World",
+                "actualOutput": "HelloWorld",
+                "passes": false,
+                "showResult": true,
                 "logicBranch": "normal-name",
                 "feedback": "This also exposes the missing-space bug with a different name. It's valid evidence, but if you've already selected Test A, both tests reveal the same flaw."
             }
@@ -109,7 +200,7 @@
         "tutorialText": "You're gaining confidence in the courtroom! Let's see how you handle a function with a more subtle logic gap.",
         "descTutorialText": "This function claims to handle both even and odd numbers. Review the evidence carefully to see if it actually delivers on that promise.",
         "title": "The One-Track Mind",
-        "functionCode": "def is_even(n):\n    if n % 2 == 0:\n        return True\n    # BUG: Missing the else statement or a default return\n    # Python returns 'None' if no return is hit",
+        "functionCode": "def is_even(n):\n    if n % 2 == 0:\n        return True\n  return\n",
         "description": "I check if a number is even. I return True for evens and False for odds.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
@@ -117,7 +208,7 @@
         "evidencePool": [
             {
                 "id": "c3-t1",
-                "label": "is_even(2) -> True",
+                "label": "assert(is_even(2), True)",
                 "input": "2",
                 "expectedOutput": "True",
                 "actualOutput": "True",
@@ -126,7 +217,7 @@
             },
             {
                 "id": "c3-t2",
-                "label": "is_even(3) -> False",
+                "label": "assert(is_even(3), False)",
                 "input": "3",
                 "expectedOutput": "False",
                 "actualOutput": "None",
@@ -135,7 +226,7 @@
             },
             {
                 "id": "c3-t3",
-                "label": "is_even(0) -> True",
+                "label": "assert(is_even(0), True)",
                 "input": "0",
                 "expectedOutput": "True",
                 "actualOutput": "True",
@@ -144,7 +235,7 @@
             },
             {
                 "id": "c3-t4",
-                "label": "is_even(7) -> False",
+                "label": "assert(is_even(7), False)",
                 "input": "7",
                 "expectedOutput": "False",
                 "actualOutput": "None",
@@ -182,7 +273,7 @@
         "difficulty": "easy",
         "tutorialText": "",
         "title": "The Listless Guardian",
-        "functionCode": "def get_first_item(items):\n    # BUG: Crashes if the list is empty\n    return items[0]",
+        "functionCode": "def get_first_item(items):\n     return items[0]",
         "description": "I return the first item in any list. If the list is empty, I return 'None'.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
@@ -190,7 +281,7 @@
         "evidencePool": [
             {
                 "id": "c5-t1",
-                "label": "get_first_item(['A', 'B']) -> 'A'",
+                "label": "assert(get_first_item(['A', 'B']), 'A')",
                 "input": "['A', 'B']",
                 "expectedOutput": "A",
                 "actualOutput": "A",
@@ -199,7 +290,7 @@
             },
             {
                 "id": "c5-t2",
-                "label": "get_first_item([]) -> None",
+                "label": "assert(get_first_item([]), None)",
                 "input": "[]",
                 "expectedOutput": "None",
                 "actualOutput": "IndexError: list index out of range",
@@ -208,7 +299,7 @@
             },
             {
                 "id": "c5-t3",
-                "label": "get_first_item([100]) -> 100",
+                "label": "assert(get_first_item([100]), 100)",
                 "input": "[100]",
                 "expectedOutput": "100",
                 "actualOutput": "100",
@@ -217,7 +308,7 @@
             },
             {
                 "id": "c5-t4",
-                "label": "get_first_item(['Cat', 'Dog']) -> 'Cat'",
+                "label": "assert(get_first_item(['Cat', 'Dog']), 'Cat')",
                 "input": "['Cat', 'Dog']",
                 "expectedOutput": "Cat",
                 "actualOutput": "Cat",
@@ -264,7 +355,7 @@
         "evidencePool": [
             {
                 "id": "c4-t1",
-                "label": "add(5, 5) -> 10",
+                "label": "assert(add_positive_only(5, 5), 10)",
                 "input": "5, 5",
                 "expectedOutput": "10",
                 "actualOutput": "10",
@@ -273,7 +364,7 @@
             },
             {
                 "id": "c4-t2",
-                "label": "add(-1, 5) -> 'Error'",
+                "label": "assert(add_positive_only(-1, 5), 'Error')",
                 "input": "-1, 5",
                 "expectedOutput": "'Error'",
                 "actualOutput": "'Error'",
@@ -282,7 +373,7 @@
             },
             {
                 "id": "c4-t3",
-                "label": "add(0, 5) -> 'Error'",
+                "label": "assert(add_positive_only(0, 5), 'Error')",
                 "input": "0, 5",
                 "expectedOutput": "'Error'",
                 "actualOutput": "'Error'",
@@ -291,7 +382,7 @@
             },
             {
                 "id": "c4-t4",
-                "label": "add(10, 2) -> 12",
+                "label": "assert(add_positive_only(10, 2), 12)",
                 "input": "10, 2",
                 "expectedOutput": "12",
                 "actualOutput": "12",
@@ -329,7 +420,7 @@
         "difficulty": "medium",
         "tutorialText": "",
         "title": "The Capital Crime",
-        "functionCode": "def check_password(pw):\n    # BUG: Only checks length, ignores the 'uppercase' rule\n    if len(pw) >= 8:\n        return True\n    return False",
+        "functionCode": "def check_password(pw):\n    if len(pw) >= 8:\n        return True\n    return False",
         "description": "I ensure passwords are secure. They must be 8 characters long AND contain at least one uppercase letter.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
@@ -337,7 +428,7 @@
         "evidencePool": [
             {
                 "id": "c6-t1",
-                "label": "check_password('password123') -> False",
+                "label": "assert(check_password('password123'), False)",
                 "input": "'password123'",
                 "expectedOutput": "False",
                 "actualOutput": "True",
@@ -346,7 +437,7 @@
             },
             {
                 "id": "c6-t2",
-                "label": "check_password('Password123') -> True",
+                "label": "assert(check_password('Password123'), True)",
                 "input": "'Password123'",
                 "expectedOutput": "True",
                 "actualOutput": "True",
@@ -355,7 +446,7 @@
             },
             {
                 "id": "c6-t3",
-                "label": "check_password('ABC') -> False",
+                "label": "assert(check_password('ABC'), False)",
                 "input": "'ABC'",
                 "expectedOutput": "False",
                 "actualOutput": "False",
@@ -364,7 +455,7 @@
             },
             {
                 "id": "c6-t4",
-                "label": "check_password('short') -> False",
+                "label": "assert(check_password('short'), False)",
                 "input": "'short'",
                 "expectedOutput": "False",
                 "actualOutput": "False",

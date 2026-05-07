@@ -1,8 +1,10 @@
 import { Scene } from "phaser";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
-import tutorialCases from "../data/tutorial-cases.json";
 import createTextButton from "../utils/createTextButton";
 import showDraggableTestCases from "../utils/dragging-logic";
+import { codeToHtml } from "shiki";
+import getCaseData from "../utils/getCaseData";
+import tutorialCases from "../data/tutorial-cases.json";
 
 // TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
 // TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
@@ -34,9 +36,13 @@ export class Case extends Scene {
     };
     showSkipMessageTip = true;
     dragDom: Phaser.GameObjects.DOMElement | undefined;
+    caseDom: Phaser.GameObjects.DOMElement | undefined;
+    evidenceDom: Phaser.GameObjects.DOMElement | undefined;
     levelDifficulty: "easy" | "medium" | "hard";
     tabDialogueShown: Set<"code" | "explanation" | "test-cases"> = new Set();
     evidenceReady: boolean = false;
+    SCREEN_W = 860;
+    SCREEN_H = 520;
 
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
@@ -44,6 +50,13 @@ export class Case extends Scene {
     private async goBack() {
         if (this.typingInProgress) return;
         if (this.dragDom) this.dragDom.destroy();
+        if (this.evidenceDom) this.evidenceDom.destroy();
+
+        getCaseData(
+            this.isTutorial,
+            this.levelDifficulty,
+            this.currentTutorialCaseIndex,
+        );
 
         if (this.caseFileTestCases.length)
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
@@ -54,15 +67,7 @@ export class Case extends Scene {
         }
         this.evidenceReady = false;
 
-        this.caseFileCodeSnippet = this.add
-            .image(
-                512,
-                450,
-                `tutorial-code-${this.currentTutorialCaseIndex ? this.currentTutorialCaseIndex : this.currentTutorialCaseIndex}`,
-            )
-            .setDisplaySize(920, 600)
-            .setScale(0.26)
-            .setDepth(10);
+        await this.generateStyledCodeSnippet();
 
         this.add
             .sprite(512, 450, "case-file-open-program", 0)
@@ -82,6 +87,68 @@ export class Case extends Scene {
             undefined,
             codeAlreadyShown,
         );
+    }
+
+    async generateStyledCodeSnippet(
+        caseData: string = getCaseData(
+            this.isTutorial,
+            this.levelDifficulty,
+            this.currentTutorialCaseIndex,
+        ).case,
+    ) {
+        const container: HTMLDivElement = document.createElement("div");
+        container.id = "question-area";
+
+        const codeContainer = document.createElement("div");
+
+        Object.assign(codeContainer.style, {
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontFamily: "'Google Sans Code', 'Fira Code', monospace",
+            fontSize: "20px",
+            backgroundColor: "#0d1117",
+            borderRadius: "8px",
+            border: "1px solid #30363d",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+            width: "fit-content",
+            maxWidth: "90%",
+            maxHeight: "90%",
+            overflow: "auto",
+        });
+
+        // 2. Generate the HTML from Shiki
+        const codeHTML = await codeToHtml(caseData, {
+            lang: "python",
+            theme: "github-dark",
+        });
+
+        // 3. Inject and Clean Up
+        codeContainer.innerHTML = codeHTML;
+
+        // 4. Target the Shiki-generated <pre> to ensure it feels "integrated"
+        const preTag = codeContainer.querySelector("pre");
+        if (preTag) {
+            preTag.style.margin = "0";
+            preTag.style.padding = "18px";
+            preTag.style.lineHeight = "1.6";
+            preTag.style.backgroundColor = "transparent";
+        }
+
+        // 5. Add to Phaser's DOM parent
+        container.appendChild(codeContainer);
+
+        Object.assign(container.style, {
+            position: "relative",
+            width: `${this.SCREEN_W}px`,
+            height: `${this.SCREEN_H}px`,
+            marginTop: "205px",
+            marginLeft: "78px",
+            overflow: "hidden",
+        });
+
+        this.caseDom = this.add.dom(0, 0, container).setOrigin(0, 0);
     }
 
     private showBackButton() {
@@ -136,48 +203,70 @@ export class Case extends Scene {
         });
     }
 
-    private addTestCases(startY: number = 380, marginY: number = 15) {
-        const testFeedback =
-            tutorialCases[this.currentTutorialCaseIndex].testFeedback;
-        const centerX = 512; // Your current horizontal center
-        const columnWidth = 400; // How far apart the two columns should be
-        const scale = 0.2;
+    private async addTestCases() {
+        const { feedback: testFeedback } = getCaseData(
+            this.isTutorial,
+            this.levelDifficulty,
+            this.currentTutorialCaseIndex,
+        );
 
-        // Gemini provided the grid formatting logic below:
-        testFeedback.forEach((_, i) => {
-            // Determine column (0 or 1) and row (0, 1, 2...)
-            const col = i % 2;
-            const row = Math.floor(i / 2);
-
-            // Calculate X: Offset left for col 0, right for col 1
-            const xPos =
-                col === 0 ?
-                    centerX - columnWidth / 2
-                :   centerX + columnWidth / 2;
-
-            // Get texture to calculate height dynamically
-            const texture = this.textures.get(
-                `tutorial-${this.currentTutorialCaseIndex}-t${i + 1}`,
-            );
-            const source = texture.getSourceImage();
-            const scaledHeight = source.height * scale;
-
-            // Calculate Y: Start position + (height of image + margin) * row index
-            const yPos = startY + row * (scaledHeight + marginY);
-
-            const testCase = this.add
-                .image(
-                    xPos,
-                    yPos,
-                    `tutorial-${this.currentTutorialCaseIndex}-t${i + 1}`,
-                )
-                .setScale(scale)
-                .setDepth(10)
-                .setInteractive();
-
-            this.caseFileTestCases.push(testCase);
+        const container = document.createElement("div");
+        Object.assign(container.style, {
+            position: "relative",
+            width: `${this.SCREEN_W}px`,
+            height: `${this.SCREEN_H}px`,
+            marginTop: "205px",
+            marginLeft: "78px",
+            overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
         });
 
+        const gridDiv = document.createElement("div");
+        Object.assign(gridDiv.style, {
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            columnGap: "40px",
+            rowGap: "24px",
+            width: "90%",
+            boxSizing: "border-box",
+            margin: "20% auto",
+        });
+
+        for (const test of testFeedback) {
+            const card = document.createElement("div");
+            card.id = test.id;
+
+            Object.assign(card.style, {
+                backgroundColor: "#0d1117",
+                borderRadius: "8px",
+                padding: "12px 20px",
+                display: "flex",
+                alignItems: "center",
+                border: "1px solid #333",
+            });
+
+            const codeHTML = await codeToHtml(test.label, {
+                lang: "python",
+                theme: "github-dark",
+            });
+
+            card.innerHTML = codeHTML;
+
+            const pre = card.querySelector("pre");
+            if (pre) {
+                pre.style.margin = "0";
+                pre.style.backgroundColor = "transparent";
+                pre.style.fontSize = "15px";
+                pre.style.fontFamily = "'Fira Code', monospace";
+            }
+
+            gridDiv.appendChild(card);
+        }
+
+        container.appendChild(gridDiv);
+        this.evidenceDom = this.add.dom(0, 0, container).setOrigin(0, 0);
         this.clickableTestCases();
     }
 
@@ -220,63 +309,78 @@ export class Case extends Scene {
     }
 
     private clickableTestCases() {
-        for (let i = 0; i < this.caseFileTestCases.length; i++) {
-            const testCase = this.caseFileTestCases[i];
+        const { feedback: testFeedback } = getCaseData(
+            this.isTutorial,
+            this.levelDifficulty,
+            this.currentTutorialCaseIndex,
+        );
 
-            testCase.on("pointerdown", async () => {
+        testFeedback.forEach((test, i) => {
+            const card = this.evidenceDom?.getChildByID(test.id) as HTMLElement;
+
+            card.style.cursor = "pointer";
+
+            card.addEventListener("click", () => {
                 if (this.typingInProgress) return;
+
                 const letter: string = this.letterMap[i];
                 const isSelected = this.selectedTestCases.includes(letter);
 
-                if (isSelected) {
-                    this.selectedTestCases = this.selectedTestCases.filter(
-                        (test) => test !== letter,
-                    );
-                    testCase.setAlpha(1);
+                const handleSelection = async () => {
+                    if (isSelected) {
+                        this.selectedTestCases = this.selectedTestCases.filter(
+                            (t) => t !== letter,
+                        );
+                        card.style.opacity = "1";
+
+                        if (
+                            this.selectedTestCases.length < 2 &&
+                            this.presentToJudgeButton
+                        ) {
+                            this.evidenceReady = false;
+                            (
+                                this.presentToJudgeButton
+                                    .list[1] as Phaser.GameObjects.Text
+                            ).setText("Select the TWO best test cases");
+                        }
+                    } else {
+                        if (this.selectedTestCases.length >= 2) {
+                            this.textObject.setText("");
+
+                            await this.addAnimatedTypingText(
+                                "Remember: You can only select 2 test cases as evidence. Please deselect one...",
+                                22,
+                                20,
+                                true,
+                            );
+
+                            this.reminderMessageReference = this.textObject;
+                            return;
+                        }
+
+                        this.selectedTestCases.push(letter);
+                        card.style.opacity = "0.5";
+                    }
 
                     if (
-                        this.selectedTestCases.length < 2 &&
+                        this.selectedTestCases.length === 2 &&
                         this.presentToJudgeButton
                     ) {
-                        this.evidenceReady = false;
+                        this.evidenceReady = true;
                         (
                             this.presentToJudgeButton
                                 .list[1] as Phaser.GameObjects.Text
-                        ).setText("Select the TWO best test cases");
+                        )
+                            .setText("Present Evidence to Judge Compiler")
+                            .setColor("#ffffff");
                     }
-                } else {
-                    if (this.selectedTestCases.length >= 2) {
-                        this.textObject.setText("");
+                };
 
-                        await this.addAnimatedTypingText(
-                            "Remember: You can only select 2 test cases as evidence. Please deselect one...",
-                            22,
-                            20,
-                            true,
-                        );
-
-                        this.reminderMessageReference = this.textObject;
-                        return;
-                    }
-
-                    this.selectedTestCases.push(letter);
-                    testCase.setAlpha(0.5);
-                }
-
-                if (
-                    this.selectedTestCases.length === 2 &&
-                    this.presentToJudgeButton
-                ) {
-                    this.evidenceReady = true;
-                    (
-                        this.presentToJudgeButton
-                            .list[1] as Phaser.GameObjects.Text
-                    )
-                        .setText("Present Evidence to Judge Compiler")
-                        .setColor("#ffffff");
-                }
+                handleSelection().catch((err) =>
+                    console.error("Selection error:", err),
+                );
             });
-        }
+        });
     }
 
     private playTimer() {
@@ -356,7 +460,7 @@ export class Case extends Scene {
             this.textObject.setText("");
             this.currentTab = "test-cases";
             this.backButton.destroy();
-            this.caseFileCodeSnippet.destroy();
+            this.caseDom?.destroy();
 
             if (this.programDescTextReference)
                 this.programDescTextReference.destroy();
@@ -369,17 +473,15 @@ export class Case extends Scene {
                     "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button."
                 :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
 
-            if (this.levelDifficulty !== "hard") this.addTestCases(350);
+            if (this.levelDifficulty !== "hard") await this.addTestCases();
             if (this.levelDifficulty === "hard") {
-                const SCREEN_W = 860;
-                const SCREEN_H = 520;
                 const container: HTMLDivElement = document.createElement("div");
                 container.id = "draggable-area";
 
                 Object.assign(container.style, {
                     position: "relative",
-                    width: `${SCREEN_W}px`,
-                    height: `${SCREEN_H}px`,
+                    width: `${this.SCREEN_W}px`,
+                    height: `${this.SCREEN_H}px`,
                     marginTop: "205px",
                     marginLeft: "78px",
                     overflow: "hidden",
@@ -422,8 +524,9 @@ export class Case extends Scene {
             if (this.currentTab === "explanation") return;
             if (this.presentToJudgeButton) this.presentToJudgeButton.destroy();
             if (this.dragDom) this.dragDom.destroy();
+            if (this.evidenceDom) this.evidenceDom.destroy();
 
-            this.caseFileCodeSnippet.destroy();
+            this.caseDom?.destroy();
             this.currentTab = "explanation";
             this.backButton.destroy();
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
@@ -514,14 +617,10 @@ export class Case extends Scene {
             .setDisplaySize(920, 600);
         this.drawTabs();
 
-        // 2. Next, we will display the code snippet for the case file
-        this.caseFileCodeSnippet = this.add
-            .image(512, 450, `tutorial-code-${this.currentTutorialCaseIndex}`)
-            .setDisplaySize(920, 600)
-            .setScale(0.26)
-            .setDepth(10);
+        // 2. Next, we'll create a Phaser DOM overlay to render the code snippet with syntax highlighting using PrismJS
+        await this.generateStyledCodeSnippet();
 
-        // 3. Next, we are going to introduce the user with the next tutorial's text
+        // 6. Next, we are going to introduce the user with the next tutorial's text
         this.showBackButton();
 
         await this.addAnimatedTypingText(this.nextTutorialText);
