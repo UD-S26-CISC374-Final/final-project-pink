@@ -200,7 +200,7 @@
         "tutorialText": "You're gaining confidence in the courtroom! Let's see how you handle a function with a more subtle logic gap.",
         "descTutorialText": "This function claims to handle both even and odd numbers. Review the evidence carefully to see if it actually delivers on that promise.",
         "title": "The One-Track Mind",
-        "functionCode": "def is_even(n):\n    if n % 2 == 0:\n        return True\n    # BUG: Missing the else statement or a default return\n    # Python returns 'None' if no return is hit",
+        "functionCode": "def is_even(n):\n    if n % 2 == 0:\n        return True\n  return\n",
         "description": "I check if a number is even. I return True for evens and False for odds.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
@@ -273,7 +273,7 @@
         "difficulty": "easy",
         "tutorialText": "",
         "title": "The Listless Guardian",
-        "functionCode": "def get_first_item(items):\n    # BUG: Crashes if the list is empty\n    return items[0]",
+        "functionCode": "def get_first_item(items):\n     return items[0]",
         "description": "I return the first item in any list. If the list is empty, I return 'None'.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
@@ -420,7 +420,7 @@
         "difficulty": "medium",
         "tutorialText": "",
         "title": "The Capital Crime",
-        "functionCode": "def check_password(pw):\n    # BUG: Only checks length, ignores the 'uppercase' rule\n    if len(pw) >= 8:\n        return True\n    return False",
+        "functionCode": "def check_password(pw):\n    if len(pw) >= 8:\n        return True\n    return False",
         "description": "I ensure passwords are secure. They must be 8 characters long AND contain at least one uppercase letter.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
@@ -428,7 +428,7 @@
         "evidencePool": [
             {
                 "id": "c6-t1",
-                "label": "assert(check_password('password123'),False)",
+                "label": "assert(check_password('password123'), False)",
                 "input": "'password123'",
                 "expectedOutput": "False",
                 "actualOutput": "True",
@@ -437,7 +437,7 @@
             },
             {
                 "id": "c6-t2",
-                "label": "assert(check_password('Password123'),True)",
+                "label": "assert(check_password('Password123'), True)",
                 "input": "'Password123'",
                 "expectedOutput": "True",
                 "actualOutput": "True",
@@ -446,7 +446,7 @@
             },
             {
                 "id": "c6-t3",
-                "label": "assert(check_password('ABC'),False)",
+                "label": "assert(check_password('ABC'), False)",
                 "input": "'ABC'",
                 "expectedOutput": "False",
                 "actualOutput": "False",
@@ -455,7 +455,7 @@
             },
             {
                 "id": "c6-t4",
-                "label": "assert(check_password('short'),False)",
+                "label": "assert(check_password('short'), False)",
                 "input": "'short'",
                 "expectedOutput": "False",
                 "actualOutput": "False",
