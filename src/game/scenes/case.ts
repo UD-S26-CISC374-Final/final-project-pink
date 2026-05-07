@@ -90,10 +90,11 @@ export class Case extends Scene {
         );
     }
 
-    async generateStyledCodeSnippet() {
+    async generateStyledCodeSnippet(
+        caseData: string = this.getCaseData().case,
+    ) {
         const container: HTMLDivElement = document.createElement("div");
         container.id = "question-area";
-        const { case: caseData } = this.getCaseData();
 
         const codeContainer = document.createElement("div");
 
