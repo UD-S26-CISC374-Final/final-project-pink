@@ -1,5 +1,6 @@
 import { Scene } from "phaser";
 import tutorialCases from "../data/tutorial-cases.json";
+import type { Case } from "../data/types";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import { playConfettiEffect } from "../utils/playConfettiEffect";
 import createTextButton from "../utils/createTextButton";
@@ -200,7 +201,7 @@ export class Verdict extends Scene {
     showTestCaseReasonings(mood: "happy" | "sad") {
         const currentCase = tutorialCases[this.currTutorialCaseIndex];
         const tutorialTestFeedback = currentCase.testFeedback as Array<{ logicBranch: string; misleading?: boolean; feedback: string; testId: string }>;
-        const requiredBranches = (currentCase as { requiredBranches: string[] }).requiredBranches;
+        const requiredBranches = (currentCase as Case).requiredBranches ?? [];
         const LETTERS = ["A", "B", "C", "D"];
 
         for (let i = 0; i < tutorialTestFeedback.length; i++) {
@@ -530,7 +531,7 @@ export class Verdict extends Scene {
         const currentTestCase = tutorialCases[this.currTutorialCaseIndex];
         const letters = ["A", "B", "C", "D"];
         const testFeedback = currentTestCase.testFeedback as Array<{ logicBranch: string; misleading?: boolean }>;
-        const requiredBranches = (currentTestCase as { requiredBranches: string[] }).requiredBranches;
+        const requiredBranches = (currentTestCase as Case).requiredBranches ?? [];
 
         const coveredBranches = new Set<string>();
         for (let i = 0; i < testFeedback.length; i++) {
