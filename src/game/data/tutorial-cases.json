@@ -9,6 +9,44 @@
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
         "requiredBranches": ["positive", "negative"],
+        "evidencePool": [
+            {
+                "id": "c1-t1",
+                "label": "assert(absolute_value(5), 5)",
+                "input": "5",
+                "expectedOutput": "5",
+                "actualOutput": "5",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c1-t2",
+                "label": "assert(absolute_value(-3), 3)",
+                "input": "-3",
+                "expectedOutput": "3",
+                "actualOutput": "3",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c1-t3",
+                "label": "assert(absolute_value(0), 0)",
+                "input": "0",
+                "expectedOutput": "0",
+                "actualOutput": "0",
+                "passes": true,
+                "showResult": true
+            },
+            {
+                "id": "c1-t4",
+                "label": "assert(absolute_value(-100), 100)",
+                "input": "-100",
+                "expectedOutput": "100",
+                "actualOutput": "100",
+                "passes": true,
+                "showResult": true
+            }
+        ],
         "testFeedback": [
             {
                 "testId": "c1-t1",
