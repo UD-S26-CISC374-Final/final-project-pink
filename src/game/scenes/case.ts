@@ -68,15 +68,7 @@ export class Case extends Scene {
         }
         this.evidenceReady = false;
 
-        this.caseFileCodeSnippet = this.add
-            .image(
-                512,
-                450,
-                `tutorial-code-${this.currentTutorialCaseIndex ? this.currentTutorialCaseIndex : this.currentTutorialCaseIndex}`,
-            )
-            .setDisplaySize(920, 600)
-            .setScale(0.26)
-            .setDepth(10);
+        await this.generateStyledCodeSnippet();
 
         this.add
             .sprite(512, 450, "case-file-open-program", 0)
@@ -96,6 +88,63 @@ export class Case extends Scene {
             undefined,
             codeAlreadyShown,
         );
+    }
+
+    async generateStyledCodeSnippet() {
+        const container: HTMLDivElement = document.createElement("div");
+        container.id = "question-area";
+        const { case: caseData } = this.getCaseData();
+
+        const codeContainer = document.createElement("div");
+
+        Object.assign(codeContainer.style, {
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            fontFamily: "'Google Sans Code', 'Fira Code', monospace",
+            fontSize: "20px",
+            backgroundColor: "#0d1117",
+            borderRadius: "8px",
+            border: "1px solid #30363d",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+            width: "fit-content",
+            maxWidth: "90%",
+            maxHeight: "90%",
+            overflow: "auto",
+        });
+
+        // 2. Generate the HTML from Shiki
+        const codeHTML = await codeToHtml(caseData, {
+            lang: "python",
+            theme: "github-dark",
+        });
+
+        // 3. Inject and Clean Up
+        codeContainer.innerHTML = codeHTML;
+
+        // 4. Target the Shiki-generated <pre> to ensure it feels "integrated"
+        const preTag = codeContainer.querySelector("pre");
+        if (preTag) {
+            preTag.style.margin = "0";
+            preTag.style.padding = "18px";
+            preTag.style.lineHeight = "1.6";
+            preTag.style.backgroundColor = "transparent";
+        }
+
+        // 5. Add to Phaser's DOM parent
+        container.appendChild(codeContainer);
+
+        Object.assign(container.style, {
+            position: "relative",
+            width: `${this.SCREEN_W}px`,
+            height: `${this.SCREEN_H}px`,
+            marginTop: "205px",
+            marginLeft: "78px",
+            overflow: "hidden",
+        });
+
+        this.caseDom = this.add.dom(0, 0, container).setOrigin(0, 0);
     }
 
     private showBackButton() {
@@ -565,60 +614,7 @@ export class Case extends Scene {
         this.drawTabs();
 
         // 2. Next, we'll create a Phaser DOM overlay to render the code snippet with syntax highlighting using PrismJS
-        const container: HTMLDivElement = document.createElement("div");
-        container.id = "question-area";
-        const { case: caseData } = this.getCaseData();
-
-        const codeContainer = document.createElement("div");
-
-        Object.assign(codeContainer.style, {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            fontFamily: "'Google Sans Code', 'Fira Code', monospace",
-            fontSize: "20px",
-            backgroundColor: "#0d1117",
-            borderRadius: "8px",
-            border: "1px solid #30363d",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
-            width: "fit-content",
-            maxWidth: "90%",
-            maxHeight: "90%",
-            overflow: "auto",
-        });
-
-        // 2. Generate the HTML from Shiki
-        const codeHTML = await codeToHtml(caseData, {
-            lang: "python",
-            theme: "github-dark",
-        });
-
-        // 3. Inject and Clean Up
-        codeContainer.innerHTML = codeHTML;
-
-        // 4. Target the Shiki-generated <pre> to ensure it feels "integrated"
-        const preTag = codeContainer.querySelector("pre");
-        if (preTag) {
-            preTag.style.margin = "0";
-            preTag.style.padding = "18px";
-            preTag.style.lineHeight = "1.6";
-            preTag.style.backgroundColor = "transparent";
-        }
-
-        // 5. Add to Phaser's DOM parent
-        container.appendChild(codeContainer);
-
-        Object.assign(container.style, {
-            position: "relative",
-            width: `${this.SCREEN_W}px`,
-            height: `${this.SCREEN_H}px`,
-            marginTop: "205px",
-            marginLeft: "78px",
-            overflow: "hidden",
-        });
-
-        this.caseDom = this.add.dom(0, 0, container).setOrigin(0, 0);
+        await this.generateStyledCodeSnippet();
 
         // 6. Next, we are going to introduce the user with the next tutorial's text
         this.showBackButton();
