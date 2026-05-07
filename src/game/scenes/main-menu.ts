@@ -35,7 +35,7 @@ export class MainMenu extends Scene implements ChangeableScene {
             "court_other_2_lights_off",
         ];
 
-        const flickerImgs = flickerKeys.map(key =>
+        const flickerImgs = flickerKeys.map((key) =>
             this.add
                 .image(512, 384, key)
                 .setDisplaySize(1024, 768)
@@ -45,9 +45,9 @@ export class MainMenu extends Scene implements ChangeableScene {
 
         const scheduleFlicker = () => {
             const delay =
-                Math.random() < 0.25
-                    ? Phaser.Math.Between(80, 350)
-                    : Phaser.Math.Between(500, 7000);
+                Math.random() < 0.25 ?
+                    Phaser.Math.Between(80, 350)
+                :   Phaser.Math.Between(500, 7000);
 
             this.time.delayedCall(delay, () => {
                 const steps = Phaser.Math.Between(3, 18);
@@ -56,9 +56,11 @@ export class MainMenu extends Scene implements ChangeableScene {
                 ];
                 for (let i = 1; i < steps; i++) {
                     sequence.push(
-                        Math.random() < 0.4
-                            ? null
-                            : flickerImgs[Phaser.Math.Between(0, flickerImgs.length - 1)],
+                        Math.random() < 0.4 ?
+                            null
+                        :   flickerImgs[
+                                Phaser.Math.Between(0, flickerImgs.length - 1)
+                            ],
                     );
                 }
 
@@ -74,7 +76,7 @@ export class MainMenu extends Scene implements ChangeableScene {
                 }
 
                 this.time.delayedCall(t + 50, () => {
-                    flickerImgs.forEach(f => f.setAlpha(0));
+                    flickerImgs.forEach((f) => f.setAlpha(0));
                     scheduleFlicker();
                 });
             });
@@ -166,13 +168,19 @@ export class MainMenu extends Scene implements ChangeableScene {
         this.drawButton("START", 540, () => {
             CaseManager.getInstance().loadTutorial();
             this.gamemode = "Tutorial";
-            this.changeScene();
+            this.cameras.main.once("camerafadeoutcomplete", () => {
+                this.changeScene();
+            });
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
         });
 
         this.drawButton("TUTORIAL", 612, () => {
             CaseManager.getInstance().loadTutorial();
             this.gamemode = "Tutorial";
-            this.changeScene();
+            this.cameras.main.once("camerafadeoutcomplete", () => {
+                this.changeScene();
+            });
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
         });
 
         EventBus.emit("current-scene-ready", this);
