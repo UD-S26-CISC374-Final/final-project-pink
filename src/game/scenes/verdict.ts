@@ -1,11 +1,12 @@
 import { Scene } from "phaser";
 import tutorialCases from "../data/tutorial-cases.json";
-import type { Case } from "../data/types";
+import type { Case, TestFeedback } from "../data/types";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import { playConfettiEffect } from "../utils/playConfettiEffect";
 import createTextButton from "../utils/createTextButton";
 import CaseManager from "../case-manager";
 import { codeToHtml } from "shiki/bundle/web";
+import getCaseData from "../utils/getCaseData";
 
 export class Verdict extends Scene {
     constructor() {
@@ -219,7 +220,7 @@ export class Verdict extends Scene {
 
     private computeTestQuality(
         idx: number,
-        testFeedback: Array<{ logicBranch: string; misleading?: boolean }>,
+        testFeedback: TestFeedback[],
         selectedLetters: string[],
         letters: string[],
         requiredBranches: string[],
@@ -240,7 +241,7 @@ export class Verdict extends Scene {
             return branchCoveredByOther ? "redundant" : "essential";
 
         return (
-                requiredBranches.includes(fb.logicBranch) &&
+                requiredBranches.includes(fb.logicBranch || "") &&
                     !branchCoveredByOther
             ) ?
                 "missed"
@@ -248,14 +249,13 @@ export class Verdict extends Scene {
     }
 
     async showTestCaseReasonings(mood: "happy" | "sad") {
+        const { feedback, currCaseData } = getCaseData(
+            this.isTutorial,
+            this.currentDifficulty,
+            this.currTutorialCaseIndex,
+        );
         const currentCase = tutorialCases[this.currTutorialCaseIndex];
-        const tutorialTestFeedback = currentCase.testFeedback as Array<{
-            logicBranch: string;
-            misleading?: boolean;
-            feedback: string;
-            testId: string;
-            label: string;
-        }>;
+        const tutorialTestFeedback = currCaseData;
         const requiredBranches = (currentCase as Case).requiredBranches ?? [];
         const LETTERS = ["A", "B", "C", "D"];
 
@@ -281,8 +281,7 @@ export class Verdict extends Scene {
             pointerEvents: "auto",
         });
 
-        for (let i = 0; i < tutorialTestFeedback.length; i++) {
-            const feedbackObj = tutorialTestFeedback[i];
+        for (let i = 0; i < feedback.length; i++) {
             const letter = LETTERS[i];
             const wasSelected = this.selectedTestCases.includes(letter);
             const quality = this.computeTestQuality(
@@ -331,13 +330,10 @@ export class Verdict extends Scene {
                 boxSizing: "border-box",
             });
 
-            const codeHTML = await codeToHtml(
-                feedbackObj.label || `test_case_${letter}()`,
-                {
-                    lang: "python",
-                    theme: "github-dark",
-                },
-            );
+            const codeHTML = await codeToHtml(feedback[i].label, {
+                lang: "python",
+                theme: "github-dark",
+            });
             card.innerHTML = codeHTML;
 
             const label = document.createElement("div");
@@ -392,7 +388,7 @@ export class Verdict extends Scene {
                     this.playJudgeAnimation(mood);
 
                     await this.addAnimatedTypingText(
-                        feedbackObj.feedback,
+                        tutorialTestFeedback[i].feedback,
                         21,
                         30,
                         alreadyReviewed,
