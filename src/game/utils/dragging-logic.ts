@@ -16,7 +16,7 @@ function showPresentToJudgeButton(
     const letters = testCases
         .map((testCase) => {
             const pool = tutorialCases[tutorialCaseIndexGlobal].evidencePool;
-            const numIdx = pool?.map((tc) => tc.label).indexOf(testCase) ?? -1;
+            const numIdx = pool.map((tc) => tc.label).indexOf(testCase);
 
             return numIdx >= 0 ? EVIDENCE_LETTERS[numIdx] : null;
         })
@@ -96,12 +96,12 @@ function getPool() {
     if (isTutorialGlobal) {
         const testCase = tutorialCases[tutorialCaseIndexGlobal];
         const testCasePool =
-            testCase.evidencePool?.flatMap((tc: UnitTest) => {
+            testCase.evidencePool.flatMap((tc: UnitTest) => {
                 return tc.label
                     .replace(/^assert\((.*)\)$/, "$1")
                     .split(",")
                     .map((part) => part.trim());
-            }) ?? [];
+            });
 
         // randomize them so that the correct ones aren't always in the same spot
         const randomizedPool: string[] = [];
