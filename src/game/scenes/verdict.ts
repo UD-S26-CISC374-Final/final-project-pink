@@ -135,9 +135,6 @@ export class Verdict extends Scene {
                 const isInnocent = verdict === "not guilty";
                 const stampKey = isInnocent ? "innocent" : "guilty";
 
-                console.log("VERDICT RAW:", verdict);
-                console.log("IS INNOCENT:", isInnocent);
-
                 if (isInnocent) {
                     playConfettiEffect.call(this);
                 }
