@@ -6,6 +6,7 @@ import hardCases from "./data/hard-cases.json";
 import tutorialCases from "./data/tutorial-cases.json";
 
 const TUTORIAL_COMPLETED_KEY = "caseByCase_tutorialCompleted";
+const RESULTS_STORAGE_KEY = "caseByCase_lastResults";
 
 const POINTS_CORRECT_VERDICT = 10;
 const POINTS_ESSENTIAL_EVIDENCE = 5;
@@ -231,6 +232,16 @@ class CaseManager {
 
     getCorrectVerdictCount(): number {
         return this.caseResults.filter((r) => r.verdictCorrect).length;
+    }
+
+    saveResults(): void {
+        const data = {
+            totalScore: this.totalScore,
+            maxPossibleScore: this.getMaxPossibleScore(),
+            correctVerdictCount: this.getCorrectVerdictCount(),
+            caseResults: this.caseResults,
+        };
+        localStorage.setItem(RESULTS_STORAGE_KEY, JSON.stringify(data));
     }
 }
 

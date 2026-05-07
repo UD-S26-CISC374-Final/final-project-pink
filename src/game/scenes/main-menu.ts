@@ -3,6 +3,7 @@ import { GameObjects, Scene } from "phaser";
 import { EventBus } from "../event-bus";
 import type { ChangeableScene } from "../reactable-scene";
 import CaseManager from "../case-manager";
+import tutorialCases from "../data/tutorial-cases.json";
 
 // Swap to "IM Fell English" to preview the other option
 //const TITLE_FONT = "Playfair Display";
@@ -165,8 +166,14 @@ export class MainMenu extends Scene implements ChangeableScene {
 
         this.drawButton("START", 540, () => {
             CaseManager.getInstance().loadTutorial();
-            this.gamemode = "Tutorial";
-            this.changeScene();
+            const lastIndex = tutorialCases.length - 1;
+            const lastCase = tutorialCases[lastIndex];
+            this.scene.start("Case", {
+                isTutorial: true,
+                nextTutorialText: lastCase.tutorialText,
+                difficulty: lastCase.difficulty as "easy" | "medium" | "hard",
+                currentTutorialCaseIndex: lastIndex,
+            });
         });
 
         this.drawButton("TUTORIAL", 612, () => {
