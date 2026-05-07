@@ -271,7 +271,7 @@
     {
         "id": "case-4",
         "difficulty": "easy",
-        "tutorialText": "",
+        "tutorialText": "You're doing fantastic work! Let's see how you handle a function that claims to work on lists.",
         "title": "The Listless Guardian",
         "functionCode": "def get_first_item(items):\n     return items[0]",
         "description": "I return the first item in any list. If the list is empty, I return 'None'.",
@@ -418,7 +418,7 @@
     {
         "id": "case-6",
         "difficulty": "medium",
-        "tutorialText": "",
+        "tutorialText": "You're doing great! Let's see how you do with this one!",
         "title": "The Capital Crime",
         "functionCode": "def check_password(pw):\n    if len(pw) >= 8:\n        return True\n    return False",
         "description": "I ensure passwords are secure. They must be 8 characters long AND contain at least one uppercase letter.",
