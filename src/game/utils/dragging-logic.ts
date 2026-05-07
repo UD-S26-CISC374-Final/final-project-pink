@@ -7,18 +7,19 @@ let isTutorialGlobal = false;
 let presentToJudgeButtonGlobal: Phaser.GameObjects.Container | undefined =
     undefined;
 
+const EVIDENCE_LETTERS = ["A", "B", "C", "D"];
+
 function showPresentToJudgeButton(
     testCases: string[],
     currentScene: Phaser.Scene,
 ) {
-    const indices = testCases.map((testCase) => {
-        const x =
+    const letters = testCases.map((testCase) => {
+        const numIdx =
             tutorialCases[tutorialCaseIndexGlobal].evidencePool
                 ?.map((tc) => tc.label)
                 .indexOf(testCase) ?? -1;
-
-        return x;
-    });
+        return numIdx >= 0 ? EVIDENCE_LETTERS[numIdx] : null;
+    }).filter((l): l is string => l !== null);
 
     presentToJudgeButtonGlobal = createTextButton
         .call(
@@ -46,7 +47,7 @@ function showPresentToJudgeButton(
     presentToJudgeButtonGlobal.on("pointerdown", () => {
         currentScene.scene.stop("Tutorial");
         currentScene.scene.start("Verdict", {
-            selectedTestCasesIndices: indices,
+            selectedTestCasesIndices: letters,
             tutorialCaseIndex: tutorialCaseIndexGlobal,
             isTutorial: isTutorialGlobal,
             difficulty: "hard",

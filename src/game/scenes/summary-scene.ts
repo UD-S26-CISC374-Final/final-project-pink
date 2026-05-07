@@ -37,7 +37,7 @@ export class SummaryScene extends Scene {
         const bh = bounds.height + pad * 2;
 
         const bx = Math.max(PANEL_W + 10 + bw / 2, RIGHT_CX);
-        const by = SCREEN_H - 330 - bh / 2;
+        const by = SCREEN_H - 250 - bh / 2;
 
         this.bubbleBg.clear();
 
@@ -98,16 +98,19 @@ export class SummaryScene extends Scene {
                         D: 3,
                     };
 
+                    const isEssentialFeedback = (fb: (typeof caseData.testFeedback)[number]): boolean => {
+                        if (fb.quality === "essential") return true;
+                        if (fb.logicBranch && !fb.misleading && caseData.requiredBranches?.includes(fb.logicBranch)) return true;
+                        return false;
+                    };
+
                     const submittedCards = result.selectedEvidenceIds
                         .map((letter) => {
                             const i = LETTER_IDX[letter];
                             if (i === undefined) return "";
                             const test = caseData.evidencePool?.[i];
                             const fb = caseData.testFeedback[i];
-                            const cls =
-                                fb.quality === "essential" ?
-                                    "card-good"
-                                :   "card-bad";
+                            const cls = isEssentialFeedback(fb) ? "card-good" : "card-bad";
                             const label = test?.label ?? letter;
                             return `<div class="ev-card ${cls}"><code>${label}</code><p>${fb.feedback}</p></div>`;
                         })
@@ -125,7 +128,7 @@ export class SummaryScene extends Scene {
                         .filter(
                             ({ i, fb }) =>
                                 !selectedIndices.has(i) &&
-                                fb.quality === "essential",
+                                isEssentialFeedback(fb),
                         )
                         .map(({ fb, test }) => {
                             const label = test?.label ?? "—";
@@ -288,6 +291,7 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
     create() {
         const manager = CaseManager.getInstance();
+        manager.saveResults();
 
         this.cameras.main.setBackgroundColor("#1a1a1a");
 
@@ -338,7 +342,7 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
         const sprite = this.add.image(
             RIGHT_CX + 10,
-            SCREEN_H - 20,
+            SCREEN_H,
             "judge-compiler",
         );
         const maxW = 230;
@@ -352,7 +356,7 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
                 fontFamily: FONT,
                 fontSize: 13,
                 color: "#1a1a1a",
-                wordWrap: { width: 190 },
+                wordWrap: { width: 240 },
                 align: "center",
                 resolution: DPR,
             })

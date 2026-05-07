@@ -82,13 +82,35 @@ export class Preloader extends Scene {
         }
 
         this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
+        this.load.image("gavel", "gavel.png");
+        const courtImages = [
+            "court_darkest",
+            "court_darker",
+            "court_darker_lights_bright",
+            "court_default",
+            "court_bright",
+            "court_white",
+            "court_other_2_lights_off",
+            "court_mid_left_light_on",
+            "court_dark_3_lights_on",
+            "court_dark_back_lights_off",
+            "court_dark_left_lights_off",
+        ];
+        for (const key of courtImages) {
+            this.load.image(key, `court/${key}.jpg`);
+        }
     }
 
     create() {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
-
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start("MainMenu");
+        // Explicitly trigger each web font download — browsers skip downloading
+        // Google Fonts unless they're used in CSS text, which never happens in a
+        // canvas game. document.fonts.load() forces the download and resolves when done.
+        void Promise.all([
+            document.fonts.load('400 1em "IM Fell English"'),
+            document.fonts.load('700 1em "Playfair Display"'),
+        ]).then(() => {
+            this.scene.start("MainMenu");
+            //this.scene.start("MainMenuPlain");
+        });
     }
 }
