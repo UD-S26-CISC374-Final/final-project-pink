@@ -129,6 +129,14 @@ export class MainMenu extends Scene implements ChangeableScene {
         this.setupBackground();
         this.drawGavel();
 
+        const music = this.sound.add("theme-music", {
+            volume: 0.2,
+            loop: true,
+        });
+
+        // Start playing
+        music.play();
+
         this.title = this.add
             .text(512, 200, "CASE BY CASE", {
                 fontFamily: TITLE_FONT,
@@ -170,6 +178,7 @@ export class MainMenu extends Scene implements ChangeableScene {
             this.gamemode = "Tutorial";
             this.cameras.main.once("camerafadeoutcomplete", () => {
                 this.changeScene();
+                music.stop();
             });
             this.cameras.main.fadeOut(1000, 0, 0, 0);
         });
@@ -179,6 +188,7 @@ export class MainMenu extends Scene implements ChangeableScene {
             this.gamemode = "Tutorial";
             this.cameras.main.once("camerafadeoutcomplete", () => {
                 this.changeScene();
+                music.stop();
             });
             this.cameras.main.fadeOut(1000, 0, 0, 0);
         });
