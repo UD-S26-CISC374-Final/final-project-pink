@@ -269,13 +269,39 @@ export class Verdict extends Scene {
             } else {
                 manager.advanceCase();
                 const nextCase = tutorialCases[this.currTutorialCaseIndex + 1];
+                const nextCaseDifficulty = (nextCase as Case).difficulty;
 
-                this.scene.start("Case", {
-                    isTutorial: this.isTutorial,
-                    nextTutorialText: nextCase.tutorialText,
-                    difficulty: nextCase.difficulty,
-                    currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
-                });
+                if (
+                    this.currentDifficulty !== "medium" &&
+                    nextCaseDifficulty === "medium"
+                ) {
+                    this.scene.start("Pause", {
+                        isTutorial: this.isTutorial,
+                        nextTutorialText:
+                            "Next up are the medium difficulty cases! This case will introduce new mechanics and a higher level of difficulty, including a timer. Be sure to find the best evidence before the time runs out! Take a moment to prepare yourself before we dive in.",
+                        difficulty: nextCaseDifficulty,
+                        currentTutorialCaseIndex: this.currTutorialCaseIndex,
+                    });
+                } else if (
+                    this.currentDifficulty !== "hard" &&
+                    nextCaseDifficulty === "hard"
+                ) {
+                    this.scene.start("Pause", {
+                        isTutorial: this.isTutorial,
+                        nextTutorialText:
+                            "Brace yourself for the Hard cases! Harder cases will now involve you building your own test cases! This level is designed to really test your understanding and skills. Take a deep breath, and get ready to tackle this final difficulty level!",
+                        difficulty: nextCaseDifficulty,
+                        currentTutorialCaseIndex: this.currTutorialCaseIndex,
+                    });
+                } else {
+                    this.scene.start("Case", {
+                        isTutorial: this.isTutorial,
+                        nextTutorialText: nextCase.tutorialText,
+                        difficulty: nextCase.difficulty,
+                        currentTutorialCaseIndex:
+                            this.currTutorialCaseIndex + 1,
+                    });
+                }
             }
         });
     }
