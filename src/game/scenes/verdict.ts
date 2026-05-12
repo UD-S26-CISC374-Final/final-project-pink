@@ -193,7 +193,10 @@ export class Verdict extends Scene {
 
                 centerDiv.appendChild(animDiv);
                 stampWrapper.appendChild(centerDiv);
-                this.add.dom(850, 290, stampWrapper).setOrigin(0, 0).setDepth(100);
+                this.add
+                    .dom(850, 290, stampWrapper)
+                    .setOrigin(0, 0)
+                    .setDepth(100);
 
                 this.typingInProgress = false;
 
@@ -520,13 +523,15 @@ export class Verdict extends Scene {
             await this.showTestCaseReasonings("happy");
 
             await this.addAnimatedTypingText(
-                "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. Click each case to read my explanation. It's important you do so before moving on.",
+                "Well done selecting the best test cases! This is the verdict screen. Here, I explain which tests were meaningful, which were misleading or redundant, and how your evidence influenced the final verdict. You're free to review each case's explanation or move on.",
                 20,
                 25,
             );
 
             this.judge.anims.pause();
             this.judge.setFrame(0);
+
+            this.showNextCaseButton();
         } else {
             this.playJudgeAnimation("sad");
 
@@ -620,7 +625,10 @@ export class Verdict extends Scene {
         tab.on("pointerout", () => tab.setFillStyle(FILL));
 
         tab.on("pointerdown", () => {
-            if (open) { close(); return; }
+            if (open) {
+                close();
+                return;
+            }
             open = true;
 
             // DOM dimmer so it covers DOM evidence cards and stamp (canvas rect can't dim DOM)
@@ -634,7 +642,10 @@ export class Verdict extends Scene {
                 cursor: "pointer",
             });
             dimDiv.addEventListener("click", close);
-            this.dimmer = this.add.dom(0, 0, dimDiv).setOrigin(0, 0).setDepth(110);
+            this.dimmer = this.add
+                .dom(0, 0, dimDiv)
+                .setOrigin(0, 0)
+                .setDepth(110);
 
             // Function code centered as a modal (depth 120, above dimmer and stamp)
             const overlay = document.createElement("div");
@@ -670,10 +681,12 @@ export class Verdict extends Scene {
                 .setOrigin(0.5, 0.5)
                 .setDepth(120);
 
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-                dimDiv.style.backgroundColor = "rgba(0,0,0,0.75)";
-                overlay.style.opacity = "1";
-            }));
+            requestAnimationFrame(() =>
+                requestAnimationFrame(() => {
+                    dimDiv.style.backgroundColor = "rgba(0,0,0,0.75)";
+                    overlay.style.opacity = "1";
+                }),
+            );
         });
     }
 
