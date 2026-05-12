@@ -29,8 +29,9 @@ export class Verdict extends Scene {
     judge: Phaser.GameObjects.Sprite;
     showVerdictText = false;
     currentDifficulty: "easy" | "medium" | "hard" = "easy";
-    private functionOverlay: Phaser.GameObjects.DOMElement | undefined;
-    private dimmer: Phaser.GameObjects.DOMElement | undefined;
+    functionOverlay: Phaser.GameObjects.DOMElement | undefined;
+    dimmer: Phaser.GameObjects.DOMElement | undefined;
+    clickSound: Phaser.Sound.BaseSound;
 
     init(data: {
         selectedTestCasesIndices: string[];
@@ -116,6 +117,8 @@ export class Verdict extends Scene {
         );
 
         revealButton.on("pointerdown", async () => {
+            this.clickSound.play();
+
             if (this.typingInProgress) return;
 
             revealButton.destroy();
@@ -232,6 +235,8 @@ export class Verdict extends Scene {
         );
 
         nextButton.on("pointerdown", () => {
+            this.clickSound.play();
+
             const manager = CaseManager.getInstance();
             const currentCase = tutorialCases[this.currTutorialCaseIndex];
 
@@ -424,6 +429,8 @@ export class Verdict extends Scene {
 
             // 2. Wrap async logic to satisfy ESLint
             card.addEventListener("click", () => {
+                this.clickSound.play();
+
                 const runSelection = async () => {
                     if (this.typingInProgress) return;
 
@@ -625,6 +632,7 @@ export class Verdict extends Scene {
         tab.on("pointerout", () => tab.setFillStyle(FILL));
 
         tab.on("pointerdown", () => {
+            this.clickSound.play();
             if (open) {
                 close();
                 return;
@@ -691,6 +699,10 @@ export class Verdict extends Scene {
     }
 
     async create() {
+        this.clickSound = this.sound.add("button-click", {
+            volume: 1.5,
+        });
+
         if (!this.textures.exists("confettiParticle")) {
             const texture = this.textures.createCanvas(
                 "confettiParticle",
