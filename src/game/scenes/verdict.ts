@@ -102,31 +102,34 @@ export class Verdict extends Scene {
         this.typingInProgress = false;
     }
 
-    private showNextCaseButton() {
-        if (!this.revealButton) {
-            this.revealButton = createTextButton.call(
-                this,
-                850,
-                190,
-                {
-                    x: 0,
-                    y: 0,
-                    width: 160,
-                    height: 40,
-                    color: 0x000000,
-                    alpha: 1,
-                },
-                {
-                    text: "Reveal Verdict",
-                    fontFamily: "Google Sans Code",
-                    fontSize: 18,
-                    color: "#ffffff",
-                },
-                true,
-            );
-        }
+    private createRevealButton() {
+        this.revealButton = createTextButton.call(
+            this,
+            850,
+            190,
+            {
+                x: 0,
+                y: 0,
+                width: 160,
+                height: 40,
+                color: 0x000000,
+                alpha: 1,
+            },
+            {
+                text: "Reveal Verdict",
+                fontFamily: "Google Sans Code",
+                fontSize: 18,
+                color: "#ffffff",
+            },
+            true,
+        );
+    }
 
-        this.revealButton.on("pointerdown", async () => {
+    private showNextCaseButton() {
+        if (!this.revealButton) this.createRevealButton();
+
+        this.revealButton?.on("pointerdown", async () => {
+            console.log(">", this.revealButton);
             this.clickSound.play();
             if (this.revealButton) this.revealButton.destroy();
 
@@ -547,8 +550,10 @@ export class Verdict extends Scene {
             this.judge.anims.pause();
             this.judge.setFrame(0);
 
+            this.createRevealButton();
             this.showNextCaseButton();
         } else {
+            this.revealButton = undefined;
             this.playJudgeAnimation("sad");
 
             await this.showTestCaseReasonings("sad");
