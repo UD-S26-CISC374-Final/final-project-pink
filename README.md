@@ -35,5 +35,10 @@ Link to our [egdd](docs/egdd.md)
 
 # Credits
 
-Built with [Phaser 3](https://phaser.io/) and TypeScript.
-[Gavel](https://www.pixilart.com/draw/gavel-1385d5bf5b)
+1. For game menu music: [Pixabay Electronic Game Music](https://pixabay.com/music/electronic-game-game-music-508018/)
+2. For the button click sound: [Freesound - AndrewEathan](https://freesound.org/people/AndrewEathan/sounds/538727/)
+3. For the game background music: [Freesound - SergeQuadrado](https://freesound.org/people/SergeQuadrado/sounds/683503/)
+4. For the click and drag test case sound: [Freesound - Vilkas_Sound](https://freesound.org/people/Vilkas_Sound/sounds/707041/)
+5. For the snap draggable test case sound: [Freesound - newagesoup](https://freesound.org/people/newagesoup/sounds/364730/)
+6. Judge Compiler sprite art was created by Hairum.
+7. Pixel art game assets were created by Tommy and Hairum.
