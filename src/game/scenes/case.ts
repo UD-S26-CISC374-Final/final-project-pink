@@ -44,6 +44,7 @@ export class Case extends Scene {
     SCREEN_W = 860;
     SCREEN_H = 520;
     clickSound: Phaser.Sound.BaseSound;
+    clickDragSound: Phaser.Sound.BaseSound;
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
 
@@ -497,6 +498,8 @@ export class Case extends Scene {
                     this.currentTutorialCaseIndex,
                     this.isTutorial,
                     container,
+                    this.clickDragSound,
+                    this.clickSound,
                 );
 
                 this.dragDom = this.add.dom(0, 0, container).setOrigin(0, 0);
@@ -618,6 +621,10 @@ export class Case extends Scene {
 
     async create() {
         this.clickSound = this.sound.add("button-click", {
+            volume: 1,
+        });
+
+        this.clickDragSound = this.sound.add("click-drag", {
             volume: 1,
         });
 
