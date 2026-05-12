@@ -42,3 +42,4 @@ Link to our [egdd](docs/egdd.md)
 5. For the snap draggable test case sound: [Freesound - newagesoup](https://freesound.org/people/newagesoup/sounds/364730/)
 6. Judge Compiler sprite art was created by Hairum.
 7. Pixel art game assets were created by Tommy and Hairum.
+8. Judge Compiler sprites were created using [Sprite Sheet Maker](https://www.finalparsec.com/tools/sprite_sheet_maker)
