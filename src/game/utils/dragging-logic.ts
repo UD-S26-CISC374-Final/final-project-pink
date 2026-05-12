@@ -6,6 +6,7 @@ let tutorialCaseIndexGlobal = 0;
 let isTutorialGlobal = false;
 let presentToJudgeButtonGlobal: Phaser.GameObjects.Container | undefined =
     undefined;
+let clickSoundGlobal: Phaser.Sound.BaseSound;
 
 const EVIDENCE_LETTERS = ["A", "B", "C", "D"];
 
@@ -46,6 +47,7 @@ function showPresentToJudgeButton(
         .setDepth(102);
 
     presentToJudgeButtonGlobal.on("pointerdown", () => {
+        clickSoundGlobal.play();
         currentScene.scene.stop("Tutorial");
         currentScene.scene.start("Verdict", {
             selectedTestCasesIndices: letters,
@@ -125,9 +127,13 @@ export default function showDraggableTestCases(
     tutorialCaseIndex: number,
     isTutorial: boolean,
     container: HTMLDivElement,
+    clickDragSound: Phaser.Sound.BaseSound,
+    clickSound: Phaser.Sound.BaseSound,
+    dropSound: Phaser.Sound.BaseSound,
 ) {
     tutorialCaseIndexGlobal = tutorialCaseIndex;
     isTutorialGlobal = isTutorial;
+    clickSoundGlobal = clickSound;
 
     const testCasesContainer = document.createElement("div");
     testCasesContainer.id = "test-cases-container";
@@ -252,6 +258,7 @@ export default function showDraggableTestCases(
         draggableDiv.addEventListener("mousedown", (e: MouseEvent) => {
             e.preventDefault();
 
+            clickDragSound.play();
             const containerRect = container.getBoundingClientRect();
             const rect = draggableDiv.getBoundingClientRect();
 
@@ -302,6 +309,7 @@ export default function showDraggableTestCases(
 
                             dropped = true;
 
+                            dropSound.play();
                             trackTestCases(scene);
 
                             break;
