@@ -25,6 +25,7 @@ export class Preloader extends Scene {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath("assets");
         this.load.image("judge-compiler", "judge_compiler_happy.png");
+        this.load.image("judge-compiler-head", "judge_compiler_head.png");
         this.load.spritesheet(
             "judge-compiler-sprite",
             "sprites/judge_compiler_speaking.png",

@@ -1,9 +1,9 @@
 {
-    "name": "final-project",
+    "name": "case-by-case",
     "version": "5.0.0",
     "type": "module",
-    "description": "CISC374 Project",
-    "homepage": "https://github.com/UD-S26-CISC374/final-project-template#readme",
+    "description": "A courtroom-themed educational game where you evaluate unit tests as evidence to determine if a function is guilty of bugs.",
+    "homepage": "https://github.com/UD-S26-CISC374-Final/final-project-pink#readme",
     "scripts": {
         "dev": "vite --config vite/config.dev.mjs",
         "build": "tsc -b && vite build --config vite/config.prod.mjs",
@@ -18,19 +18,16 @@
     "keywords": [
         "Phaser",
         "Phaser 3",
-        "Phaser3",
         "html5 game",
         "TypeScript",
-        "webpack",
-        "starter"
+        "educational",
+        "unit testing",
+        "software engineering"
     ],
-    "author": {
-        "name": "Austin Cory Bart",
-        "url": "https://github.com/acbart"
-    },
+    "author": "Tommy Parisi and Hairum Qureshi",
     "repository": {
         "type": "git",
-        "url": "https://github.com/UD-S26-CISC374/final-project-template.git"
+        "url": "https://github.com/UD-S26-CISC374-Final/final-project-pink.git"
     },
     "license": "MIT",
     "dependencies": {
