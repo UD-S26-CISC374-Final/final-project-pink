@@ -341,6 +341,11 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
             localStorage.removeItem("caseByCase_lastResults");
             localStorage.removeItem("caseByCase_tutorialCompleted");
             localStorage.removeItem("savedProgress");
+            this.sound
+                .add("button-click", {
+                    volume: 1,
+                })
+                .play();
             this.scene.start("MainMenu");
         });
 
