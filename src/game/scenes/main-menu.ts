@@ -16,6 +16,7 @@ const PANEL_BG = 0x1a1008;
 export class MainMenu extends Scene implements ChangeableScene {
     title: GameObjects.Text;
     gamemode: "Level1" | "Tutorial";
+    clickSound: Phaser.Sound.BaseSound;
 
     constructor() {
         super("MainMenu");
@@ -129,8 +130,12 @@ export class MainMenu extends Scene implements ChangeableScene {
         this.setupBackground();
         this.drawGavel();
 
+        this.clickSound = this.sound.add("button-click", {
+            volume: 1.5,
+        });
+
         const music = this.sound.add("theme-music", {
-            volume: 0.2,
+            volume: 0.1,
             loop: true,
         });
 
@@ -176,6 +181,8 @@ export class MainMenu extends Scene implements ChangeableScene {
         this.drawButton("START", 540, () => {
             CaseManager.getInstance().loadTutorial();
             this.gamemode = "Tutorial";
+            this.clickSound.play();
+
             this.cameras.main.once("camerafadeoutcomplete", () => {
                 this.changeScene();
                 music.stop();
@@ -186,6 +193,7 @@ export class MainMenu extends Scene implements ChangeableScene {
         this.drawButton("TUTORIAL", 612, () => {
             CaseManager.getInstance().loadTutorial();
             this.gamemode = "Tutorial";
+            this.clickSound.play();
             this.cameras.main.once("camerafadeoutcomplete", () => {
                 this.changeScene();
                 music.stop();
