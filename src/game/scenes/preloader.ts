@@ -69,6 +69,7 @@ export class Preloader extends Scene {
         this.load.audio("background-music", [
             "audio/game-background-music.wav",
         ]);
+        this.load.audio("click-drag", ["audio/drag.mp3"]);
 
         this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
         this.load.image("gavel", "gavel.png");
