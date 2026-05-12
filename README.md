@@ -1,6 +1,6 @@
-# CaseByCase
+# Game Name
 
-A courtroom-themed educational game where you serve as a software lawyer at the Syntax Criminal Court. Examine function code, select unit tests as evidence, and argue whether the defendant program is guilty of bugs or innocent.
+Case By Case
 
 # Team Color
 
@@ -8,8 +8,8 @@ Pink
 
 # Developers
 
-- Tommy Parisi (tparisi@udel.edu)
-- Hairum Quershi (hqureshi@udel.edu)
+* Tommy Parisi (tparisi@udel.edu)
+* Hairum Qureshi (hqureshi@udel.edu)
 
 # Blurb
 
@@ -29,7 +29,7 @@ CaseByCase teaches software testing fundamentals through a legal drama lens. Eac
 
 # Educational Game Design Document
 
-Link to our [egdd](egdd/egdd.md)
+Link to our [egdd](docs/egdd.md)
 
 # Credits
 
