@@ -32,6 +32,7 @@ export class Verdict extends Scene {
     functionOverlay: Phaser.GameObjects.DOMElement | undefined;
     dimmer: Phaser.GameObjects.DOMElement | undefined;
     clickSound: Phaser.Sound.BaseSound;
+    revealButton: Phaser.GameObjects.Container | undefined;
 
     init(data: {
         selectedTestCasesIndices: string[];
@@ -102,26 +103,34 @@ export class Verdict extends Scene {
     }
 
     private showNextCaseButton() {
-        const revealButton = createTextButton.call(
-            this,
-            850,
-            190,
-            { x: 0, y: 0, width: 160, height: 40, color: 0x000000, alpha: 1 },
-            {
-                text: "Reveal Verdict",
-                fontFamily: "Google Sans Code",
-                fontSize: 18,
-                color: "#ffffff",
-            },
-            true,
-        );
+        if (!this.revealButton) {
+            this.revealButton = createTextButton.call(
+                this,
+                850,
+                190,
+                {
+                    x: 0,
+                    y: 0,
+                    width: 160,
+                    height: 40,
+                    color: 0x000000,
+                    alpha: 1,
+                },
+                {
+                    text: "Reveal Verdict",
+                    fontFamily: "Google Sans Code",
+                    fontSize: 18,
+                    color: "#ffffff",
+                },
+                true,
+            );
+        }
 
-        revealButton.on("pointerdown", async () => {
+        this.revealButton.on("pointerdown", async () => {
             this.clickSound.play();
+            if (this.revealButton) this.revealButton.destroy();
 
             if (this.typingInProgress) return;
-
-            revealButton.destroy();
 
             const currentCase = tutorialCases[this.currTutorialCaseIndex];
             const verdict = currentCase.correctVerdict; // "guilty" or "not guilty"
