@@ -13,7 +13,7 @@ Pink
 
 # Blurb
 
-CaseByCase teaches software testing fundamentals through a legal drama lens. Each case presents a Python function on trial — you review its code, study the available test cases, and build your evidence by selecting the tests that best expose (or clear) the bug. The Judge Compiler evaluates your selections and explains what made each test strong, redundant, or misleading. Progress through easy, medium, and hard cases across the full game to sharpen your instincts for code coverage and test quality.
+Case By Case is an educational game that teaches you how to write and evaluate software tests — through the drama of a courtroom. You play as a software attorney whose job is to decide whether a piece of code is guilty of having a bug. Each case gives you a function and a set of unit tests to use as evidence. You pick the tests that best prove your case, declare a verdict, and then the Judge Compiler explains what your choices revealed. It's a fun way to build real instincts for spotting bugs and understanding why good tests matter.
 
 # Basic Instructions
 
@@ -25,6 +25,8 @@ CaseByCase teaches software testing fundamentals through a legal drama lens. Eac
 
 # Screenshot
 
+![Case By Case](docs/small.png)
+
 # Gameplay Video
 
 # Educational Game Design Document
@@ -34,3 +36,4 @@ Link to our [egdd](docs/egdd.md)
 # Credits
 
 Built with [Phaser 3](https://phaser.io/) and TypeScript.
+[Gavel](https://www.pixilart.com/draw/gavel-1385d5bf5b)

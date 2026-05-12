@@ -85,6 +85,12 @@ export class MainMenu extends Scene implements ChangeableScene {
         this.time.delayedCall(Phaser.Math.Between(500, 1500), scheduleFlicker);
     }
 
+    private drawJudge() {
+        if (!this.textures.exists("judge-compiler-head")) return;
+        const img = this.add.image(512, 386, "judge-compiler-head").setDepth(2);
+        img.setDisplaySize(220, 150);
+    }
+
     private drawGavel() {
         if (!this.textures.exists("gavel")) return;
         const img = this.add.image(512, 128, "gavel").setDepth(3);
@@ -127,6 +133,7 @@ export class MainMenu extends Scene implements ChangeableScene {
 
     create() {
         this.setupBackground();
+        this.drawJudge();
         this.drawGavel();
 
         const music = this.sound.add("theme-music", {

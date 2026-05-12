@@ -4,6 +4,8 @@
 
 ![Case By Case gameplay](large.png)
 
+![Case By Case small](small.png)
+
 ## Gameplay Video
 
 <!-- Paste your YouTube or Google Drive embed code here, e.g.:
