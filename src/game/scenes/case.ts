@@ -219,9 +219,9 @@ export class Case extends Scene {
             position: "relative",
             width: `${this.SCREEN_W}px`,
             height: `${this.SCREEN_H}px`,
-            marginTop: "205px",
+            marginTop: "300px",
             marginLeft: "78px",
-            overflow: "hidden",
+            overflow: "visible",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -230,12 +230,14 @@ export class Case extends Scene {
         const gridDiv = document.createElement("div");
         Object.assign(gridDiv.style, {
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            columnGap: "40px",
-            rowGap: "24px",
-            width: "90%",
+            // Use 1fr 1fr but ensure they don't exceed container width
+            gridTemplateColumns: "repeat(2, 1fr)",
+            columnGap: "20px",
+            rowGap: "20px",
+            width: "95%", // Increased width to give more breathing room
             boxSizing: "border-box",
-            margin: "20% auto",
+            // Remove the 20% margin which was pushing items off-screen
+            margin: "0 auto",
         });
 
         for (const test of testFeedback) {
@@ -245,10 +247,14 @@ export class Case extends Scene {
             Object.assign(card.style, {
                 backgroundColor: "#0d1117",
                 borderRadius: "8px",
-                padding: "12px 20px",
+                padding: "12px 15px",
                 display: "flex",
                 alignItems: "center",
                 border: "1px solid #333",
+                // Key additions to prevent cutoff:
+                minWidth: "0", // Allows grid item to shrink below content size
+                overflow: "hidden",
+                wordBreak: "break-all",
             });
 
             const codeHTML = await codeToHtml(test.label, {
@@ -262,8 +268,11 @@ export class Case extends Scene {
             if (pre) {
                 pre.style.margin = "0";
                 pre.style.backgroundColor = "transparent";
-                pre.style.fontSize = "15px";
+                pre.style.fontSize = "14px"; // Slightly smaller to fit better
                 pre.style.fontFamily = "'Fira Code', monospace";
+                // Ensure the code itself wraps if it's too long
+                pre.style.whiteSpace = "pre-wrap";
+                pre.style.wordBreak = "break-all";
             }
 
             gridDiv.appendChild(card);
@@ -501,7 +510,7 @@ export class Case extends Scene {
                     container,
                     this.clickDragSound,
                     this.clickSound,
-                    this.dropSound
+                    this.dropSound,
                 );
 
                 this.dragDom = this.add.dom(0, 0, container).setOrigin(0, 0);
