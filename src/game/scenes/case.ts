@@ -611,6 +611,13 @@ export class Case extends Scene {
     }
 
     async create() {
+        const music = this.sound.add("background-music", {
+            volume: 0.009,
+            loop: true,
+        });
+
+        music.play();
+
         // 1. First, we are going to display the open case file sprite showing the program's code and adding the clickable tabs as well
         this.add
             .sprite(512, 450, "case-file-open-program", 0)
