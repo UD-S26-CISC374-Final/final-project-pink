@@ -709,7 +709,7 @@ export class Verdict extends Scene {
 
     async create() {
         this.clickSound = this.sound.add("button-click", {
-            volume: 1.5,
+            volume: 1,
         });
 
         if (!this.textures.exists("confettiParticle")) {
