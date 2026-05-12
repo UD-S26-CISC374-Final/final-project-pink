@@ -95,25 +95,23 @@ function trackTestCases(scene: Phaser.Scene) {
 function getPool() {
     if (isTutorialGlobal) {
         const testCase = tutorialCases[tutorialCaseIndexGlobal];
-        const testCasePool =
-            testCase.evidencePool.flatMap((tc: UnitTest) => {
-                return tc.label
-                    .replace(/^assert\((.*)\)$/, "$1")
-                    .split(",")
-                    .map((part) => part.trim());
-            });
+        const testCasePool = testCase.evidencePool.flatMap((tc: UnitTest) => {
+            return tc.label
+                .replace(/^assert\((.*)\)$/, "$1")
+                .split(",")
+                .map((part) => part.trim());
+        });
 
         // randomize them so that the correct ones aren't always in the same spot
         const randomizedPool: string[] = [];
         let current = 0;
         const numPieces = testCasePool.length;
         while (current !== numPieces) {
-            let randomIndex = Math.floor(Math.random() * numPieces);
+            const randomIndex = Math.floor(Math.random() * numPieces);
             if (!randomizedPool[randomIndex]) {
                 randomizedPool[randomIndex] = testCasePool[current];
                 current++;
             }
-            randomIndex = Math.floor(Math.random() * numPieces);
         }
 
         return randomizedPool;
