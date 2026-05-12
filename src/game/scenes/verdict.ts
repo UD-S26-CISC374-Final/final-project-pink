@@ -129,7 +129,6 @@ export class Verdict extends Scene {
         if (!this.revealButton) this.createRevealButton();
 
         this.revealButton?.on("pointerdown", async () => {
-            console.log(">", this.revealButton);
             this.clickSound.play();
             if (this.revealButton) this.revealButton.destroy();
 
