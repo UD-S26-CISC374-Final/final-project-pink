@@ -43,7 +43,9 @@ export class Case extends Scene {
     evidenceReady: boolean = false;
     SCREEN_W = 860;
     SCREEN_H = 520;
-
+    clickSound: Phaser.Sound.BaseSound;
+    clickDragSound: Phaser.Sound.BaseSound;
+    dropSound: Phaser.Sound.BaseSound;
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
 
@@ -188,6 +190,8 @@ export class Case extends Scene {
             .setDepth(101);
 
         this.backButton.on("pointerdown", async () => {
+            this.clickSound.play();
+
             if (this.currentTab === "code") {
                 const confirmation = confirm(
                     "Are you sure you want to go back? Your progress in the tutorial will be lost.",
@@ -298,6 +302,7 @@ export class Case extends Scene {
 
         this.presentToJudgeButton.on("pointerdown", () => {
             if (!this.evidenceReady) return;
+            this.clickSound.play();
             this.scene.stop("Tutorial");
             this.scene.start("Verdict", {
                 selectedTestCasesIndices: this.selectedTestCases,
@@ -323,6 +328,7 @@ export class Case extends Scene {
             card.addEventListener("click", () => {
                 if (this.typingInProgress) return;
 
+                this.clickSound.play();
                 const letter: string = this.letterMap[i];
                 const isSelected = this.selectedTestCases.includes(letter);
 
@@ -453,6 +459,7 @@ export class Case extends Scene {
         greenTab.on("pointerdown", async () => {
             if (this.typingInProgress) return;
             if (this.currentTab === "test-cases") return;
+            this.clickSound.play();
 
             this.caseFileTestCases = [];
             this.selectedTestCases = [];
@@ -492,6 +499,9 @@ export class Case extends Scene {
                     this.currentTutorialCaseIndex,
                     this.isTutorial,
                     container,
+                    this.clickDragSound,
+                    this.clickSound,
+                    this.dropSound
                 );
 
                 this.dragDom = this.add.dom(0, 0, container).setOrigin(0, 0);
@@ -526,6 +536,7 @@ export class Case extends Scene {
             if (this.dragDom) this.dragDom.destroy();
             if (this.evidenceDom) this.evidenceDom.destroy();
 
+            this.clickSound.play();
             this.caseDom?.destroy();
             this.currentTab = "explanation";
             this.backButton.destroy();
@@ -611,6 +622,31 @@ export class Case extends Scene {
     }
 
     async create() {
+        this.clickSound = this.sound.add("button-click", {
+            volume: 1,
+        });
+
+        this.clickDragSound = this.sound.add("click-drag", {
+            volume: 1,
+        });
+
+        this.dropSound = this.sound.add("drop", {
+            volume: 1,
+        });
+
+        const music = this.sound.get(
+            "background-music",
+        ) as Phaser.Sound.BaseSound | null;
+
+        if (!music || !music.isPlaying) {
+            this.sound
+                .add("background-music", {
+                    volume: 0.009,
+                    loop: true,
+                })
+                .play();
+        }
+
         // 1. First, we are going to display the open case file sprite showing the program's code and adding the clickable tabs as well
         this.add
             .sprite(512, 450, "case-file-open-program", 0)
