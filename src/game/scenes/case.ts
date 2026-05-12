@@ -45,6 +45,7 @@ export class Case extends Scene {
     SCREEN_H = 520;
     clickSound: Phaser.Sound.BaseSound;
     clickDragSound: Phaser.Sound.BaseSound;
+    dropSound: Phaser.Sound.BaseSound;
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
 
@@ -500,6 +501,7 @@ export class Case extends Scene {
                     container,
                     this.clickDragSound,
                     this.clickSound,
+                    this.dropSound
                 );
 
                 this.dragDom = this.add.dom(0, 0, container).setOrigin(0, 0);
@@ -625,6 +627,10 @@ export class Case extends Scene {
         });
 
         this.clickDragSound = this.sound.add("click-drag", {
+            volume: 1,
+        });
+
+        this.dropSound = this.sound.add("drop", {
             volume: 1,
         });
 
