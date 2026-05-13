@@ -65,7 +65,13 @@ export class Preloader extends Scene {
             frameHeight: 32,
         });
 
-        this.load.audio("theme-music", ["audio/game-music.mp3"]);
+        this.load.audio("theme-music", ["audio/game-menu-music.mp3"]);
+        this.load.audio("button-click", ["audio/button-click.wav"]);
+        this.load.audio("background-music", [
+            "audio/game-background-music.wav",
+        ]);
+        this.load.audio("click-drag", ["audio/drag.mp3"]);
+        this.load.audio("drop", ["audio/drop.wav"]);
 
         this.load.font("Google Sans Code", "fonts/Google-Sans-Code.ttf");
         this.load.image("gavel", "gavel.png");

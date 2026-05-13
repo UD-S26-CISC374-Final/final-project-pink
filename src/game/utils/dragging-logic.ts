@@ -6,6 +6,7 @@ let tutorialCaseIndexGlobal = 0;
 let isTutorialGlobal = false;
 let presentToJudgeButtonGlobal: Phaser.GameObjects.Container | undefined =
     undefined;
+let clickSoundGlobal: Phaser.Sound.BaseSound;
 
 const EVIDENCE_LETTERS = ["A", "B", "C", "D"];
 
@@ -46,6 +47,7 @@ function showPresentToJudgeButton(
         .setDepth(102);
 
     presentToJudgeButtonGlobal.on("pointerdown", () => {
+        clickSoundGlobal.play();
         currentScene.scene.stop("Tutorial");
         currentScene.scene.start("Verdict", {
             selectedTestCasesIndices: letters,
@@ -125,9 +127,13 @@ export default function showDraggableTestCases(
     tutorialCaseIndex: number,
     isTutorial: boolean,
     container: HTMLDivElement,
+    clickDragSound: Phaser.Sound.BaseSound,
+    clickSound: Phaser.Sound.BaseSound,
+    dropSound: Phaser.Sound.BaseSound,
 ) {
     tutorialCaseIndexGlobal = tutorialCaseIndex;
     isTutorialGlobal = isTutorial;
+    clickSoundGlobal = clickSound;
 
     const testCasesContainer = document.createElement("div");
     testCasesContainer.id = "test-cases-container";
@@ -151,14 +157,16 @@ export default function showDraggableTestCases(
         const zone = document.createElement("div");
         zone.id = id;
         Object.assign(zone.style, {
-            minWidth: "100px",
-            height: "40px",
-            border: "2px dashed #00ff00",
+            minWidth: "120px",
+            height: "42px",
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            border: "2px solid #30363d",
             borderRadius: "6px",
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
             padding: "0 10px",
+            transition: "background-color 0.3s, border-color 0.3s",
         });
         return zone;
     };
@@ -213,14 +221,18 @@ export default function showDraggableTestCases(
 
     const draggableDivsContainer = document.createElement("div");
     Object.assign(draggableDivsContainer.style, {
-        width: "85%",
-        height: "50%",
+        width: "90%",
+        height: "45%",
         display: "flex",
         flexWrap: "wrap",
-        gap: "10px",
-        padding: "10px",
+        gap: "12px",
+        padding: "20px",
+        backgroundColor: "rgba(255, 255, 255, 0.03)",
+        borderRadius: "12px",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
         overflowY: "auto",
         alignItems: "flex-start",
+        margin: "0 auto",
     });
 
     container.appendChild(draggableDivsContainer);
@@ -232,19 +244,22 @@ export default function showDraggableTestCases(
         const draggableDiv = document.createElement("div");
 
         Object.assign(draggableDiv.style, {
-            backgroundColor: "#ff00ff",
-            color: "#ffffff",
+            backgroundColor: "#1f2428",
+            color: "#e1e4e8",
             display: "inline-flex",
             justifyContent: "center",
             alignItems: "center",
-            fontFamily: "Google Sans Code",
-            fontSize: "14px",
+            fontFamily: "'Fira Code', 'Google Sans Code', monospace",
+            fontSize: "15px",
             cursor: "grab",
             position: "relative",
-            padding: "6px 10px",
+            padding: "8px 14px",
             borderRadius: "6px",
+            border: "1px solid #444c56",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
             whiteSpace: "nowrap",
             userSelect: "none",
+            transition: "transform 0.1s, border-color 0.2s",
         });
 
         draggableDiv.textContent = testCasePool[i];
@@ -252,6 +267,7 @@ export default function showDraggableTestCases(
         draggableDiv.addEventListener("mousedown", (e: MouseEvent) => {
             e.preventDefault();
 
+            clickDragSound.play();
             const containerRect = container.getBoundingClientRect();
             const rect = draggableDiv.getBoundingClientRect();
 
@@ -302,6 +318,7 @@ export default function showDraggableTestCases(
 
                             dropped = true;
 
+                            dropSound.play();
                             trackTestCases(scene);
 
                             break;

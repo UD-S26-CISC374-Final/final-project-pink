@@ -29,8 +29,10 @@ export class Verdict extends Scene {
     judge: Phaser.GameObjects.Sprite;
     showVerdictText = false;
     currentDifficulty: "easy" | "medium" | "hard" = "easy";
-    private functionOverlay: Phaser.GameObjects.DOMElement | undefined;
-    private dimmer: Phaser.GameObjects.DOMElement | undefined;
+    functionOverlay: Phaser.GameObjects.DOMElement | undefined;
+    dimmer: Phaser.GameObjects.DOMElement | undefined;
+    clickSound: Phaser.Sound.BaseSound;
+    revealButton: Phaser.GameObjects.Container | undefined;
 
     init(data: {
         selectedTestCasesIndices: string[];
@@ -100,12 +102,19 @@ export class Verdict extends Scene {
         this.typingInProgress = false;
     }
 
-    private showNextCaseButton() {
-        const revealButton = createTextButton.call(
+    private createRevealButton() {
+        this.revealButton = createTextButton.call(
             this,
             850,
             190,
-            { x: 0, y: 0, width: 160, height: 40, color: 0x000000, alpha: 1 },
+            {
+                x: 0,
+                y: 0,
+                width: 160,
+                height: 40,
+                color: 0x000000,
+                alpha: 1,
+            },
             {
                 text: "Reveal Verdict",
                 fontFamily: "Google Sans Code",
@@ -114,11 +123,16 @@ export class Verdict extends Scene {
             },
             true,
         );
+    }
 
-        revealButton.on("pointerdown", async () => {
+    private showNextCaseButton() {
+        if (!this.revealButton) this.createRevealButton();
+
+        this.revealButton?.on("pointerdown", async () => {
+            this.clickSound.play();
+            if (this.revealButton) this.revealButton.destroy();
+
             if (this.typingInProgress) return;
-
-            revealButton.destroy();
 
             const currentCase = tutorialCases[this.currTutorialCaseIndex];
             const verdict = currentCase.correctVerdict; // "guilty" or "not guilty"
@@ -232,6 +246,8 @@ export class Verdict extends Scene {
         );
 
         nextButton.on("pointerdown", () => {
+            this.clickSound.play();
+
             const manager = CaseManager.getInstance();
             const currentCase = tutorialCases[this.currTutorialCaseIndex];
 
@@ -253,13 +269,39 @@ export class Verdict extends Scene {
             } else {
                 manager.advanceCase();
                 const nextCase = tutorialCases[this.currTutorialCaseIndex + 1];
+                const nextCaseDifficulty = (nextCase as Case).difficulty;
 
-                this.scene.start("Case", {
-                    isTutorial: this.isTutorial,
-                    nextTutorialText: nextCase.tutorialText,
-                    difficulty: nextCase.difficulty,
-                    currentTutorialCaseIndex: this.currTutorialCaseIndex + 1,
-                });
+                if (
+                    this.currentDifficulty !== "medium" &&
+                    nextCaseDifficulty === "medium"
+                ) {
+                    this.scene.start("Pause", {
+                        isTutorial: this.isTutorial,
+                        nextTutorialText:
+                            "Next up are the medium difficulty cases! This case will introduce new mechanics and a higher level of difficulty, including a timer. Be sure to find the best evidence before the time runs out! Take a moment to prepare yourself before we dive in.",
+                        difficulty: nextCaseDifficulty,
+                        currentTutorialCaseIndex: this.currTutorialCaseIndex,
+                    });
+                } else if (
+                    this.currentDifficulty !== "hard" &&
+                    nextCaseDifficulty === "hard"
+                ) {
+                    this.scene.start("Pause", {
+                        isTutorial: this.isTutorial,
+                        nextTutorialText:
+                            "Brace yourself for the Hard cases! Harder cases will now involve you building your own test cases! This level is designed to really test your understanding and skills. Take a deep breath, and get ready to tackle this final difficulty level!",
+                        difficulty: nextCaseDifficulty,
+                        currentTutorialCaseIndex: this.currTutorialCaseIndex,
+                    });
+                } else {
+                    this.scene.start("Case", {
+                        isTutorial: this.isTutorial,
+                        nextTutorialText: nextCase.tutorialText,
+                        difficulty: nextCase.difficulty,
+                        currentTutorialCaseIndex:
+                            this.currTutorialCaseIndex + 1,
+                    });
+                }
             }
         });
     }
@@ -424,6 +466,8 @@ export class Verdict extends Scene {
 
             // 2. Wrap async logic to satisfy ESLint
             card.addEventListener("click", () => {
+                this.clickSound.play();
+
                 const runSelection = async () => {
                     if (this.typingInProgress) return;
 
@@ -531,8 +575,10 @@ export class Verdict extends Scene {
             this.judge.anims.pause();
             this.judge.setFrame(0);
 
+            this.createRevealButton();
             this.showNextCaseButton();
         } else {
+            this.revealButton = undefined;
             this.playJudgeAnimation("sad");
 
             await this.showTestCaseReasonings("sad");
@@ -625,6 +671,7 @@ export class Verdict extends Scene {
         tab.on("pointerout", () => tab.setFillStyle(FILL));
 
         tab.on("pointerdown", () => {
+            this.clickSound.play();
             if (open) {
                 close();
                 return;
@@ -691,6 +738,10 @@ export class Verdict extends Scene {
     }
 
     async create() {
+        this.clickSound = this.sound.add("button-click", {
+            volume: 1,
+        });
+
         if (!this.textures.exists("confettiParticle")) {
             const texture = this.textures.createCanvas(
                 "confettiParticle",

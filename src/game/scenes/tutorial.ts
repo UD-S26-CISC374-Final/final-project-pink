@@ -8,6 +8,7 @@ export class Tutorial extends Scene {
     judge: Phaser.GameObjects.Sprite;
     index: number;
     typingInProgress: boolean = false;
+    clickSound: Phaser.Sound.BaseSound;
 
     constructor() {
         super("Tutorial");
@@ -30,9 +31,6 @@ export class Tutorial extends Scene {
             parsedSavedTutorialData ?
                 parsedSavedTutorialData.currentTutorialCaseIndex
             :   0;
-
-        console.log("Current tutorial case index:", this.index);
-        console.log(parsedSavedTutorialData);
 
         if (parsedSavedTutorialData) {
             if (this.index > 0) {
@@ -77,6 +75,10 @@ export class Tutorial extends Scene {
 
     async create() {
         this.add.rectangle(512, 130, 1024, 205, 0x000000, 0.8).setOrigin(0.5);
+
+        this.clickSound = this.sound.add("button-click", {
+            volume: 1,
+        });
 
         const textObject = this.add
             .text(512, 130, "", {
@@ -136,6 +138,7 @@ export class Tutorial extends Scene {
 
         buttonContainer.on("pointerdown", async () => {
             if (this.typingInProgress) return;
+            this.clickSound.play();
             this.judge.setTexture("judge-compiler-case-sprite");
             this.playGiveCaseFileAnimation();
             buttonContainer.destroy();
@@ -160,6 +163,7 @@ export class Tutorial extends Scene {
 
             caseFileButton.on("pointerdown", () => {
                 if (this.typingInProgress) return;
+                this.clickSound.play();
                 this.judge.destroy();
                 this.changeScene(true, thirdIntro, "easy", this.index);
             });

@@ -98,9 +98,16 @@ export class SummaryScene extends Scene {
                         D: 3,
                     };
 
-                    const isEssentialFeedback = (fb: (typeof caseData.testFeedback)[number]): boolean => {
+                    const isEssentialFeedback = (
+                        fb: (typeof caseData.testFeedback)[number],
+                    ): boolean => {
                         if (fb.quality === "essential") return true;
-                        if (fb.logicBranch && !fb.misleading && caseData.requiredBranches?.includes(fb.logicBranch)) return true;
+                        if (
+                            fb.logicBranch &&
+                            !fb.misleading &&
+                            caseData.requiredBranches?.includes(fb.logicBranch)
+                        )
+                            return true;
                         return false;
                     };
 
@@ -110,7 +117,10 @@ export class SummaryScene extends Scene {
                             if (i === undefined) return "";
                             const test = caseData.evidencePool?.[i];
                             const fb = caseData.testFeedback[i];
-                            const cls = isEssentialFeedback(fb) ? "card-good" : "card-bad";
+                            const cls =
+                                isEssentialFeedback(fb) ? "card-good" : (
+                                    "card-bad"
+                                );
                             const label = test?.label ?? letter;
                             return `<div class="ev-card ${cls}"><code>${label}</code><p>${fb.feedback}</p></div>`;
                         })
@@ -328,6 +338,21 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
         }
 
         panelDiv.querySelector("#menu-btn")?.addEventListener("click", () => {
+            localStorage.removeItem("caseByCase_lastResults");
+            localStorage.removeItem("caseByCase_tutorialCompleted");
+            localStorage.removeItem("savedProgress");
+            this.sound
+                .add("button-click", {
+                    volume: 1,
+                })
+                .play();
+
+            (
+                this.sound.get(
+                    "background-music",
+                ) as Phaser.Sound.BaseSound | null
+            )?.stop();
+            
             this.scene.start("MainMenu");
         });
 
