@@ -221,6 +221,9 @@ export class Case extends Scene {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            paddingTop: "90px",
+            boxSizing: "border-box",
+            pointerEvents: "none",
         });
 
         const gridDiv = document.createElement("div");
@@ -231,8 +234,17 @@ export class Case extends Scene {
             rowGap: "24px",
             width: "90%",
             boxSizing: "border-box",
-            margin: "20% auto",
+            margin: "auto",
+            pointerEvents: "none",
         });
+
+        const maxLabelLen = Math.max(
+            ...testFeedback.map((t) => t.label.length),
+        );
+        const fontSize =
+            maxLabelLen > 44 ? "12px"
+            : maxLabelLen > 38 ? "13px"
+            : "15px";
 
         for (const test of testFeedback) {
             const card = document.createElement("div");
@@ -245,6 +257,9 @@ export class Case extends Scene {
                 display: "flex",
                 alignItems: "center",
                 border: "1px solid #333",
+                minWidth: "0",
+                overflow: "hidden",
+                pointerEvents: "auto",
             });
 
             const codeHTML = await codeToHtml(test.label, {
@@ -258,9 +273,20 @@ export class Case extends Scene {
             if (pre) {
                 pre.style.margin = "0";
                 pre.style.backgroundColor = "transparent";
-                pre.style.fontSize = "15px";
+                pre.style.fontSize = fontSize;
                 pre.style.fontFamily = "'Fira Code', monospace";
+                pre.style.overflow = "hidden";
             }
+
+            card.addEventListener("mouseenter", (e) => {
+                this.game.canvas.dispatchEvent(
+                    new MouseEvent("mousemove", {
+                        clientX: e.clientX,
+                        clientY: e.clientY,
+                        bubbles: true,
+                    }),
+                );
+            });
 
             gridDiv.appendChild(card);
         }
@@ -293,6 +319,7 @@ export class Case extends Scene {
                     color: "#ffffff",
                 },
                 true,
+                () => this.evidenceReady,
             )
             .setDepth(102);
 

@@ -22,6 +22,7 @@ export default function createTextButton(
     rectangleData: Rectangle,
     buttonData: TextButtonConfig,
     enableTween: boolean,
+    isClickable?: () => boolean,
 ): Phaser.GameObjects.Container {
     const { text, fontFamily, fontSize, color } = buttonData;
     const { width, height, color: rectColor, alpha } = rectangleData;
@@ -50,6 +51,17 @@ export default function createTextButton(
 
     buttonContainer.setSize(width, height);
     buttonContainer.setInteractive();
+
+    buttonContainer.on("pointerover", () => {
+        if (isClickable && !isClickable()) return;
+        this.game.canvas.style.cursor = "pointer";
+        buttonBackground.setFillStyle(0x2a2a2a, alpha);
+    });
+
+    buttonContainer.on("pointerout", () => {
+        this.game.canvas.style.cursor = "default";
+        buttonBackground.setFillStyle(rectColor, alpha);
+    });
 
     if (enableTween) {
         this.tweens.add({
