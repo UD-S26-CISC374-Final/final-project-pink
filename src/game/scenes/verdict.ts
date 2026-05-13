@@ -229,7 +229,15 @@ export class Verdict extends Scene {
 
     private createNewNextButton() {
         const isLastCase =
-            this.currTutorialCaseIndex >= tutorialCases.length - 1;
+            this.isTutorial ?
+                this.currTutorialCaseIndex >= tutorialCases.length - 1
+            :   this.currTutorialCaseIndex >=
+                (
+                    JSON.parse(
+                        localStorage.getItem("randomizedCases") || "[]",
+                    ) as Case[]
+                ).length -
+                    1;
 
         const nextButton = createTextButton.call(
             this,
@@ -272,7 +280,7 @@ export class Verdict extends Scene {
                     this.isTutorial,
                     this.currTutorialCaseIndex + 1,
                 ).caseDataWhole;
-                
+
                 const nextCaseDifficulty = nextCase.difficulty;
 
                 if (
