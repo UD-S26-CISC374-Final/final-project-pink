@@ -8,7 +8,7 @@ export function typewriterEffect(
     // credit for code: https://joel.net/creating-a-typewriter-effect-in-phaserjs-v3
     // code altered from the original, but overall logic and structure is the same
 
-    const invisibleMessage = message.replace(/[^ ]/g, " ");
+    const invisibleMessage = !message ? "" : message.replace(/[^ ]/g, " ");
     target.setText("");
     let isSkipping = false;
     let isSpeedingUp = false;
@@ -50,7 +50,7 @@ export function typewriterEffect(
             delay: speedInMS,
             loop: true,
             callback: () => {
-                if (visibleText.length >= message.length) {
+                if (visibleText.length >= (!message ? 0 : message.length)) {
                     timer.destroy();
                     cleanup();
                     if (judge) {
