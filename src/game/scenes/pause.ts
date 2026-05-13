@@ -2,6 +2,7 @@ import { Scene } from "phaser";
 import createTextButton from "../utils/createTextButton";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
 import tutorialCases from "../data/tutorial-cases.json";
+import getCaseData from "../utils/getCaseData";
 
 export class Pause extends Scene {
     isTutorial: boolean;
@@ -208,8 +209,10 @@ export class Pause extends Scene {
         continueButton.on("pointerdown", () => {
             this.scene.start("Case", {
                 isTutorial: this.isTutorial,
-                nextTutorialText:
-                    tutorialCases[this.currentTutorialCaseIndex].tutorialText,
+                nextTutorialText: getCaseData(
+                    this.isTutorial,
+                    this.currentTutorialCaseIndex,
+                ).caseDataWhole.tutorialText,
                 difficulty: this.difficulty,
                 currentTutorialCaseIndex: this.currentTutorialCaseIndex,
             });
