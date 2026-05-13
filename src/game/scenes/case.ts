@@ -643,8 +643,10 @@ export class Case extends Scene {
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
         this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
-        this.currTutorialCaseDesc =
-            tutorialCases[this.currentTutorialCaseIndex].description;
+        this.currTutorialCaseDesc = getCaseData(
+            data.isTutorial,
+            this.currentTutorialCaseIndex,
+        ).description;
         this.selectedTestCases = [];
         this.currentTab = "code";
         this.levelDifficulty = data.difficulty;
