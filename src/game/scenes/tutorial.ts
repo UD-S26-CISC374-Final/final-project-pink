@@ -32,9 +32,6 @@ export class Tutorial extends Scene {
                 parsedSavedTutorialData.currentTutorialCaseIndex
             :   0;
 
-        console.log("Current tutorial case index:", this.index);
-        console.log(parsedSavedTutorialData);
-
         if (parsedSavedTutorialData) {
             if (this.index > 0) {
                 this.scene.start("Case", {

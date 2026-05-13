@@ -29,6 +29,9 @@ Case By Case is an educational game that teaches you how to write and evaluate s
 
 # Gameplay Video
 
+Click the image below to watch the gameplay video!
+[![Watch gameplay](docs/small.png)](https://drive.google.com/file/d/1hSdnD9Im-WyFAPNeJ9rKsoL-QRwm7Kpe/view)
+
 # Educational Game Design Document
 
 Link to our [egdd](docs/egdd.md)
@@ -43,3 +46,4 @@ Link to our [egdd](docs/egdd.md)
 6. Judge Compiler sprite art was created by Hairum.
 7. Pixel art game assets were created by Tommy and Hairum.
 8. Judge Compiler sprites were created using [Sprite Sheet Maker](https://www.finalparsec.com/tools/sprite_sheet_maker)
+9. The main menu background image base was generated with Google Gemini AI.

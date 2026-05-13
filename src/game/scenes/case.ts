@@ -45,6 +45,7 @@ export class Case extends Scene {
     SCREEN_H = 520;
     clickSound: Phaser.Sound.BaseSound;
     clickDragSound: Phaser.Sound.BaseSound;
+    backgroundMusic: Phaser.Sound.BaseSound | null;
     dropSound: Phaser.Sound.BaseSound;
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
@@ -198,6 +199,7 @@ export class Case extends Scene {
                 );
                 if (!confirmation) return;
 
+                this.backgroundMusic?.stop();
                 this.scene.stop("Tutorial");
                 this.scene.start("MainMenu");
                 return;
@@ -219,9 +221,9 @@ export class Case extends Scene {
             position: "relative",
             width: `${this.SCREEN_W}px`,
             height: `${this.SCREEN_H}px`,
-            marginTop: "205px",
+            marginTop: "300px",
             marginLeft: "78px",
-            overflow: "hidden",
+            overflow: "visible",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -230,12 +232,14 @@ export class Case extends Scene {
         const gridDiv = document.createElement("div");
         Object.assign(gridDiv.style, {
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            columnGap: "40px",
-            rowGap: "24px",
-            width: "90%",
+            // Use 1fr 1fr but ensure they don't exceed container width
+            gridTemplateColumns: "repeat(2, 1fr)",
+            columnGap: "20px",
+            rowGap: "20px",
+            width: "95%", // Increased width to give more breathing room
             boxSizing: "border-box",
-            margin: "20% auto",
+            // Remove the 20% margin which was pushing items off-screen
+            margin: "0 auto",
         });
 
         for (const test of testFeedback) {
@@ -245,10 +249,14 @@ export class Case extends Scene {
             Object.assign(card.style, {
                 backgroundColor: "#0d1117",
                 borderRadius: "8px",
-                padding: "12px 20px",
+                padding: "12px 15px",
                 display: "flex",
                 alignItems: "center",
                 border: "1px solid #333",
+                // Key additions to prevent cutoff:
+                minWidth: "0", // Allows grid item to shrink below content size
+                overflow: "hidden",
+                wordBreak: "break-all",
             });
 
             const codeHTML = await codeToHtml(test.label, {
@@ -262,8 +270,11 @@ export class Case extends Scene {
             if (pre) {
                 pre.style.margin = "0";
                 pre.style.backgroundColor = "transparent";
-                pre.style.fontSize = "15px";
+                pre.style.fontSize = "14px"; // Slightly smaller to fit better
                 pre.style.fontFamily = "'Fira Code', monospace";
+                // Ensure the code itself wraps if it's too long
+                pre.style.whiteSpace = "pre-wrap";
+                pre.style.wordBreak = "break-all";
             }
 
             gridDiv.appendChild(card);
@@ -501,7 +512,7 @@ export class Case extends Scene {
                     container,
                     this.clickDragSound,
                     this.clickSound,
-                    this.dropSound
+                    this.dropSound,
                 );
 
                 this.dragDom = this.add.dom(0, 0, container).setOrigin(0, 0);
@@ -634,18 +645,22 @@ export class Case extends Scene {
             volume: 1,
         });
 
-        const music = this.sound.get(
+        let music = this.sound.get(
             "background-music",
         ) as Phaser.Sound.BaseSound | null;
 
-        if (!music || !music.isPlaying) {
-            this.sound
-                .add("background-music", {
-                    volume: 0.009,
-                    loop: true,
-                })
-                .play();
+        if (!music) {
+            music = this.sound.add("background-music", {
+                volume: 0.009,
+                loop: true,
+            });
         }
+
+        if (!music.isPlaying) {
+            music.play();
+        }
+
+        this.backgroundMusic = music;
 
         // 1. First, we are going to display the open case file sprite showing the program's code and adding the clickable tabs as well
         this.add
