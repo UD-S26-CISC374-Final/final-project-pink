@@ -41,19 +41,21 @@ export default function getCaseData(
     feedback: UnitTest[];
     case: string;
     currCaseData: TestFeedback[];
+    description: string;
 } {
     if (isTutorial) {
         return {
             feedback: tutorialCases[currentCaseIndex]?.evidencePool || [],
             case: tutorialCases[currentCaseIndex]?.functionCode,
             currCaseData: tutorialCases[currentCaseIndex].testFeedback,
+            description: tutorialCases[currentCaseIndex].description,
         };
     } else {
         const endAmountOfCases = 15;
         let current = 0;
         const difficultyLevels = ["easy", "medium", "hard"];
         const difficultyCount = 3; // the number of difficulty levels
-        let currentDifficulty = 1;
+        let currentDifficulty = 0;
         const randomizedCasesArr: Case[] = [];
         const savedRandomizedCases = localStorage.getItem("randomizedCases");
         if (!savedRandomizedCases) {
@@ -62,12 +64,13 @@ export default function getCaseData(
                 currentDifficulty !== difficultyCount
             ) {
                 const randomFiveCases: Case[] = getRandomFiveCases(
-                    difficultyLevels[currentDifficulty - 1] as
+                    difficultyLevels[currentDifficulty] as
                         | "easy"
                         | "medium"
                         | "hard",
                 );
 
+                // TODO - figure out why it won't add the 5 cases for hard difficulty
                 randomizedCasesArr.push(...randomFiveCases);
                 currentDifficulty++;
                 current += 5;
@@ -83,6 +86,7 @@ export default function getCaseData(
                     randomizedCasesArr[currentCaseIndex]?.evidencePool || [],
                 case: randomizedCasesArr[currentCaseIndex]?.functionCode,
                 currCaseData: randomizedCasesArr[currentCaseIndex].testFeedback,
+                description: randomizedCasesArr[currentCaseIndex].description,
             };
         } else {
             const parsedRandomizedCases: Case[] = JSON.parse(
@@ -94,6 +98,8 @@ export default function getCaseData(
                 case: parsedRandomizedCases[currentCaseIndex]?.functionCode,
                 currCaseData:
                     parsedRandomizedCases[currentCaseIndex].testFeedback,
+                description:
+                    parsedRandomizedCases[currentCaseIndex].description,
             };
         }
     }
