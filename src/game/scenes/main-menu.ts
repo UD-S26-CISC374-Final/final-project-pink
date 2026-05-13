@@ -215,11 +215,28 @@ export class MainMenu extends Scene implements ChangeableScene {
         if (this.gamemode === "Tutorial") {
             this.scene.start("Tutorial");
         } else {
-            this.scene.start("Level", {
+            const savedProgressData = localStorage.getItem(
+                "savedProgressMainGame",
+            );
+
+            const saved =
+                savedProgressData ?
+                    (JSON.parse(savedProgressData) as {
+                        currentCaseIndex?: number;
+                        difficulty?: "easy" | "medium" | "hard";
+                    })
+                :   {};
+
+            const { currentCaseIndex = 0, difficulty = "easy" } = saved as {
+                currentCaseIndex?: number;
+                difficulty?: "easy" | "medium" | "hard";
+            };
+
+            this.scene.start("Case", {
                 isTutorial: false,
                 nextTutorialText: "",
-                difficulty: "easy",
-                currentTutorialCaseIndex: 0,
+                difficulty,
+                currentTutorialCaseIndex: currentCaseIndex,
             });
         }
     }
