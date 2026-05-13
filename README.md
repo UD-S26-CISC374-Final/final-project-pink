@@ -29,7 +29,7 @@ Case By Case is an educational game that teaches you how to write and evaluate s
 
 # Gameplay Video
 
-[![Watch gameplay](docs/large.png)](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://drive.google.com/file/d/1hSdnD9Im-WyFAPNeJ9rKsoL-QRwm7Kpe/view)
+[![Watch gameplay](docs/large.png)](https://drive.google.com/file/d/1hSdnD9Im-WyFAPNeJ9rKsoL-QRwm7Kpe/view)
 
 # Educational Game Design Document
 
