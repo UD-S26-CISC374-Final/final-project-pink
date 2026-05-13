@@ -1,1 +1,382 @@
-[]
+[
+    {
+        "id": "case-16",
+        "difficulty": "hard",
+        "title": "The Selective Searcher",
+        "functionCode": "def find_first_even(nums:list[int]):\n    for num in nums:\n        if num % 2 == 0:\n            return num\n    return -1",
+        "description": "I search through a list and return the very first even number I find. If there are none, I return -1.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "requiredBranches": ["proper-loop-completion", "early-exit-success"],
+        "evidencePool": [
+            {
+                "id": "c16-t1",
+                "label": "assert(find_first_even([2, 4, 6]), 2)",
+                "input": "[2, 4, 6]",
+                "expectedOutput": "2",
+                "actualOutput": "2",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["find_first_even([2, 4, 6])", "2"]
+            },
+            {
+                "id": "c16-t2",
+                "label": "assert(find_first_even([1, 3, 5]), -1)",
+                "input": "[1, 3, 5]",
+                "expectedOutput": "-1",
+                "actualOutput": "-1",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["find_first_even([1, 3, 5])", "-1"]
+            },
+            {
+                "id": "c16-t3",
+                "label": "assert(find_first_even([1, 4, 5]), 4)",
+                "input": "[1, 4, 5]",
+                "expectedOutput": "4",
+                "actualOutput": "4",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["find_first_even([1, 4, 5])", "4"]
+            },
+            {
+                "id": "c16-t4",
+                "label": "assert(find_first_even([]), -1)",
+                "input": "[]",
+                "expectedOutput": "-1",
+                "actualOutput": "-1",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["find_first_even([])", "-1"]
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c16-t1",
+                "logicBranch": "early-exit-success",
+                "feedback": "Confirms the function returns immediately upon finding the first even number."
+            },
+            {
+                "testId": "c16-t2",
+                "logicBranch": "proper-loop-completion",
+                "feedback": "Verifies the function searches the entire list before returning -1."
+            },
+            {
+                "testId": "c16-t3",
+                "logicBranch": "proper-loop-completion",
+                "feedback": "This confirms the function correctly skips odd numbers and continues searching."
+            },
+            {
+                "testId": "c16-t4",
+                "logicBranch": "empty-list-handling",
+                "feedback": "Correctly handles empty input by skipping the loop and hitting the default return."
+            }
+        ],
+        "missedEvidenceExplanation": "The return -1 is correctly placed outside the loop, ensuring the entire list is checked before giving up.",
+        "closingStatement": "Not Guilty! The defendant followed the search protocol perfectly, checking every item until a match was found or the list was exhausted."
+    },
+    {
+        "id": "case-18",
+        "difficulty": "hard",
+        "title": "The Duplicate Destroyer",
+        "functionCode": "def remove_target(nums:list[int], target:int):\n    return [num for num in nums if num != target]",
+        "description": "I remove every instance of a specific number from your list!",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "requiredBranches": ["list-comprehension-safety", "empty-result-path"],
+        "evidencePool": [
+            {
+                "id": "c18-t1",
+                "label": "assert(remove([1, 2, 3], 4), [1, 2, 3])",
+                "input": "[1, 2, 3], 4",
+                "expectedOutput": "[1, 2, 3]",
+                "actualOutput": "[1, 2, 3]",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["remove([1, 2, 3], 4)", "[1, 2, 3]"]
+            },
+            {
+                "id": "c18-t2",
+                "label": "assert(remove([2, 2, 2], 2), [])",
+                "input": "[2, 2, 2], 2",
+                "expectedOutput": "[]",
+                "actualOutput": "[]",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["remove([2, 2, 2], 2)", "[]"]
+            },
+            {
+                "id": "c18-t3",
+                "label": "assert(remove([1, 2, 2, 4], 2), [1, 4])",
+                "input": "[1, 2, 2, 4], 2",
+                "expectedOutput": "[1, 4]",
+                "actualOutput": "[1, 4]",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["remove([1, 2, 2, 4], 2)", "[1, 4]"]
+            },
+            {
+                "id": "c18-t4",
+                "label": "assert(remove([], 1), [])",
+                "input": "[], 1",
+                "expectedOutput": "[]",
+                "actualOutput": "[]",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["remove([], 1)", "[]"]
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c18-t1",
+                "logicBranch": "non-target-retention",
+                "feedback": "Ensures that items not matching the target are kept intact."
+            },
+            {
+                "testId": "c18-t2",
+                "logicBranch": "empty-result-path",
+                "feedback": "Correctly handles cases where the entire list consists of the target value."
+            },
+            {
+                "testId": "c18-t3",
+                "logicBranch": "list-comprehension-safety",
+                "feedback": "By using a list comprehension, the function creates a new list instead of mutating the one it is reading."
+            },
+            {
+                "testId": "c18-t4",
+                "logicBranch": "empty-input-handling",
+                "feedback": "Cleanly handles empty input lists without error."
+            }
+        ],
+        "missedEvidenceExplanation": "The function avoids the common 'mutation during iteration' trap by filtering the list into a new result.",
+        "closingStatement": "Not Guilty! This is a textbook example of clean, functional programming. No indices were harmed in the making of this list."
+    },
+    {
+        "id": "case-20",
+        "difficulty": "hard",
+        "title": "The Swap Specialist",
+        "functionCode": "def swap(nums:list[int]):\n    if len(nums) < 2: return nums\n    nums[0], nums[-1] = nums[-1], nums[0]\n    return nums",
+        "description": "I swap the first and last elements of any list.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "requiredBranches": ["tuple-unpacking-success", "short-list-safety"],
+        "evidencePool": [
+            {
+                "id": "c20-t1",
+                "label": "assert(swap([1, 2, 3]), [3, 2, 1])",
+                "input": "[1, 2, 3]",
+                "expectedOutput": "[3, 2, 1]",
+                "actualOutput": "[3, 2, 1]",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["swap([1, 2, 3])", "[3, 2, 1]"]
+            },
+            {
+                "id": "c20-t2",
+                "label": "assert(swap([5]), [5])",
+                "input": "[5]",
+                "expectedOutput": "[5]",
+                "actualOutput": "[5]",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["swap([5])", "[5]"]
+            },
+            {
+                "id": "c20-t3",
+                "label": "assert(swap([10, 20, 30, 40]), [40, 20, 30, 10])",
+                "input": "[10, 20, 30, 40]",
+                "expectedOutput": "[40, 20, 30, 10]",
+                "actualOutput": "[40, 20, 30, 10]",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["swap([10, 20, 30, 40])", "[40, 20, 30, 10]"]
+            },
+            {
+                "id": "c20-t4",
+                "label": "assert(swap([]), [])",
+                "input": "[]",
+                "expectedOutput": "[]",
+                "actualOutput": "[]",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["swap([])", "[]"]
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c20-t1",
+                "logicBranch": "tuple-unpacking-success",
+                "feedback": "Simultaneous assignment ensures values are updated correctly without a manual temp variable."
+            },
+            {
+                "testId": "c20-t2",
+                "logicBranch": "short-list-safety",
+                "feedback": "Verifies that single-element lists are returned unchanged as per the safety check."
+            },
+            {
+                "testId": "c20-t3",
+                "logicBranch": "tuple-unpacking-success",
+                "feedback": "Confirms the swap works correctly on longer lists."
+            },
+            {
+                "testId": "c20-t4",
+                "logicBranch": "short-list-safety",
+                "feedback": "Confirms empty lists are handled safely."
+            }
+        ],
+        "missedEvidenceExplanation": "Python's `a, b = b, a` syntax handles the temporary storage internally, preventing the overwriting issue.",
+        "closingStatement": "Not Guilty! The defendant used Python's most elegant feature to perform a flawless swap."
+    },
+    {
+        "id": "case-23",
+        "difficulty": "hard",
+        "title": "The Counterfeit Counter",
+        "functionCode": "def count_occurrences(items:list, target):\n    count = 0\n    for item in items:\n        if item == target:\n            count += 1\n    return count",
+        "description": "I count exactly how many times an item appears in your list.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "requiredBranches": ["equality-success", "miss-case"],
+        "evidencePool": [
+            {
+                "id": "c23-t1",
+                "label": "assert(count(['a', 'b', 'a'], 'a'), 2)",
+                "input": "['a', 'b', 'a'], 'a'",
+                "expectedOutput": "2",
+                "actualOutput": "2",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["count(['a', 'b', 'a'], 'a')", "2"]
+            },
+            {
+                "id": "c23-t2",
+                "label": "assert(count([1000, 1000], 1000), 2)",
+                "input": "[1000, 1000], 1000",
+                "expectedOutput": "2",
+                "actualOutput": "2",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["count([1000, 1000], 1000)", "2"]
+            },
+            {
+                "id": "c23-t3",
+                "label": "assert(count([1, 2, 3], 4), 0)",
+                "input": "[1, 2, 3], 4",
+                "expectedOutput": "0",
+                "actualOutput": "0",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["count([1, 2, 3], 4)", "0"]
+            },
+            {
+                "id": "c23-t4",
+                "label": "assert(count([500, 500], 500), 2)",
+                "input": "[500, 500], 500",
+                "expectedOutput": "2",
+                "actualOutput": "2",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["count([500, 500], 500)", "2"]
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c23-t1",
+                "logicBranch": "equality-success",
+                "feedback": "Confirms the function works for strings as well as numbers."
+            },
+            {
+                "testId": "c23-t2",
+                "logicBranch": "equality-success",
+                "feedback": "By using '==', the function correctly compares values rather than memory addresses (avoiding the 'is' trap)."
+            },
+            {
+                "testId": "c23-t3",
+                "logicBranch": "miss-case",
+                "feedback": "Properly returns 0 when no matches are found."
+            },
+            {
+                "testId": "c23-t4",
+                "logicBranch": "equality-success",
+                "feedback": "Reinforces that value equality is consistently applied."
+            }
+        ],
+        "missedEvidenceExplanation": "The use of the equality operator (==) ensures that the function works for all objects, regardless of Python's internal memory management or integer caching.",
+        "closingStatement": "Not Guilty! This counter knows the difference between 'identity' and 'value'. A perfect score."
+    },
+    {
+        "id": "case-24",
+        "difficulty": "hard",
+        "title": "The Average Faker",
+        "functionCode": "def average(nums:list[int]):\n    if not nums: return 0\n    total = 0\n    for num in nums:\n        total += num\n    return total / len(nums)",
+        "description": "I calculate the average of all numbers in a list.",
+        "evidenceSlots": 2,
+        "correctVerdict": "not guilty",
+        "requiredBranches": ["correct-aggregation", "empty-safety"],
+        "evidencePool": [
+            {
+                "id": "c24-t1",
+                "label": "assert(average([2, 4, 6]), 4.0)",
+                "input": "[2, 4, 6]",
+                "expectedOutput": "4.0",
+                "actualOutput": "4.0",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["average([2, 4, 6])", "4.0"]
+            },
+            {
+                "id": "c24-t2",
+                "label": "assert(average([]), 0)",
+                "input": "[]",
+                "expectedOutput": "0",
+                "actualOutput": "0",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["average([])", "0"]
+            },
+            {
+                "id": "c24-t3",
+                "label": "assert(average([10, 20]), 15.0)",
+                "input": "[10, 20]",
+                "expectedOutput": "15.0",
+                "actualOutput": "15.0",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["average([10, 20])", "15.0"]
+            },
+            {
+                "id": "c24-t4",
+                "label": "assert(average([5]), 5.0)",
+                "input": "[5]",
+                "expectedOutput": "5.0",
+                "actualOutput": "5.0",
+                "passes": true,
+                "showResult": true,
+                "pieces": ["average([5])", "5.0"]
+            }
+        ],
+        "testFeedback": [
+            {
+                "testId": "c24-t1",
+                "logicBranch": "correct-aggregation",
+                "feedback": "The function correctly sums every element in the list before performing division."
+            },
+            {
+                "testId": "c24-t2",
+                "logicBranch": "empty-safety",
+                "feedback": "Verifies that the function prevents a division-by-zero error on empty lists."
+            },
+            {
+                "testId": "c24-t3",
+                "logicBranch": "correct-aggregation",
+                "feedback": "Standard average calculation confirms math is solid."
+            },
+            {
+                "testId": "c24-t4",
+                "logicBranch": "correct-aggregation",
+                "feedback": "Single element lists return the element as the average correctly."
+            }
+        ],
+        "missedEvidenceExplanation": "The return statement is placed outside the loop, allowing the accumulation of 'total' to finish for all elements.",
+        "closingStatement": "Not Guilty! The defendant patiently waited for all data to be processed before rendering a final result."
+    }
+]
