@@ -15,7 +15,7 @@ const PANEL_BG = 0x1a1008;
 
 export class MainMenu extends Scene implements ChangeableScene {
     title: GameObjects.Text;
-    gamemode: "Level1" | "Tutorial";
+    gamemode: "Level" | "Tutorial";
     clickSound: Phaser.Sound.BaseSound;
 
     constructor() {
@@ -187,7 +187,7 @@ export class MainMenu extends Scene implements ChangeableScene {
 
         this.drawButton("START", 540, () => {
             CaseManager.getInstance().loadTutorial();
-            this.gamemode = "Tutorial";
+            this.gamemode = "Level";
             this.clickSound.play();
 
             this.cameras.main.once("camerafadeoutcomplete", () => {
@@ -215,7 +215,12 @@ export class MainMenu extends Scene implements ChangeableScene {
         if (this.gamemode === "Tutorial") {
             this.scene.start("Tutorial");
         } else {
-            this.scene.start("Level1");
+            this.scene.start("Level", {
+                isTutorial: false,
+                nextTutorialText: "",
+                difficulty: "easy",
+                currentTutorialCaseIndex: 0,
+            });
         }
     }
 }
