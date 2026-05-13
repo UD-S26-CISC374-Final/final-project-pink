@@ -1,7 +1,6 @@
 import { Scene } from "phaser";
 import createTextButton from "../utils/createTextButton";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
-import tutorialCases from "../data/tutorial-cases.json";
 import getCaseData from "../utils/getCaseData";
 
 export class Pause extends Scene {
