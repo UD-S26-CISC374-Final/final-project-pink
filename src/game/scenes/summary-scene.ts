@@ -346,6 +346,13 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
                     volume: 1,
                 })
                 .play();
+
+            (
+                this.sound.get(
+                    "background-music",
+                ) as Phaser.Sound.BaseSound | null
+            )?.stop();
+            
             this.scene.start("MainMenu");
         });
 
