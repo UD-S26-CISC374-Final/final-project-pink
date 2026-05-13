@@ -7,6 +7,7 @@
         "description": "I can sum any two integers together correctly!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["negative-sum"],
         "evidencePool": [
             {
                 "id": "c1-t1",
@@ -48,22 +49,23 @@
         "testFeedback": [
             {
                 "testId": "c1-t1",
-                "quality": "redundant",
+                "logicBranch": "positive-sum",
                 "feedback": "This shows normal positive behavior but doesn't test the limits."
             },
             {
                 "testId": "c1-t2",
-                "quality": "misleading",
+                "logicBranch": "positive-sum",
+                "misleading": true,
                 "feedback": "The result is positive, so it hides the fact that an abs() function is being used."
             },
             {
                 "testId": "c1-t3",
-                "quality": "essential",
+                "logicBranch": "negative-sum",
                 "feedback": "CRITICAL! This exposes the abs() bug by showing a negative sum turned positive."
             },
             {
                 "testId": "c1-t4",
-                "quality": "redundant",
+                "logicBranch": "zero-case",
                 "feedback": "Boundary case that doesn't prove the function handles negatives correctly."
             }
         ],
@@ -78,6 +80,7 @@
         "description": "I check if a user is old enough to enter the club. If you're 21 or older, you're in!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["exact-boundary"],
         "evidencePool": [
             {
                 "id": "c2-t1",
@@ -119,22 +122,22 @@
         "testFeedback": [
             {
                 "testId": "c2-t1",
-                "quality": "redundant",
+                "logicBranch": "under-age",
                 "feedback": "Testing significantly below the limit makes the function appear correct."
             },
             {
                 "testId": "c2-t2",
-                "quality": "essential",
-                "feedback": "CRITICAL EVIDENCE! This exposes that the function bars exactly 21-year-olds."
+                "logicBranch": "exact-boundary",
+                "feedback": "CRITICAL EVIDENCE! This exposes that the function bars exactly 21-year-olds incorrectly."
             },
             {
                 "testId": "c2-t3",
-                "quality": "redundant",
+                "logicBranch": "over-age",
                 "feedback": "Standard pass case that doesn't test the edge boundary."
             },
             {
                 "testId": "c2-t4",
-                "quality": "redundant",
+                "logicBranch": "under-age",
                 "feedback": "Another standard fail case that obscures the off-by-one bug."
             }
         ],
@@ -149,6 +152,7 @@
         "description": "I correctly add up all the numbers in a list!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["value-mismatch"],
         "evidencePool": [
             {
                 "id": "c3-t1",
@@ -190,22 +194,23 @@
         "testFeedback": [
             {
                 "testId": "c3-t1",
-                "quality": "misleading",
+                "logicBranch": "empty-list",
+                "misleading": true,
                 "feedback": "The loop never runs, so the bug remains hidden."
             },
             {
                 "testId": "c3-t2",
-                "quality": "essential",
+                "logicBranch": "value-mismatch",
                 "feedback": "CRITICAL! Proves the code adds the indices (0+1+2) instead of the values."
             },
             {
                 "testId": "c3-t3",
-                "quality": "redundant",
+                "logicBranch": "index-match",
                 "feedback": "The values match the indices, so the math works by accident."
             },
             {
                 "testId": "c3-t4",
-                "quality": "essential",
+                "logicBranch": "value-mismatch",
                 "feedback": "Exposes that indices are always positive, revealing the value vs index bug."
             }
         ],
@@ -220,6 +225,7 @@
         "description": "I correctly concatenate a given first and last name!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["raw-concat"],
         "evidencePool": [
             {
                 "id": "c4-t1",
@@ -261,22 +267,25 @@
         "testFeedback": [
             {
                 "testId": "c4-t1",
-                "quality": "misleading",
+                "logicBranch": "manual-space",
+                "misleading": true,
                 "feedback": "Hides the bug because the input manually includes a space."
             },
             {
                 "testId": "c4-t2",
-                "quality": "misleading",
+                "logicBranch": "manual-space",
+                "misleading": true,
                 "feedback": "Again, the input ' Doe' has a space that the function should provide."
             },
             {
                 "testId": "c4-t3",
-                "quality": "essential",
+                "logicBranch": "raw-concat",
                 "feedback": "Exposes that the function does not add a space between names."
             },
             {
                 "testId": "c4-t4",
-                "quality": "misleading",
+                "logicBranch": "manual-space",
+                "misleading": true,
                 "feedback": "Correct behavior only because the input is formatted to hide the error."
             }
         ],
@@ -291,6 +300,7 @@
         "description": "Returns the average grade accurately.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
+        "requiredBranches": ["standard-avg", "safety-check"],
         "evidencePool": [
             {
                 "id": "c5-t1",
@@ -332,22 +342,22 @@
         "testFeedback": [
             {
                 "testId": "c5-t1",
-                "quality": "essential",
+                "logicBranch": "standard-avg",
                 "feedback": "Shows the math is correct for standard inputs."
             },
             {
                 "testId": "c5-t2",
-                "quality": "essential",
+                "logicBranch": "safety-check",
                 "feedback": "Verifies the safety check for empty lists works correctly."
             },
             {
                 "testId": "c5-t3",
-                "quality": "redundant",
+                "logicBranch": "standard-avg",
                 "feedback": "Simple case that reinforces the basic math."
             },
             {
                 "testId": "c5-t4",
-                "quality": "redundant",
+                "logicBranch": "standard-avg",
                 "feedback": "Boundary case (all zeros) that the function handles fine."
             }
         ],
@@ -362,6 +372,7 @@
         "description": "I take a list of people and pair them each up with the first person.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["leader-pick"],
         "evidencePool": [
             {
                 "id": "c6-t1",
@@ -403,22 +414,22 @@
         "testFeedback": [
             {
                 "testId": "c6-t1",
-                "quality": "essential",
+                "logicBranch": "leader-pick",
                 "feedback": "Clearly shows the person at index 1 was picked as leader instead of index 0."
             },
             {
                 "testId": "c6-t2",
-                "quality": "essential",
+                "logicBranch": "leader-pick",
                 "feedback": "Confirms the off-by-one selection even in small lists."
             },
             {
                 "testId": "c6-t3",
-                "quality": "essential",
+                "logicBranch": "leader-pick",
                 "feedback": "Further proof of the leader selection bias."
             },
             {
                 "testId": "c6-t4",
-                "quality": "essential",
+                "logicBranch": "leader-pick",
                 "feedback": "Demonstrates the skip at the start of the list."
             }
         ],
@@ -433,6 +444,7 @@
         "description": "I count how many actual digits are in any integer.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
+        "requiredBranches": ["negative-check", "boundary-check"],
         "evidencePool": [
             {
                 "id": "c7-t1",
@@ -474,22 +486,22 @@
         "testFeedback": [
             {
                 "testId": "c7-t1",
-                "quality": "essential",
+                "logicBranch": "negative-check",
                 "feedback": "Verifies that negative signs are ignored correctly."
             },
             {
                 "testId": "c7-t2",
-                "quality": "redundant",
+                "logicBranch": "standard-count",
                 "feedback": "Standard case that works as expected."
             },
             {
                 "testId": "c7-t3",
-                "quality": "essential",
+                "logicBranch": "boundary-check",
                 "feedback": "Checks boundary case of a single digit zero."
             },
             {
                 "testId": "c7-t4",
-                "quality": "redundant",
+                "logicBranch": "negative-check",
                 "feedback": "Similar to the other negative test."
             }
         ],
@@ -504,6 +516,7 @@
         "description": "I convert miles to kilometers and vice-versa!",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
+        "requiredBranches": ["km-path", "mi-path"],
         "evidencePool": [
             {
                 "id": "c8-t1",
@@ -545,22 +558,22 @@
         "testFeedback": [
             {
                 "testId": "c8-t1",
-                "quality": "essential",
+                "logicBranch": "km-path",
                 "feedback": "Confirms km conversion logic is sound."
             },
             {
                 "testId": "c8-t2",
-                "quality": "essential",
+                "logicBranch": "mi-path",
                 "feedback": "Confirms miles conversion logic is sound."
             },
             {
                 "testId": "c8-t3",
-                "quality": "redundant",
+                "logicBranch": "km-path",
                 "feedback": "Boundary case handled correctly."
             },
             {
                 "testId": "c8-t4",
-                "quality": "redundant",
+                "logicBranch": "mi-path",
                 "feedback": "Another boundary case handled correctly."
             }
         ],
@@ -575,6 +588,7 @@
         "description": "I will find the largest number in any list of integers!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["negative-list"],
         "evidencePool": [
             {
                 "id": "c9-t1",
@@ -616,22 +630,23 @@
         "testFeedback": [
             {
                 "testId": "c9-t1",
-                "quality": "misleading",
+                "logicBranch": "positive-list",
+                "misleading": true,
                 "feedback": "Since 5 is greater than the initial 0, the bug remains hidden."
             },
             {
                 "testId": "c9-t2",
-                "quality": "essential",
+                "logicBranch": "negative-list",
                 "feedback": "Exposes that it can't find a max when all numbers are less than 0."
             },
             {
                 "testId": "c9-t3",
-                "quality": "redundant",
+                "logicBranch": "mixed-list",
                 "feedback": "The math works by accident when 0 is in the list."
             },
             {
                 "testId": "c9-t4",
-                "quality": "essential",
+                "logicBranch": "negative-list",
                 "feedback": "Another proof that negative lists are the function's weakness."
             }
         ],
@@ -646,6 +661,7 @@
         "description": "I count every vowel in a word (A, E, I, O, U)!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["uppercase-vowels"],
         "evidencePool": [
             {
                 "id": "c10-t1",
@@ -687,22 +703,22 @@
         "testFeedback": [
             {
                 "testId": "c10-t1",
-                "quality": "redundant",
+                "logicBranch": "lowercase-vowels",
                 "feedback": "Works correctly for lowercase, masking the bug."
             },
             {
                 "testId": "c10-t2",
-                "quality": "essential",
+                "logicBranch": "uppercase-vowels",
                 "feedback": "Exposes that uppercase vowels are being skipped."
             },
             {
                 "testId": "c10-t3",
-                "quality": "essential",
+                "logicBranch": "uppercase-vowels",
                 "feedback": "A complete failure for uppercase input."
             },
             {
                 "testId": "c10-t4",
-                "quality": "redundant",
+                "logicBranch": "no-vowels",
                 "feedback": "Normal behavior for words without vowels."
             }
         ],
@@ -717,6 +733,11 @@
         "description": "I scan any list of numbers and find the highest and lowest values.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
+        "requiredBranches": [
+            "positive-range",
+            "negative-range",
+            "empty-safety"
+        ],
         "evidencePool": [
             {
                 "id": "c11-t1",
@@ -758,22 +779,22 @@
         "testFeedback": [
             {
                 "testId": "c11-t1",
-                "quality": "essential",
+                "logicBranch": "positive-range",
                 "feedback": "Confirms positive range logic."
             },
             {
                 "testId": "c11-t2",
-                "quality": "essential",
+                "logicBranch": "negative-range",
                 "feedback": "Confirms it handles negative ranges correctly by using the first element as start."
             },
             {
                 "testId": "c11-t3",
-                "quality": "essential",
+                "logicBranch": "empty-safety",
                 "feedback": "Checks safety behavior."
             },
             {
                 "testId": "c11-t4",
-                "quality": "redundant",
+                "logicBranch": "single-element",
                 "feedback": "Single element case works fine."
             }
         ],
@@ -788,6 +809,7 @@
         "description": "I return a version where every number appears only once.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
+        "requiredBranches": ["duplicate-filter", "empty-handle"],
         "evidencePool": [
             {
                 "id": "c12-t1",
@@ -829,22 +851,22 @@
         "testFeedback": [
             {
                 "testId": "c12-t1",
-                "quality": "essential",
+                "logicBranch": "duplicate-filter",
                 "feedback": "Verifies that duplicates are properly filtered."
             },
             {
                 "testId": "c12-t2",
-                "quality": "redundant",
+                "logicBranch": "duplicate-filter",
                 "feedback": "Confirms the logic on extreme duplicates."
             },
             {
                 "testId": "c12-t3",
-                "quality": "essential",
+                "logicBranch": "empty-handle",
                 "feedback": "Shows it handles empty input."
             },
             {
                 "testId": "c12-t4",
-                "quality": "redundant",
+                "logicBranch": "unique-list",
                 "feedback": "Correctly preserves unique lists."
             }
         ],
@@ -859,6 +881,7 @@
         "description": "I check if the first and last numbers in a list are the same.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["populated-crash"],
         "evidencePool": [
             {
                 "id": "c13-t1",
@@ -900,22 +923,23 @@
         "testFeedback": [
             {
                 "testId": "c13-t1",
-                "quality": "essential",
+                "logicBranch": "populated-crash",
                 "feedback": "Exposes the off-by-one index error immediately."
             },
             {
                 "testId": "c13-t2",
-                "quality": "misleading",
+                "logicBranch": "empty-safety",
+                "misleading": true,
                 "feedback": "Safety check passes, hiding the crash in the main logic."
             },
             {
                 "testId": "c13-t3",
-                "quality": "essential",
+                "logicBranch": "populated-crash",
                 "feedback": "Shows any populated list will trigger an IndexError."
             },
             {
                 "testId": "c13-t4",
-                "quality": "essential",
+                "logicBranch": "populated-crash",
                 "feedback": "Even a single element list crashes due to indexing error."
             }
         ],
@@ -930,6 +954,7 @@
         "description": "I take a list of numbers and return their total sum.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
+        "requiredBranches": ["addition-path", "negative-path", "empty-path"],
         "evidencePool": [
             {
                 "id": "c14-t1",
@@ -971,22 +996,22 @@
         "testFeedback": [
             {
                 "testId": "c14-t1",
-                "quality": "essential",
+                "logicBranch": "addition-path",
                 "feedback": "Confirms basic addition."
             },
             {
                 "testId": "c14-t2",
-                "quality": "essential",
+                "logicBranch": "negative-path",
                 "feedback": "Confirms handling of negative cancellation."
             },
             {
                 "testId": "c14-t3",
-                "quality": "essential",
+                "logicBranch": "empty-path",
                 "feedback": "Empty list correctly yields 0."
             },
             {
                 "testId": "c14-t4",
-                "quality": "redundant",
+                "logicBranch": "single-path",
                 "feedback": "Single item case confirmed."
             }
         ],
@@ -1001,6 +1026,7 @@
         "description": "I calculate the total product of any list of numbers.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
+        "requiredBranches": ["zero-init-bug"],
         "evidencePool": [
             {
                 "id": "c15-t1",
@@ -1042,22 +1068,23 @@
         "testFeedback": [
             {
                 "testId": "c15-t1",
-                "quality": "essential",
+                "logicBranch": "zero-init-bug",
                 "feedback": "Exposes that starting at 0 kills any product."
             },
             {
                 "testId": "c15-t2",
-                "quality": "essential",
+                "logicBranch": "zero-init-bug",
                 "feedback": "Further proof of the 0-initialization bug."
             },
             {
                 "testId": "c15-t3",
-                "quality": "misleading",
+                "logicBranch": "zero-input",
+                "misleading": true,
                 "feedback": "Accidentally works because 0 is in the input."
             },
             {
                 "testId": "c15-t4",
-                "quality": "essential",
+                "logicBranch": "zero-init-bug",
                 "feedback": "Shows empty products fail math standards."
             }
         ],
