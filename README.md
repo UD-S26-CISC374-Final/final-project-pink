@@ -18,10 +18,10 @@ Case By Case is an educational game that teaches you how to write and evaluate s
 # Basic Instructions
 
 1. Read the function's purpose on the pink tab and its code on the green tab
-2. Select up to two test cases as your evidence
-3. Submit your verdict: Guilty or Not Guilty
+2. Select/build two test cases as your evidence
+3. View Judge Compiler's verdict based on your presented evidence
 4. Review the Judge Compiler's feedback on each test you selected
-5. Aim for full branch coverage — pick tests that explore different logical paths
+5. Aim for full branch coverage -- pick tests that explore different logical paths
 
 # Screenshot
 
