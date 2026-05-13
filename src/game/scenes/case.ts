@@ -45,6 +45,7 @@ export class Case extends Scene {
     SCREEN_H = 520;
     clickSound: Phaser.Sound.BaseSound;
     clickDragSound: Phaser.Sound.BaseSound;
+    backgroundMusic: Phaser.Sound.BaseSound | null;
     dropSound: Phaser.Sound.BaseSound;
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
@@ -198,6 +199,7 @@ export class Case extends Scene {
                 );
                 if (!confirmation) return;
 
+                this.backgroundMusic?.stop();
                 this.scene.stop("Tutorial");
                 this.scene.start("MainMenu");
                 return;
@@ -643,11 +645,11 @@ export class Case extends Scene {
             volume: 1,
         });
 
-        const music = this.sound.get(
+        this.backgroundMusic = this.sound.get(
             "background-music",
         ) as Phaser.Sound.BaseSound | null;
 
-        if (!music || !music.isPlaying) {
+        if (!this.backgroundMusic || !this.backgroundMusic.isPlaying) {
             this.sound
                 .add("background-music", {
                     volume: 0.009,
