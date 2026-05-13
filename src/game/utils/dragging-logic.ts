@@ -1,6 +1,7 @@
 import createTextButton from "./createTextButton";
 import tutorialCases from "../data/tutorial-cases.json";
 import type { UnitTest } from "../data/types";
+import getCaseData from "./getCaseData";
 
 let tutorialCaseIndexGlobal = 0;
 let isTutorialGlobal = false;
@@ -95,31 +96,29 @@ function trackTestCases(scene: Phaser.Scene) {
 }
 
 function getPool() {
-    if (isTutorialGlobal) {
-        const testCase = tutorialCases[tutorialCaseIndexGlobal];
-        const testCasePool = testCase.evidencePool.flatMap((tc: UnitTest) => {
-            return tc.label
-                .replace(/^assert\((.*)\)$/, "$1")
-                .split(",")
-                .map((part) => part.trim());
-        });
+    const testCasePool = getCaseData(
+        isTutorialGlobal,
+        tutorialCaseIndexGlobal,
+    ).evidencePool.flatMap((tc: UnitTest) => {
+        return tc.label
+            .replace(/^assert\((.*)\)$/, "$1")
+            .split(",")
+            .map((part) => part.trim());
+    });
 
-        // randomize them so that the correct ones aren't always in the same spot
-        const randomizedPool: string[] = [];
-        let current = 0;
-        const numPieces = testCasePool.length;
-        while (current !== numPieces) {
-            const randomIndex = Math.floor(Math.random() * numPieces);
-            if (!randomizedPool[randomIndex]) {
-                randomizedPool[randomIndex] = testCasePool[current];
-                current++;
-            }
+    // randomize them so that the correct ones aren't always in the same spot
+    const randomizedPool: string[] = [];
+    let current = 0;
+    const numPieces = testCasePool.length;
+    while (current !== numPieces) {
+        const randomIndex = Math.floor(Math.random() * numPieces);
+        if (!randomizedPool[randomIndex]) {
+            randomizedPool[randomIndex] = testCasePool[current];
+            current++;
         }
-
-        return randomizedPool;
     }
 
-    return [];
+    return randomizedPool;
 }
 
 export default function showDraggableTestCases(
@@ -238,7 +237,6 @@ export default function showDraggableTestCases(
     container.appendChild(draggableDivsContainer);
 
     const testCasePool = getPool();
-    console.log("Test case pool in showDraggableTestCases:", testCasePool);
 
     for (let i = 0; i < testCasePool.length; i++) {
         const draggableDiv = document.createElement("div");
