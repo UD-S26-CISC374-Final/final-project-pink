@@ -1,8 +1,6 @@
 import { Boot } from "./scenes/boot";
 import { GameOver } from "./scenes/game-over";
 import { Level1 as MainGame } from "./scenes/level1";
-import { MainMenu } from "./scenes/main-menu";
-import { MainMenuPlain } from "./scenes/main-menu-plain";
 import { AUTO, Game } from "phaser";
 import { Preloader } from "./scenes/preloader";
 import { Tutorial } from "./scenes/tutorial";
@@ -10,6 +8,7 @@ import { Case } from "./scenes/case";
 import { Verdict } from "./scenes/verdict";
 import { Pause } from "./scenes/pause";
 import { SummaryScene } from "./scenes/summary-scene";
+import { MainMenu } from "./scenes/main-menu";
 
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -23,7 +22,6 @@ const config: Phaser.Types.Core.GameConfig = {
         Boot,
         Preloader,
         MainMenu,
-        MainMenuPlain,
         MainGame,
         GameOver,
         Tutorial,
