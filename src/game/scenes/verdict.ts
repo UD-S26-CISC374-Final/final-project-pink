@@ -268,8 +268,12 @@ export class Verdict extends Scene {
                 this.scene.start("Summary");
             } else {
                 manager.advanceCase();
-                const nextCase = tutorialCases[this.currTutorialCaseIndex + 1];
-                const nextCaseDifficulty = (nextCase as Case).difficulty;
+                const nextCase = getCaseData(
+                    this.isTutorial,
+                    this.currTutorialCaseIndex + 1,
+                ).caseDataWhole;
+                
+                const nextCaseDifficulty = nextCase.difficulty;
 
                 if (
                     this.currentDifficulty !== "medium" &&
