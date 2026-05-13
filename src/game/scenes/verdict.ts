@@ -339,7 +339,6 @@ export class Verdict extends Scene {
     async showTestCaseReasonings(mood: "happy" | "sad") {
         const { feedback, currCaseData } = getCaseData(
             this.isTutorial,
-            this.currentDifficulty,
             this.currTutorialCaseIndex,
         );
         const currentCase = tutorialCases[this.currTutorialCaseIndex];
@@ -620,7 +619,6 @@ export class Verdict extends Scene {
     private async drawFunctionTab() {
         const { case: functionCode } = getCaseData(
             this.isTutorial,
-            this.currentDifficulty,
             this.currTutorialCaseIndex,
         );
 
