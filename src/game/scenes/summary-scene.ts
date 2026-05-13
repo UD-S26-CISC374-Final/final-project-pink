@@ -338,7 +338,11 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
         }
 
         panelDiv.querySelector("#menu-btn")?.addEventListener("click", () => {
-            localStorage.clear(); // clear all saved game data from LocalStorage
+            localStorage.removeItem("caseByCase_lastResults");
+            localStorage.removeItem("caseByCase_tutorialCompleted");
+            localStorage.removeItem("savedProgress");
+            localStorage.removeItem("randomizedCases");
+            localStorage.removeItem("savedProgressMainGame");
 
             this.sound
                 .add("button-click", {
