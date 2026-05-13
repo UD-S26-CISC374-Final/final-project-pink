@@ -43,6 +43,7 @@ export default function getCaseData(
     currCaseData: TestFeedback[];
     description: string;
     evidencePool: UnitTest[];
+    caseDataWhole: Case;
 } {
     if (isTutorial) {
         return {
@@ -51,6 +52,7 @@ export default function getCaseData(
             currCaseData: tutorialCases[currentCaseIndex].testFeedback,
             description: tutorialCases[currentCaseIndex].description,
             evidencePool: tutorialCases[currentCaseIndex]?.evidencePool || [],
+            caseDataWhole: tutorialCases[currentCaseIndex], 
         };
     } else {
         const endAmountOfCases = 15;
@@ -90,6 +92,7 @@ export default function getCaseData(
                 description: randomizedCasesArr[currentCaseIndex].description,
                 evidencePool:
                     randomizedCasesArr[currentCaseIndex]?.evidencePool || [],
+                caseDataWhole: randomizedCasesArr[currentCaseIndex], 
             };
         } else {
             const parsedRandomizedCases: Case[] = JSON.parse(
@@ -105,6 +108,7 @@ export default function getCaseData(
                     parsedRandomizedCases[currentCaseIndex].description,
                 evidencePool:
                     parsedRandomizedCases[currentCaseIndex]?.evidencePool || [],
+                caseDataWhole: parsedRandomizedCases[currentCaseIndex],
             };
         }
     }
