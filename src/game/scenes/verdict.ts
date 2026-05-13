@@ -49,8 +49,11 @@ export class Verdict extends Scene {
         this.isTutorial = data.isTutorial;
         this.currentDifficulty = data.difficulty;
         this.currTutorialCaseIndex = data.tutorialCaseIndex;
-        this.totalEvidenceCases =
-            tutorialCases[this.currTutorialCaseIndex].testFeedback.length;
+        this.totalEvidenceCases = getCaseData(
+            this.isTutorial,
+            this.currTutorialCaseIndex,
+        ).caseDataWhole.testFeedback.length;
+
         this.currReviewedEvidence = [];
     }
 
@@ -134,7 +137,10 @@ export class Verdict extends Scene {
 
             if (this.typingInProgress) return;
 
-            const currentCase = tutorialCases[this.currTutorialCaseIndex];
+            const currentCase = getCaseData(
+                this.isTutorial,
+                this.currTutorialCaseIndex,
+            ).caseDataWhole;
             const verdict = currentCase.correctVerdict; // "guilty" or "not guilty"
 
             this.textObject?.setText("");
@@ -257,7 +263,10 @@ export class Verdict extends Scene {
             this.clickSound.play();
 
             const manager = CaseManager.getInstance();
-            const currentCase = tutorialCases[this.currTutorialCaseIndex];
+            const currentCase = getCaseData(
+                this.isTutorial,
+                this.currTutorialCaseIndex,
+            ).caseDataWhole;
 
             // Sync manager state
             while (manager.getCurrentCaseIndex() < this.currTutorialCaseIndex) {
@@ -353,9 +362,12 @@ export class Verdict extends Scene {
             this.isTutorial,
             this.currTutorialCaseIndex,
         );
-        const currentCase = tutorialCases[this.currTutorialCaseIndex];
+        const currentCase = getCaseData(
+            this.isTutorial,
+            this.currTutorialCaseIndex,
+        ).caseDataWhole;
         const tutorialTestFeedback = currCaseData;
-        const requiredBranches = (currentCase as Case).requiredBranches ?? [];
+        const requiredBranches = currentCase.requiredBranches ?? [];
         const LETTERS = ["A", "B", "C", "D"];
 
         const container = document.createElement("div");
@@ -595,8 +607,8 @@ export class Verdict extends Scene {
             await this.showTestCaseReasonings("sad");
 
             await this.addAnimatedTypingText(
-                tutorialCases[this.currTutorialCaseIndex]
-                    .missedEvidenceExplanation,
+                getCaseData(this.isTutorial, this.currTutorialCaseIndex)
+                    .caseDataWhole.missedEvidenceExplanation,
                 18,
             );
             this.judge.anims.pause();
@@ -605,14 +617,16 @@ export class Verdict extends Scene {
     }
 
     private async checkUserSelections() {
-        const currentTestCase = tutorialCases[this.currTutorialCaseIndex];
+        const currentTestCase = getCaseData(
+            this.isTutorial,
+            this.currTutorialCaseIndex,
+        ).caseDataWhole;
         const letters = ["A", "B", "C", "D"];
         const testFeedback = currentTestCase.testFeedback as Array<{
             logicBranch: string;
             misleading?: boolean;
         }>;
-        const requiredBranches =
-            (currentTestCase as Case).requiredBranches ?? [];
+        const requiredBranches = currentTestCase.requiredBranches ?? [];
 
         const coveredBranches = new Set<string>();
         for (let i = 0; i < testFeedback.length; i++) {
