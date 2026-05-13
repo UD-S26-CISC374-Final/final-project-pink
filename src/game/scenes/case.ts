@@ -57,7 +57,6 @@ export class Case extends Scene {
 
         getCaseData(
             this.isTutorial,
-            this.levelDifficulty,
             this.currentTutorialCaseIndex,
         );
 
@@ -95,7 +94,6 @@ export class Case extends Scene {
     async generateStyledCodeSnippet(
         caseData: string = getCaseData(
             this.isTutorial,
-            this.levelDifficulty,
             this.currentTutorialCaseIndex,
         ).case,
     ) {
@@ -212,7 +210,6 @@ export class Case extends Scene {
     private async addTestCases() {
         const { feedback: testFeedback } = getCaseData(
             this.isTutorial,
-            this.levelDifficulty,
             this.currentTutorialCaseIndex,
         );
 
@@ -348,7 +345,6 @@ export class Case extends Scene {
     private clickableTestCases() {
         const { feedback: testFeedback } = getCaseData(
             this.isTutorial,
-            this.levelDifficulty,
             this.currentTutorialCaseIndex,
         );
 
