@@ -352,7 +352,7 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
                     "background-music",
                 ) as Phaser.Sound.BaseSound | null
             )?.stop();
-            
+
             this.scene.start("MainMenu");
         });
 
