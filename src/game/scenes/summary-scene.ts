@@ -301,7 +301,7 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
     create() {
         const manager = CaseManager.getInstance();
-        manager.saveResults();
+        // manager.saveResults();
 
         this.cameras.main.setBackgroundColor("#1a1a1a");
 
@@ -338,9 +338,8 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
         }
 
         panelDiv.querySelector("#menu-btn")?.addEventListener("click", () => {
-            localStorage.removeItem("caseByCase_lastResults");
-            localStorage.removeItem("caseByCase_tutorialCompleted");
-            localStorage.removeItem("savedProgress");
+            localStorage.clear(); // clear all saved game data from LocalStorage
+
             this.sound
                 .add("button-click", {
                     volume: 1,
@@ -352,7 +351,7 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
                     "background-music",
                 ) as Phaser.Sound.BaseSound | null
             )?.stop();
-            
+
             this.scene.start("MainMenu");
         });
 

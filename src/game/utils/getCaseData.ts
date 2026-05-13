@@ -38,7 +38,6 @@ export default function getCaseData(
     isTutorial: boolean,
     currentCaseIndex: number,
 ): {
-    feedback: UnitTest[];
     case: string;
     currCaseData: TestFeedback[];
     description: string;
@@ -47,12 +46,11 @@ export default function getCaseData(
 } {
     if (isTutorial) {
         return {
-            feedback: tutorialCases[currentCaseIndex]?.evidencePool || [],
             case: tutorialCases[currentCaseIndex]?.functionCode,
             currCaseData: tutorialCases[currentCaseIndex].testFeedback,
             description: tutorialCases[currentCaseIndex].description,
             evidencePool: tutorialCases[currentCaseIndex]?.evidencePool || [],
-            caseDataWhole: tutorialCases[currentCaseIndex], 
+            caseDataWhole: tutorialCases[currentCaseIndex],
         };
     } else {
         const endAmountOfCases = 15;
@@ -85,22 +83,18 @@ export default function getCaseData(
             );
 
             return {
-                feedback:
-                    randomizedCasesArr[currentCaseIndex]?.evidencePool || [],
                 case: randomizedCasesArr[currentCaseIndex]?.functionCode,
                 currCaseData: randomizedCasesArr[currentCaseIndex].testFeedback,
                 description: randomizedCasesArr[currentCaseIndex].description,
                 evidencePool:
                     randomizedCasesArr[currentCaseIndex]?.evidencePool || [],
-                caseDataWhole: randomizedCasesArr[currentCaseIndex], 
+                caseDataWhole: randomizedCasesArr[currentCaseIndex],
             };
         } else {
             const parsedRandomizedCases: Case[] = JSON.parse(
                 savedRandomizedCases,
             ) as Case[];
             return {
-                feedback:
-                    parsedRandomizedCases[currentCaseIndex]?.evidencePool || [],
                 case: parsedRandomizedCases[currentCaseIndex]?.functionCode,
                 currCaseData:
                     parsedRandomizedCases[currentCaseIndex].testFeedback,
