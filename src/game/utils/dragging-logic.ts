@@ -5,11 +5,51 @@ import getCaseData from "./getCaseData";
 
 let tutorialCaseIndexGlobal = 0;
 let isTutorialGlobal = false;
-let presentToJudgeButtonGlobal: Phaser.GameObjects.Container | undefined =
-    undefined;
+let presentToJudgeButtonGlobal: Phaser.GameObjects.Container | undefined;
 let clickSoundGlobal: Phaser.Sound.BaseSound;
 
 const EVIDENCE_LETTERS = ["A", "B", "C", "D"];
+
+/**
+ * Turns:
+ * assert(find_first_even([2, 4, 6]), 2)
+ *
+ * into:
+ * {
+ *   call: "find_first_even([2, 4, 6])",
+ *   expected: "2"
+ * }
+ */
+function splitLabel(label: string) {
+    const inner = label.replace(/^assert\(/, "").replace(/\)$/, "");
+
+    let depth = 0;
+    let splitIndex = -1;
+
+    for (let i = inner.length - 1; i >= 0; i--) {
+        const char = inner[i];
+
+        if (char === ")" || char === "]" || char === "}") depth++;
+        else if (char === "(" || char === "[" || char === "{") depth--;
+
+        if (char === "," && depth === 0) {
+            splitIndex = i;
+            break;
+        }
+    }
+
+    if (splitIndex === -1) {
+        return {
+            call: inner,
+            expected: "",
+        };
+    }
+
+    return {
+        call: inner.slice(0, splitIndex).trim(),
+        expected: inner.slice(splitIndex + 1).trim(),
+    };
+}
 
 function showPresentToJudgeButton(
     testCases: string[],
@@ -17,8 +57,15 @@ function showPresentToJudgeButton(
 ) {
     const letters = testCases
         .map((testCase) => {
-            const pool = tutorialCases[tutorialCaseIndexGlobal].evidencePool;
-            const numIdx = pool.map((tc) => tc.label).indexOf(testCase);
+            const pool = getCaseData(
+                isTutorialGlobal,
+                tutorialCaseIndexGlobal,
+            ).evidencePool;
+
+            const numIdx = pool.findIndex((tc) => {
+                const { call, expected } = splitLabel(tc.label);
+                return `${call}|${expected}` === testCase;
+            });
 
             return numIdx >= 0 ? EVIDENCE_LETTERS[numIdx] : null;
         })
@@ -72,46 +119,39 @@ function trackTestCases(scene: Phaser.Scene) {
     constructedTestCasesContainer
         .querySelectorAll("[id^='test-case']")
         .forEach((testCaseDiv) => {
-            let filledBlankCount = 0;
+            const zones = testCaseDiv.querySelectorAll("[id*='zone']");
 
-            testCaseDiv.querySelectorAll("div").forEach((zone) => {
-                const zoneText = zone.querySelector("div")?.textContent;
-                if (zoneText) filledBlankCount++;
-            });
+            const zone1Text = zones[0].textContent.trim();
+            const zone2Text = zones[1].textContent.trim();
 
-            if (filledBlankCount === 2) {
+            if (zone1Text && zone2Text) {
                 completedCount++;
-                constructedTestCases.push(
-                    testCaseDiv.textContent.replace(",", ", "),
-                );
+                constructedTestCases.push(`${zone1Text}|${zone2Text}`);
             }
 
             presentToJudgeButtonGlobal?.destroy();
         });
 
     if (completedCount === constructedTestCasesContainer.children.length) {
-        console.log("All test cases complete");
         showPresentToJudgeButton(constructedTestCases, scene);
     }
 }
 
 function getPool() {
-    const testCasePool = getCaseData(
-        isTutorialGlobal,
-        tutorialCaseIndexGlobal,
-    ).evidencePool.flatMap((tc: UnitTest) => {
-        return tc.label
-            .replace(/^assert\((.*)\)$/, "$1")
-            .split(",")
-            .map((part) => part.trim());
+    const caseData = getCaseData(isTutorialGlobal, tutorialCaseIndexGlobal);
+
+    const testCasePool = caseData.evidencePool.flatMap((tc: UnitTest) => {
+        const { call, expected } = splitLabel(tc.label);
+        return [call, expected];
     });
 
-    // randomize them so that the correct ones aren't always in the same spot
     const randomizedPool: string[] = [];
     let current = 0;
     const numPieces = testCasePool.length;
+
     while (current !== numPieces) {
         const randomIndex = Math.floor(Math.random() * numPieces);
+
         if (!randomizedPool[randomIndex]) {
             randomizedPool[randomIndex] = testCasePool[current];
             current++;
@@ -136,6 +176,7 @@ export default function showDraggableTestCases(
 
     const testCasesContainer = document.createElement("div");
     testCasesContainer.id = "test-cases-container";
+
     Object.assign(testCasesContainer.style, {
         width: "100%",
         height: "30%",
@@ -155,8 +196,9 @@ export default function showDraggableTestCases(
     const createDropZone = (id: string) => {
         const zone = document.createElement("div");
         zone.id = id;
+
         Object.assign(zone.style, {
-            minWidth: "120px",
+            minWidth: "180px",
             height: "42px",
             backgroundColor: "rgba(0, 0, 0, 0.4)",
             border: "2px solid #30363d",
@@ -165,14 +207,15 @@ export default function showDraggableTestCases(
             alignItems: "center",
             justifyContent: "center",
             padding: "0 10px",
-            transition: "background-color 0.3s, border-color 0.3s",
         });
+
         return zone;
     };
 
     const createTestCase = () => {
         const row = document.createElement("div");
         row.id = `test-case-${testCasesContainer.children.length + 1}`;
+
         Object.assign(row.style, {
             display: "flex",
             alignItems: "center",
@@ -216,9 +259,8 @@ export default function showDraggableTestCases(
         testCases.push({ zone1: tc.zone1, zone2: tc.zone2 });
     }
 
-    container.appendChild(testCasesContainer);
-
     const draggableDivsContainer = document.createElement("div");
+
     Object.assign(draggableDivsContainer.style, {
         width: "90%",
         height: "45%",
@@ -238,7 +280,7 @@ export default function showDraggableTestCases(
 
     const testCasePool = getPool();
 
-    for (let i = 0; i < testCasePool.length; i++) {
+    for (const piece of testCasePool) {
         const draggableDiv = document.createElement("div");
 
         Object.assign(draggableDiv.style, {
@@ -257,15 +299,15 @@ export default function showDraggableTestCases(
             boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
             whiteSpace: "nowrap",
             userSelect: "none",
-            transition: "transform 0.1s, border-color 0.2s",
         });
 
-        draggableDiv.textContent = testCasePool[i];
+        draggableDiv.textContent = piece;
 
         draggableDiv.addEventListener("mousedown", (e: MouseEvent) => {
             e.preventDefault();
 
             clickDragSound.play();
+
             const containerRect = container.getBoundingClientRect();
             const rect = draggableDiv.getBoundingClientRect();
 
@@ -276,11 +318,8 @@ export default function showDraggableTestCases(
             draggableDiv.style.zIndex = "9999";
 
             const onMouseMove = (e: MouseEvent) => {
-                const x = e.clientX - containerRect.left - offsetX;
-                const y = e.clientY - containerRect.top - offsetY;
-
-                draggableDiv.style.left = `${x}px`;
-                draggableDiv.style.top = `${y}px`;
+                draggableDiv.style.left = `${e.clientX - containerRect.left - offsetX}px`;
+                draggableDiv.style.top = `${e.clientY - containerRect.top - offsetY}px`;
             };
 
             const onMouseUp = () => {
@@ -303,7 +342,7 @@ export default function showDraggableTestCases(
                             dragCenterY > dropRect.top &&
                             dragCenterY < dropRect.bottom;
 
-                        if (isOver) {
+                        if (isOver && zone.children.length === 0) {
                             zone.appendChild(draggableDiv);
 
                             Object.assign(draggableDiv.style, {
@@ -311,17 +350,15 @@ export default function showDraggableTestCases(
                                 left: "",
                                 top: "",
                                 zIndex: "",
-                                cursor: "grab",
                             });
 
-                            dropped = true;
-
                             dropSound.play();
+                            dropped = true;
                             trackTestCases(scene);
-
                             break;
                         }
                     }
+
                     if (dropped) break;
                 }
 
@@ -346,4 +383,3 @@ export default function showDraggableTestCases(
         draggableDivsContainer.appendChild(draggableDiv);
     }
 }
-// Had help from ChatGPT to implement this dragging logic
