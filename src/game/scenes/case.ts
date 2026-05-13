@@ -645,18 +645,22 @@ export class Case extends Scene {
             volume: 1,
         });
 
-        this.backgroundMusic = this.sound.get(
+        let music = this.sound.get(
             "background-music",
         ) as Phaser.Sound.BaseSound | null;
 
-        if (!this.backgroundMusic || !this.backgroundMusic.isPlaying) {
-            this.sound
-                .add("background-music", {
-                    volume: 0.009,
-                    loop: true,
-                })
-                .play();
+        if (!music) {
+            music = this.sound.add("background-music", {
+                volume: 0.009,
+                loop: true,
+            });
         }
+
+        if (!music.isPlaying) {
+            music.play();
+        }
+
+        this.backgroundMusic = music;
 
         // 1. First, we are going to display the open case file sprite showing the program's code and adding the clickable tabs as well
         this.add
