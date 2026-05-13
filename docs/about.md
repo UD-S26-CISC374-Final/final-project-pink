@@ -9,5 +9,5 @@
 ## Gameplay Video
 
 Click the image below to watch the gameplay video! <br />
-[![Watch gameplay](docs/small.png)](https://drive.google.com/file/d/1hSdnD9Im-WyFAPNeJ9rKsoL-QRwm7Kpe/view)
+[![Watch gameplay](small.png)](https://drive.google.com/file/d/1hSdnD9Im-WyFAPNeJ9rKsoL-QRwm7Kpe/view)
 
