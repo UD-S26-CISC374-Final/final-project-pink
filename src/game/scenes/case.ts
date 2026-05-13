@@ -55,10 +55,7 @@ export class Case extends Scene {
         if (this.dragDom) this.dragDom.destroy();
         if (this.evidenceDom) this.evidenceDom.destroy();
 
-        getCaseData(
-            this.isTutorial,
-            this.currentTutorialCaseIndex,
-        );
+        getCaseData(this.isTutorial, this.currentTutorialCaseIndex);
 
         if (this.caseFileTestCases.length)
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
@@ -572,15 +569,21 @@ export class Case extends Scene {
             this.textObject.setText("");
 
             this.programDescTextReference = this.add
-                .text(512, 350, this.currTutorialCaseDesc, {
-                    fontFamily: "Google Sans Code",
-                    fontSize: 23,
-                    color: "#ffffff",
-                    wordWrap: {
-                        width: 600,
-                        useAdvancedWrap: true,
+                .text(
+                    512,
+                    350,
+                    getCaseData(this.isTutorial, this.currentTutorialCaseIndex)
+                        .description,
+                    {
+                        fontFamily: "Google Sans Code",
+                        fontSize: 23,
+                        color: "#ffffff",
+                        wordWrap: {
+                            width: 600,
+                            useAdvancedWrap: true,
+                        },
                     },
-                })
+                )
                 .setOrigin(0.5);
 
             const fourthIntro =
