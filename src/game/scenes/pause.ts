@@ -176,13 +176,23 @@ export class Pause extends Scene {
         this.saveProgressButton.on("pointerdown", async () => {
             if (this.typingInProgress) return;
 
-            localStorage.setItem(
-                "savedProgress",
-                JSON.stringify({
-                    currentTutorialCaseIndex: this.currentTutorialCaseIndex,
-                    difficulty: this.difficulty,
-                }),
-            );
+            if (this.isTutorial) {
+                localStorage.setItem(
+                    "savedProgress",
+                    JSON.stringify({
+                        currentTutorialCaseIndex: this.currentTutorialCaseIndex,
+                        difficulty: this.difficulty,
+                    }),
+                );
+            } else {
+                localStorage.setItem(
+                    "savedProgressMainGame",
+                    JSON.stringify({
+                        currentCaseIndex: this.currentTutorialCaseIndex,
+                        difficulty: this.difficulty,
+                    }),
+                );
+            }
 
             this.textObject.setText("");
 
