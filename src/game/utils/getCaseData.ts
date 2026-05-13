@@ -42,6 +42,7 @@ export default function getCaseData(
     case: string;
     currCaseData: TestFeedback[];
     description: string;
+    evidencePool: UnitTest[];
 } {
     if (isTutorial) {
         return {
@@ -49,6 +50,7 @@ export default function getCaseData(
             case: tutorialCases[currentCaseIndex]?.functionCode,
             currCaseData: tutorialCases[currentCaseIndex].testFeedback,
             description: tutorialCases[currentCaseIndex].description,
+            evidencePool: tutorialCases[currentCaseIndex]?.evidencePool || [],
         };
     } else {
         const endAmountOfCases = 15;
@@ -70,7 +72,6 @@ export default function getCaseData(
                         | "hard",
                 );
 
-                // TODO - figure out why it won't add the 5 cases for hard difficulty
                 randomizedCasesArr.push(...randomFiveCases);
                 currentDifficulty++;
                 current += 5;
@@ -87,6 +88,8 @@ export default function getCaseData(
                 case: randomizedCasesArr[currentCaseIndex]?.functionCode,
                 currCaseData: randomizedCasesArr[currentCaseIndex].testFeedback,
                 description: randomizedCasesArr[currentCaseIndex].description,
+                evidencePool:
+                    randomizedCasesArr[currentCaseIndex]?.evidencePool || [],
             };
         } else {
             const parsedRandomizedCases: Case[] = JSON.parse(
@@ -100,6 +103,8 @@ export default function getCaseData(
                     parsedRandomizedCases[currentCaseIndex].testFeedback,
                 description:
                     parsedRandomizedCases[currentCaseIndex].description,
+                evidencePool:
+                    parsedRandomizedCases[currentCaseIndex]?.evidencePool || [],
             };
         }
     }
