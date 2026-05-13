@@ -8,6 +8,5 @@
 
 ## Gameplay Video
 
-<!-- Paste your YouTube or Google Drive embed code here, e.g.:
-<iframe width="560" height="315" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
--->
+<iframe width="560" height="315" src="https://drive.google.com/file/d/1hSdnD9Im-WyFAPNeJ9rKsoL-QRwm7Kpe/view?usp=sharing" frameborder="0" allowfullscreen></iframe>
+
