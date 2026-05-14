@@ -3,15 +3,17 @@
         "id": "case-1",
         "difficulty": "easy",
         "title": "The Overly Positive Adder",
-        "functionCode": "def find_sum(num1:int, num2:int):\n    return abs(num1 + num2)",
+        "functionCode": "def find_sum(num1:int, num2:int) -> int:\n    return abs(num1 + num2)",
         "description": "I can sum any two integers together correctly!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["negative-sum"],
+        "requiredBranches": [
+            "negative-sum"
+        ],
         "evidencePool": [
             {
                 "id": "c1-t1",
-                "label": "find_sum(5, 5) -> 10",
+                "label": "assert(find_sum(5, 5), 10)",
                 "input": "5, 5",
                 "expectedOutput": "10",
                 "actualOutput": "10",
@@ -20,7 +22,7 @@
             },
             {
                 "id": "c1-t2",
-                "label": "find_sum(10, -4) -> 6",
+                "label": "assert(find_sum(10, -4), 6)",
                 "input": "10, -4",
                 "expectedOutput": "6",
                 "actualOutput": "6",
@@ -29,7 +31,7 @@
             },
             {
                 "id": "c1-t3",
-                "label": "find_sum(-20, -4) -> -24",
+                "label": "assert(find_sum(-20, -4), -24)",
                 "input": "-20, -4",
                 "expectedOutput": "-24",
                 "actualOutput": "24",
@@ -38,7 +40,7 @@
             },
             {
                 "id": "c1-t4",
-                "label": "find_sum(0, 0) -> 0",
+                "label": "assert(find_sum(0, 0), 0)",
                 "input": "0, 0",
                 "expectedOutput": "0",
                 "actualOutput": "0",
@@ -76,15 +78,17 @@
         "id": "case-2",
         "difficulty": "easy",
         "title": "The Exclusive Bouncer",
-        "functionCode": "def is_old_enough(age:int):\n  if age > 21:\n      return True\n  else:\n      return False",
+        "functionCode": "def is_old_enough(age:int) -> bool:\n  if age > 21:\n      return True\n  else:\n      return False",
         "description": "I check if a user is old enough to enter the club. If you're 21 or older, you're in!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["exact-boundary"],
+        "requiredBranches": [
+            "exact-boundary"
+        ],
         "evidencePool": [
             {
                 "id": "c2-t1",
-                "label": "is_old_enough(12) -> False",
+                "label": "assert(is_old_enough(12), False)",
                 "input": "12",
                 "expectedOutput": "False",
                 "actualOutput": "False",
@@ -93,7 +97,7 @@
             },
             {
                 "id": "c2-t2",
-                "label": "is_old_enough(21) -> True",
+                "label": "assert(is_old_enough(21), True)",
                 "input": "21",
                 "expectedOutput": "True",
                 "actualOutput": "False",
@@ -102,7 +106,7 @@
             },
             {
                 "id": "c2-t3",
-                "label": "is_old_enough(30) -> True",
+                "label": "assert(is_old_enough(30), True)",
                 "input": "30",
                 "expectedOutput": "True",
                 "actualOutput": "True",
@@ -111,7 +115,7 @@
             },
             {
                 "id": "c2-t4",
-                "label": "is_old_enough(18) -> False",
+                "label": "assert(is_old_enough(18), False)",
                 "input": "18",
                 "expectedOutput": "False",
                 "actualOutput": "False",
@@ -148,15 +152,17 @@
         "id": "case-3",
         "difficulty": "easy",
         "title": "The Index Imposter",
-        "functionCode": "def sum_list(nums:list[int]):\n   sum = 0\n   nums_length = len(nums)\n   \n   for i in range(nums_length):\n       sum += i\n\n   return sum",
+        "functionCode": "def sum_list(nums:list[int]) -> int:\n   sum = 0\n   nums_length = len(nums)\n   \n   for i in range(nums_length):\n       sum += i\n\n   return sum",
         "description": "I correctly add up all the numbers in a list!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["value-mismatch"],
+        "requiredBranches": [
+            "value-mismatch"
+        ],
         "evidencePool": [
             {
                 "id": "c3-t1",
-                "label": "sum([]) -> 0",
+                "label": "assert(sum([]), 0)",
                 "input": "[]",
                 "expectedOutput": "0",
                 "actualOutput": "0",
@@ -165,7 +171,7 @@
             },
             {
                 "id": "c3-t2",
-                "label": "sum([1, 5, 9]) -> 15",
+                "label": "assert(sum([1, 5, 9]), 15)",
                 "input": "[1, 5, 9]",
                 "expectedOutput": "15",
                 "actualOutput": "3",
@@ -174,7 +180,7 @@
             },
             {
                 "id": "c3-t3",
-                "label": "sum([0, 1]) -> 1",
+                "label": "assert(sum([0, 1]), 1)",
                 "input": "[0, 1]",
                 "expectedOutput": "1",
                 "actualOutput": "1",
@@ -183,7 +189,7 @@
             },
             {
                 "id": "c3-t4",
-                "label": "sum([-1, -1]) -> -2",
+                "label": "assert(sum([-1, -1]), -2)",
                 "input": "[-1, -1]",
                 "expectedOutput": "-2",
                 "actualOutput": "1",
@@ -221,15 +227,17 @@
         "id": "case-4",
         "difficulty": "easy",
         "title": "The Missing Space",
-        "functionCode": "def concat_name(first_name:str, last_name:str):\n  return first_name + last_name",
+        "functionCode": "def concat_name(first_name:str, last_name:str) -> str:\n  return first_name + last_name",
         "description": "I correctly concatenate a given first and last name!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["raw-concat"],
+        "requiredBranches": [
+            "raw-concat"
+        ],
         "evidencePool": [
             {
                 "id": "c4-t1",
-                "label": "concat('John ', 'Doe')",
+                "label": "assert(concat('John ', 'Doe'), 'John Doe')",
                 "input": "'John ', 'Doe'",
                 "expectedOutput": "John Doe",
                 "actualOutput": "John Doe",
@@ -238,7 +246,7 @@
             },
             {
                 "id": "c4-t2",
-                "label": "concat('Jane', ' Doe')",
+                "label": "assert(concat('Jane', ' Doe'), 'Jane Doe')",
                 "input": "'Jane', ' Doe'",
                 "expectedOutput": "Jane Doe",
                 "actualOutput": "Jane Doe",
@@ -247,7 +255,7 @@
             },
             {
                 "id": "c4-t3",
-                "label": "concat('George', 'Washington')",
+                "label": "assert(concat('George', 'Washington'), 'George Washington')",
                 "input": "'George', 'Washington'",
                 "expectedOutput": "George Washington",
                 "actualOutput": "GeorgeWashington",
@@ -256,7 +264,7 @@
             },
             {
                 "id": "c4-t4",
-                "label": "concat('Mary', ' Alice')",
+                "label": "assert(concat('Mary', ' Alice'), 'Mary Alice')",
                 "input": "'Mary', ' Alice'",
                 "expectedOutput": "Mary Alice",
                 "actualOutput": "Mary Alice",
@@ -296,15 +304,18 @@
         "id": "case-5",
         "difficulty": "easy",
         "title": "The Average Joe",
-        "functionCode": "def find_grade_average(grades:list[int]):\n   grades_length = len(grades)\n   if grades_length == 0:\n      return -1\n   sum = 0\n   for i in range(grades_length):\n       sum += grades[i]\n   return sum / grades_length",
+        "functionCode": "def find_grade_average(grades:list[int]) -> float | int:\n   grades_length = len(grades)\n   if grades_length == 0:\n      return -1\n   sum = 0\n   for i in range(grades_length):\n       sum += grades[i]\n   return sum / grades_length",
         "description": "Returns the average grade accurately.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["standard-avg", "safety-check"],
+        "requiredBranches": [
+            "standard-avg",
+            "safety-check"
+        ],
         "evidencePool": [
             {
                 "id": "c5-t1",
-                "label": "avg([80, 90, 100]) -> 90.0",
+                "label": "assert(avg([80, 90, 100]), 90.0)",
                 "input": "[80, 90, 100]",
                 "expectedOutput": "90.0",
                 "actualOutput": "90.0",
@@ -313,7 +324,7 @@
             },
             {
                 "id": "c5-t2",
-                "label": "avg([]) -> -1",
+                "label": "assert(avg([]), -1)",
                 "input": "[]",
                 "expectedOutput": "-1",
                 "actualOutput": "-1",
@@ -322,7 +333,7 @@
             },
             {
                 "id": "c5-t3",
-                "label": "avg([100]) -> 100.0",
+                "label": "assert(avg([100]), 100.0)",
                 "input": "[100]",
                 "expectedOutput": "100.0",
                 "actualOutput": "100.0",
@@ -331,7 +342,7 @@
             },
             {
                 "id": "c5-t4",
-                "label": "avg([0, 0]) -> 0.0",
+                "label": "assert(avg([0, 0]), 0.0)",
                 "input": "[0, 0]",
                 "expectedOutput": "0.0",
                 "actualOutput": "0.0",
@@ -368,15 +379,17 @@
         "id": "case-6",
         "difficulty": "easy",
         "title": "The Snobby Socialite",
-        "functionCode": "def pair_with_leader(people):\n    leader_index = 1\n    leader = people[leader_index]\n    pairs = []\n    for i in range(len(people)):\n        if i != leader_index:\n            pairs.append(f\"{leader} & {people[i]}\")\n    return pairs",
+        "functionCode": "def pair_with_leader(people:list[str]) -> list[str]:\n    leader_index = 1\n    leader = people[leader_index]\n    pairs = []\n    for i in range(len(people)):\n        if i != leader_index:\n            pairs.append(f\"{leader} & {people[i]}\")\n    return pairs",
         "description": "I take a list of people and pair them each up with the first person.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["leader-pick"],
+        "requiredBranches": [
+            "leader-pick"
+        ],
         "evidencePool": [
             {
                 "id": "c6-t1",
-                "label": "pair(['A', 'B', 'C'])",
+                "label": "assert(pair(['A', 'B', 'C']), ['A & B', 'A & C'])",
                 "input": "['A', 'B', 'C']",
                 "expectedOutput": "['A & B', 'A & C']",
                 "actualOutput": "['B & A', 'B & C']",
@@ -385,7 +398,7 @@
             },
             {
                 "id": "c6-t2",
-                "label": "pair(['Leader', 'X'])",
+                "label": "assert(pair(['Leader', 'X']), ['Leader & X'])",
                 "input": "['Leader', 'X']",
                 "expectedOutput": "['Leader & X']",
                 "actualOutput": "['X & Leader']",
@@ -394,7 +407,7 @@
             },
             {
                 "id": "c6-t3",
-                "label": "pair(['X', 'Y', 'Z'])",
+                "label": "assert(pair(['X', 'Y', 'Z']), ['X & Y', 'X & Z'])",
                 "input": "['X', 'Y', 'Z']",
                 "expectedOutput": "['X & Y', 'X & Z']",
                 "actualOutput": "['Y & X', 'Y & Z']",
@@ -403,7 +416,7 @@
             },
             {
                 "id": "c6-t4",
-                "label": "pair(['First', 'Second'])",
+                "label": "assert(pair(['First', 'Second']), ['First & Second'])",
                 "input": "['First', 'Second']",
                 "expectedOutput": "['First & Second']",
                 "actualOutput": "['Second & First']",
@@ -440,15 +453,18 @@
         "id": "case-7",
         "difficulty": "easy",
         "title": "The Digital Accountant",
-        "functionCode": "def count_digits(num:int):\n    string_num = str(num)\n    total = 0\n    for i in range(len(string_num)):\n        if string_num[i].isdigit():\n            total += 1\n    return total",
+        "functionCode": "def count_digits(num:int) -> int:\n    string_num = str(num)\n    total = 0\n    for i in range(len(string_num)):\n        if string_num[i].isdigit():\n            total += 1\n    return total",
         "description": "I count how many actual digits are in any integer.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["negative-check", "boundary-check"],
+        "requiredBranches": [
+            "negative-check",
+            "boundary-check"
+        ],
         "evidencePool": [
             {
                 "id": "c7-t1",
-                "label": "count(-123) -> 3",
+                "label": "assert(count(-123), 3)",
                 "input": "-123",
                 "expectedOutput": "3",
                 "actualOutput": "3",
@@ -457,7 +473,7 @@
             },
             {
                 "id": "c7-t2",
-                "label": "count(1001) -> 4",
+                "label": "assert(count(1001), 4)",
                 "input": "1001",
                 "expectedOutput": "4",
                 "actualOutput": "4",
@@ -466,7 +482,7 @@
             },
             {
                 "id": "c7-t3",
-                "label": "count(0) -> 1",
+                "label": "assert(count(0), 1)",
                 "input": "0",
                 "expectedOutput": "1",
                 "actualOutput": "1",
@@ -475,7 +491,7 @@
             },
             {
                 "id": "c7-t4",
-                "label": "count(-5) -> 1",
+                "label": "assert(count(-5), 1)",
                 "input": "-5",
                 "expectedOutput": "1",
                 "actualOutput": "1",
@@ -512,15 +528,18 @@
         "id": "case-8",
         "difficulty": "easy",
         "title": "The Versatile Converter",
-        "functionCode": "def distance_converter(distance:int, convert_to:str):\n    if convert_to == \"km\":\n        return distance * 1.609\n    elif convert_to == \"mi\":\n        return distance / 1.609",
+        "functionCode": "def distance_converter(distance:int, convert_to:str) -> float | None:\n    if convert_to == \"km\":\n        return distance * 1.609\n    elif convert_to == \"mi\":\n        return distance / 1.609",
         "description": "I convert miles to kilometers and vice-versa!",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["km-path", "mi-path"],
+        "requiredBranches": [
+            "km-path",
+            "mi-path"
+        ],
         "evidencePool": [
             {
                 "id": "c8-t1",
-                "label": "to_km(1) -> 1.609",
+                "label": "assert(to_km(1), 1.609)",
                 "input": "1, 'km'",
                 "expectedOutput": "1.609",
                 "actualOutput": "1.609",
@@ -529,7 +548,7 @@
             },
             {
                 "id": "c8-t2",
-                "label": "to_mi(1.609) -> 1.0",
+                "label": "assert(to_mi(1.609), 1.0)",
                 "input": "1.609, 'mi'",
                 "expectedOutput": "1.0",
                 "actualOutput": "1.0",
@@ -538,7 +557,7 @@
             },
             {
                 "id": "c8-t3",
-                "label": "to_km(0) -> 0.0",
+                "label": "assert(to_km(0), 0.0)",
                 "input": "0, 'km'",
                 "expectedOutput": "0.0",
                 "actualOutput": "0.0",
@@ -547,7 +566,7 @@
             },
             {
                 "id": "c8-t4",
-                "label": "to_mi(0) -> 0.0",
+                "label": "assert(to_mi(0), 0.0)",
                 "input": "0, 'mi'",
                 "expectedOutput": "0.0",
                 "actualOutput": "0.0",
@@ -584,15 +603,17 @@
         "id": "case-9",
         "difficulty": "easy",
         "title": "The Glass Half Full",
-        "functionCode": "def find_largest_num(nums:list[int]):\n    largest = 0\n    largest_len = len(nums)\n    for i in range(largest_len):\n        if nums[i] > largest:\n            largest = nums[i]\n    return largest",
+        "functionCode": "def find_largest_num(nums:list[int]) -> int:\n    largest = 0\n    largest_len = len(nums)\n    for i in range(largest_len):\n        if nums[i] > largest:\n            largest = nums[i]\n    return largest",
         "description": "I will find the largest number in any list of integers!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["negative-list"],
+        "requiredBranches": [
+            "negative-list"
+        ],
         "evidencePool": [
             {
                 "id": "c9-t1",
-                "label": "max([1, 5, 2]) -> 5",
+                "label": "assert(max([1, 5, 2]), 5)",
                 "input": "[1, 5, 2]",
                 "expectedOutput": "5",
                 "actualOutput": "5",
@@ -601,7 +622,7 @@
             },
             {
                 "id": "c9-t2",
-                "label": "max([-5, -10, -2]) -> -2",
+                "label": "assert(max([-5, -10, -2]), -2)",
                 "input": "[-5, -10, -2]",
                 "expectedOutput": "-2",
                 "actualOutput": "0",
@@ -610,7 +631,7 @@
             },
             {
                 "id": "c9-t3",
-                "label": "max([0, -1]) -> 0",
+                "label": "assert(max([0, -1]), 0)",
                 "input": "[0, -1]",
                 "expectedOutput": "0",
                 "actualOutput": "0",
@@ -619,7 +640,7 @@
             },
             {
                 "id": "c9-t4",
-                "label": "max([-100, -50]) -> -50",
+                "label": "assert(max([-100, -50]), -50)",
                 "input": "[-100, -50]",
                 "expectedOutput": "-50",
                 "actualOutput": "0",
@@ -657,15 +678,17 @@
         "id": "case-10",
         "difficulty": "easy",
         "title": "The Lowercase Literalist",
-        "functionCode": "def count_vowels(word:str):\n    total = 0\n    for i in range(len(word)):\n        if word[i] == 'a' or word[i] == 'e' or word[i] == 'i' or word[i] == 'o' or word[i] == 'u':\n            total += 1\n    return total",
+        "functionCode": "def count_vowels(word:str) -> int:\n    total = 0\n    for i in range(len(word)):\n        if word[i] == 'a' or word[i] == 'e' or word[i] == 'i' or word[i] == 'o' or word[i] == 'u':\n            total += 1\n    return total",
         "description": "I count every vowel in a word (A, E, I, O, U)!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["uppercase-vowels"],
+        "requiredBranches": [
+            "uppercase-vowels"
+        ],
         "evidencePool": [
             {
                 "id": "c10-t1",
-                "label": "vowels('apple') -> 2",
+                "label": "assert(vowels('apple'), 2)",
                 "input": "'apple'",
                 "expectedOutput": "2",
                 "actualOutput": "2",
@@ -674,7 +697,7 @@
             },
             {
                 "id": "c10-t2",
-                "label": "vowels('Apple') -> 2",
+                "label": "assert(vowels('Apple'), 2)",
                 "input": "'Apple'",
                 "expectedOutput": "2",
                 "actualOutput": "1",
@@ -683,7 +706,7 @@
             },
             {
                 "id": "c10-t3",
-                "label": "vowels('AEIOU') -> 5",
+                "label": "assert(vowels('AEIOU'), 5)",
                 "input": "'AEIOU'",
                 "expectedOutput": "5",
                 "actualOutput": "0",
@@ -692,7 +715,7 @@
             },
             {
                 "id": "c10-t4",
-                "label": "vowels('sky') -> 0",
+                "label": "assert(vowels('sky'), 0)",
                 "input": "'sky'",
                 "expectedOutput": "0",
                 "actualOutput": "0",
@@ -729,7 +752,7 @@
         "id": "case-11",
         "difficulty": "easy",
         "title": "The Range Ranger",
-        "functionCode": "def find_min_max(nums:list[int]):\n    nums_len = len(nums)\n    if nums_len == 0: return -1\n    min_val = nums[0]\n    max_val = nums[0]\n    for i in range(nums_len):\n        if min_val > nums[i]: min_val = nums[i]\n        if max_val < nums[i]: max_val = nums[i]\n    return f\"The max is: {max_val} and the min is {min_val}\"",
+        "functionCode": "def find_min_max(nums:list[int]) -> str | int:\n    nums_len = len(nums)\n    if nums_len == 0: return -1\n    min_val = nums[0]\n    max_val = nums[0]\n    for i in range(nums_len):\n        if min_val > nums[i]: min_val = nums[i]\n        if max_val < nums[i]: max_val = nums[i]\n    return f\"The max is: {max_val} and the min is {min_val}\"",
         "description": "I scan any list of numbers and find the highest and lowest values.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
@@ -741,7 +764,7 @@
         "evidencePool": [
             {
                 "id": "c11-t1",
-                "label": "range([5, 1, 9])",
+                "label": "assert(range([5, 1, 9]), 'The max is: 9 and the min is 1')",
                 "input": "[5, 1, 9]",
                 "expectedOutput": "The max is: 9 and the min is 1",
                 "actualOutput": "The max is: 9 and the min is 1",
@@ -750,7 +773,7 @@
             },
             {
                 "id": "c11-t2",
-                "label": "range([-10, -1])",
+                "label": "assert(range([-10, -1]), 'The max is: -1 and the min is -10')",
                 "input": "[-10, -1]",
                 "expectedOutput": "The max is: -1 and the min is -10",
                 "actualOutput": "The max is: -1 and the min is -10",
@@ -759,7 +782,7 @@
             },
             {
                 "id": "c11-t3",
-                "label": "range([]) -> -1",
+                "label": "assert(range([]), -1)",
                 "input": "[]",
                 "expectedOutput": "-1",
                 "actualOutput": "-1",
@@ -768,7 +791,7 @@
             },
             {
                 "id": "c11-t4",
-                "label": "range([7])",
+                "label": "assert(range([7]), 'The max is: 7 and the min is 7')",
                 "input": "[7]",
                 "expectedOutput": "The max is: 7 and the min is 7",
                 "actualOutput": "The max is: 7 and the min is 7",
@@ -805,15 +828,18 @@
         "id": "case-12",
         "difficulty": "easy",
         "title": "The Minimalist",
-        "functionCode": "def remove_duplicates(nums:list[int]):\n    clean_arr = []\n    for i in range(len(nums)):\n        if nums[i] not in clean_arr:\n            clean_arr.append(nums[i])\n    return clean_arr",
+        "functionCode": "def remove_duplicates(nums:list[int]) -> list[int]:\n    clean_arr = []\n    for i in range(len(nums)):\n        if nums[i] not in clean_arr:\n            clean_arr.append(nums[i])\n    return clean_arr",
         "description": "I return a version where every number appears only once.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["duplicate-filter", "empty-handle"],
+        "requiredBranches": [
+            "duplicate-filter",
+            "empty-handle"
+        ],
         "evidencePool": [
             {
                 "id": "c12-t1",
-                "label": "dedupe([1, 2, 2, 3])",
+                "label": "assert(dedupe([1, 2, 2, 3]), [1, 2, 3])",
                 "input": "[1, 2, 2, 3]",
                 "expectedOutput": "[1, 2, 3]",
                 "actualOutput": "[1, 2, 3]",
@@ -822,7 +848,7 @@
             },
             {
                 "id": "c12-t2",
-                "label": "dedupe([1, 1, 1])",
+                "label": "assert(dedupe([1, 1, 1]), [1])",
                 "input": "[1, 1, 1]",
                 "expectedOutput": "[1]",
                 "actualOutput": "[1]",
@@ -831,7 +857,7 @@
             },
             {
                 "id": "c12-t3",
-                "label": "dedupe([]) -> []",
+                "label": "assert(dedupe([]), [])",
                 "input": "[]",
                 "expectedOutput": "[]",
                 "actualOutput": "[]",
@@ -840,7 +866,7 @@
             },
             {
                 "id": "c12-t4",
-                "label": "dedupe([1, 2, 3])",
+                "label": "assert(dedupe([1, 2, 3]), [1, 2, 3])",
                 "input": "[1, 2, 3]",
                 "expectedOutput": "[1, 2, 3]",
                 "actualOutput": "[1, 2, 3]",
@@ -877,15 +903,17 @@
         "id": "case-13",
         "difficulty": "easy",
         "title": "First/Last Same",
-        "functionCode": "def check_first_last_same(nums:list[int]):\n    nums_len = len(nums)\n    if nums_len == 0: return False\n    first_elem = nums[0]\n    last_elem = nums[nums_len]\n    return first_elem == last_elem",
+        "functionCode": "def check_first_last_same(nums:list[int]) -> bool:\n    nums_len = len(nums)\n    if nums_len == 0: return False\n    first_elem = nums[0]\n    last_elem = nums[nums_len]\n    return first_elem == last_elem",
         "description": "I check if the first and last numbers in a list are the same.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["populated-crash"],
+        "requiredBranches": [
+            "populated-crash"
+        ],
         "evidencePool": [
             {
                 "id": "c13-t1",
-                "label": "check([1, 2, 1]) -> True",
+                "label": "assert(check([1, 2, 1]), True)",
                 "input": "[1, 2, 1]",
                 "expectedOutput": "True",
                 "actualOutput": "IndexError",
@@ -894,7 +922,7 @@
             },
             {
                 "id": "c13-t2",
-                "label": "check([]) -> False",
+                "label": "assert(check([]), False)",
                 "input": "[]",
                 "expectedOutput": "False",
                 "actualOutput": "False",
@@ -903,7 +931,7 @@
             },
             {
                 "id": "c13-t3",
-                "label": "check([5, 5]) -> True",
+                "label": "assert(check([5, 5]), True)",
                 "input": "[5, 5]",
                 "expectedOutput": "True",
                 "actualOutput": "IndexError",
@@ -912,7 +940,7 @@
             },
             {
                 "id": "c13-t4",
-                "label": "check([1]) -> True",
+                "label": "assert(check([1]), True)",
                 "input": "[1]",
                 "expectedOutput": "True",
                 "actualOutput": "IndexError",
@@ -950,15 +978,19 @@
         "id": "case-14",
         "difficulty": "easy",
         "title": "Sum All",
-        "functionCode": "def sum_all(nums:list[int]):\n    total = 0 \n    for num in nums:\n        total += num\n    return total",
+        "functionCode": "def sum_all(nums:list[int]) -> int:\n    total = 0 \n    for num in nums:\n        total += num\n    return total",
         "description": "I take a list of numbers and return their total sum.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["addition-path", "negative-path", "empty-path"],
+        "requiredBranches": [
+            "addition-path",
+            "negative-path",
+            "empty-path"
+        ],
         "evidencePool": [
             {
                 "id": "c14-t1",
-                "label": "sum([1, 1, 5]) -> 7",
+                "label": "assert(sum([1, 1, 5]), 7)",
                 "input": "[1, 1, 5]",
                 "expectedOutput": "7",
                 "actualOutput": "7",
@@ -967,7 +999,7 @@
             },
             {
                 "id": "c14-t2",
-                "label": "sum([-5, 5]) -> 0",
+                "label": "assert(sum([-5, 5]), 0)",
                 "input": "[-5, 5]",
                 "expectedOutput": "0",
                 "actualOutput": "0",
@@ -976,7 +1008,7 @@
             },
             {
                 "id": "c14-t3",
-                "label": "sum([]) -> 0",
+                "label": "assert(sum([]), 0)",
                 "input": "[]",
                 "expectedOutput": "0",
                 "actualOutput": "0",
@@ -985,7 +1017,7 @@
             },
             {
                 "id": "c14-t4",
-                "label": "sum([10]) -> 10",
+                "label": "assert(sum([10]), 10)",
                 "input": "[10]",
                 "expectedOutput": "10",
                 "actualOutput": "10",
@@ -1022,15 +1054,17 @@
         "id": "case-15",
         "difficulty": "easy",
         "title": "Multiply All",
-        "functionCode": "def multiply_all(nums:list[int]):\n    product = 0 \n    for num in nums:\n        product *= num\n    return product",
+        "functionCode": "def multiply_all(nums:list[int]) -> int:\n    product = 0 \n    for num in nums:\n        product *= num\n    return product",
         "description": "I calculate the total product of any list of numbers.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["zero-init-bug"],
+        "requiredBranches": [
+            "zero-init-bug"
+        ],
         "evidencePool": [
             {
                 "id": "c15-t1",
-                "label": "mul([1, 1, 5]) -> 5",
+                "label": "assert(mul([1, 1, 5]), 5)",
                 "input": "[1, 1, 5]",
                 "expectedOutput": "5",
                 "actualOutput": "0",
@@ -1039,7 +1073,7 @@
             },
             {
                 "id": "c15-t2",
-                "label": "mul([10, 20]) -> 200",
+                "label": "assert(mul([10, 20]), 200)",
                 "input": "[10, 20]",
                 "expectedOutput": "200",
                 "actualOutput": "0",
@@ -1048,7 +1082,7 @@
             },
             {
                 "id": "c15-t3",
-                "label": "mul([5, 0]) -> 0",
+                "label": "assert(mul([5, 0]), 0)",
                 "input": "[5, 0]",
                 "expectedOutput": "0",
                 "actualOutput": "0",
@@ -1057,7 +1091,7 @@
             },
             {
                 "id": "c15-t4",
-                "label": "mul([]) -> 1",
+                "label": "assert(mul([]), 1)",
                 "input": "[]",
                 "expectedOutput": "1",
                 "actualOutput": "0",

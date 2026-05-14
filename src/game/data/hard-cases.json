@@ -3,11 +3,14 @@
         "id": "case-16",
         "difficulty": "hard",
         "title": "The Selective Searcher",
-        "functionCode": "def find_first_even(nums:list[int]):\n    for num in nums:\n        if num % 2 == 0:\n            return num\n    return -1",
+        "functionCode": "def find_first_even(nums:list[int]) -> int:\n    for num in nums:\n        if num % 2 == 0:\n            return num\n    return -1",
         "description": "I search through a list and return the very first even number I find. If there are none, I return -1.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["proper-loop-completion", "early-exit-success"],
+        "requiredBranches": [
+            "proper-loop-completion",
+            "early-exit-success"
+        ],
         "evidencePool": [
             {
                 "id": "c16-t1",
@@ -17,7 +20,10 @@
                 "actualOutput": "2",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["find_first_even([2, 4, 6])", "2"]
+                "pieces": [
+                    "find_first_even([2, 4, 6])",
+                    "2"
+                ]
             },
             {
                 "id": "c16-t2",
@@ -27,7 +33,10 @@
                 "actualOutput": "-1",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["find_first_even([1, 3, 5])", "-1"]
+                "pieces": [
+                    "find_first_even([1, 3, 5])",
+                    "-1"
+                ]
             },
             {
                 "id": "c16-t3",
@@ -37,7 +46,10 @@
                 "actualOutput": "4",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["find_first_even([1, 4, 5])", "4"]
+                "pieces": [
+                    "find_first_even([1, 4, 5])",
+                    "4"
+                ]
             },
             {
                 "id": "c16-t4",
@@ -47,7 +59,10 @@
                 "actualOutput": "-1",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["find_first_even([])", "-1"]
+                "pieces": [
+                    "find_first_even([])",
+                    "-1"
+                ]
             }
         ],
         "testFeedback": [
@@ -79,11 +94,14 @@
         "id": "case-18",
         "difficulty": "hard",
         "title": "The Duplicate Destroyer",
-        "functionCode": "def remove_target(nums:list[int], target:int):\n    return [num for num in nums if num != target]",
+        "functionCode": "def remove_target(nums:list[int], target:int) -> list[int]:\n    return [num for num in nums if num != target]",
         "description": "I remove every instance of a specific number from your list!",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["list-comprehension-safety", "empty-result-path"],
+        "requiredBranches": [
+            "list-comprehension-safety",
+            "empty-result-path"
+        ],
         "evidencePool": [
             {
                 "id": "c18-t1",
@@ -93,7 +111,10 @@
                 "actualOutput": "[1, 2, 3]",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["remove([1, 2, 3], 4)", "[1, 2, 3]"]
+                "pieces": [
+                    "remove([1, 2, 3], 4)",
+                    "[1, 2, 3]"
+                ]
             },
             {
                 "id": "c18-t2",
@@ -103,7 +124,10 @@
                 "actualOutput": "[]",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["remove([2, 2, 2], 2)", "[]"]
+                "pieces": [
+                    "remove([2, 2, 2], 2)",
+                    "[]"
+                ]
             },
             {
                 "id": "c18-t3",
@@ -113,7 +137,10 @@
                 "actualOutput": "[1, 4]",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["remove([1, 2, 2, 4], 2)", "[1, 4]"]
+                "pieces": [
+                    "remove([1, 2, 2, 4], 2)",
+                    "[1, 4]"
+                ]
             },
             {
                 "id": "c18-t4",
@@ -123,7 +150,10 @@
                 "actualOutput": "[]",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["remove([], 1)", "[]"]
+                "pieces": [
+                    "remove([], 1)",
+                    "[]"
+                ]
             }
         ],
         "testFeedback": [
@@ -155,21 +185,27 @@
         "id": "case-20",
         "difficulty": "hard",
         "title": "The Swap Specialist",
-        "functionCode": "def swap(nums:list[int]):\n    if len(nums) < 2: return nums\n    nums[0], nums[-1] = nums[-1], nums[0]\n    return nums",
+        "functionCode": "def swap(nums:list[int]) -> list[int]:\n    if len(nums) < 2: return nums\n    nums[0] = nums[-1]\n    nums[-1] = nums[0]\n    return nums",
         "description": "I swap the first and last elements of any list.",
         "evidenceSlots": 2,
-        "correctVerdict": "not guilty",
-        "requiredBranches": ["tuple-unpacking-success", "short-list-safety"],
+        "correctVerdict": "guilty",
+        "requiredBranches": [
+            "overwrite-bug",
+            "short-list-safety"
+        ],
         "evidencePool": [
             {
                 "id": "c20-t1",
                 "label": "assert(swap([1, 2, 3]), [3, 2, 1])",
                 "input": "[1, 2, 3]",
                 "expectedOutput": "[3, 2, 1]",
-                "actualOutput": "[3, 2, 1]",
-                "passes": true,
+                "actualOutput": "[3, 2, 3]",
+                "passes": false,
                 "showResult": true,
-                "pieces": ["swap([1, 2, 3])", "[3, 2, 1]"]
+                "pieces": [
+                    "swap([1, 2, 3])",
+                    "[3, 2, 1]"
+                ]
             },
             {
                 "id": "c20-t2",
@@ -179,17 +215,23 @@
                 "actualOutput": "[5]",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["swap([5])", "[5]"]
+                "pieces": [
+                    "swap([5])",
+                    "[5]"
+                ]
             },
             {
                 "id": "c20-t3",
                 "label": "assert(swap([10, 20, 30, 40]), [40, 20, 30, 10])",
                 "input": "[10, 20, 30, 40]",
                 "expectedOutput": "[40, 20, 30, 10]",
-                "actualOutput": "[40, 20, 30, 10]",
-                "passes": true,
+                "actualOutput": "[40, 20, 30, 40]",
+                "passes": false,
                 "showResult": true,
-                "pieces": ["swap([10, 20, 30, 40])", "[40, 20, 30, 10]"]
+                "pieces": [
+                    "swap([10, 20, 30, 40])",
+                    "[40, 20, 30, 10]"
+                ]
             },
             {
                 "id": "c20-t4",
@@ -199,14 +241,17 @@
                 "actualOutput": "[]",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["swap([])", "[]"]
+                "pieces": [
+                    "swap([])",
+                    "[]"
+                ]
             }
         ],
         "testFeedback": [
             {
                 "testId": "c20-t1",
-                "logicBranch": "tuple-unpacking-success",
-                "feedback": "Simultaneous assignment ensures values are updated correctly without a manual temp variable."
+                "logicBranch": "overwrite-bug",
+                "feedback": "CRITICAL! The first assignment overwrites data, so both ends end up identical instead of swapping."
             },
             {
                 "testId": "c20-t2",
@@ -215,8 +260,8 @@
             },
             {
                 "testId": "c20-t3",
-                "logicBranch": "tuple-unpacking-success",
-                "feedback": "Confirms the swap works correctly on longer lists."
+                "logicBranch": "overwrite-bug",
+                "feedback": "Further proof that manual two-step assignment duplicates one value and loses the original first element."
             },
             {
                 "testId": "c20-t4",
@@ -224,18 +269,21 @@
                 "feedback": "Confirms empty lists are handled safely."
             }
         ],
-        "missedEvidenceExplanation": "Python's `a, b = b, a` syntax handles the temporary storage internally, preventing the overwriting issue.",
-        "closingStatement": "Not Guilty! The defendant used Python's most elegant feature to perform a flawless swap."
+        "missedEvidenceExplanation": "Without tuple unpacking or a temporary variable, the first assignment destroys information before the second assignment runs.",
+        "closingStatement": "Guilty! The defendant overwrote key evidence mid-swap, producing mirrored ends instead of a true exchange."
     },
     {
         "id": "case-23",
         "difficulty": "hard",
         "title": "The Counterfeit Counter",
-        "functionCode": "def count_occurrences(items:list, target):\n    count = 0\n    for item in items:\n        if item == target:\n            count += 1\n    return count",
+        "functionCode": "def count_occurrences(items:list[object], target:object) -> int:\n    count = 0\n    for item in items:\n        if item == target:\n            count += 1\n    return count",
         "description": "I count exactly how many times an item appears in your list.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["equality-success", "miss-case"],
+        "requiredBranches": [
+            "equality-success",
+            "miss-case"
+        ],
         "evidencePool": [
             {
                 "id": "c23-t1",
@@ -245,7 +293,10 @@
                 "actualOutput": "2",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["count(['a', 'b', 'a'], 'a')", "2"]
+                "pieces": [
+                    "count(['a', 'b', 'a'], 'a')",
+                    "2"
+                ]
             },
             {
                 "id": "c23-t2",
@@ -255,7 +306,10 @@
                 "actualOutput": "2",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["count([1000, 1000], 1000)", "2"]
+                "pieces": [
+                    "count([1000, 1000], 1000)",
+                    "2"
+                ]
             },
             {
                 "id": "c23-t3",
@@ -265,7 +319,10 @@
                 "actualOutput": "0",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["count([1, 2, 3], 4)", "0"]
+                "pieces": [
+                    "count([1, 2, 3], 4)",
+                    "0"
+                ]
             },
             {
                 "id": "c23-t4",
@@ -275,7 +332,10 @@
                 "actualOutput": "2",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["count([500, 500], 500)", "2"]
+                "pieces": [
+                    "count([500, 500], 500)",
+                    "2"
+                ]
             }
         ],
         "testFeedback": [
@@ -307,21 +367,27 @@
         "id": "case-24",
         "difficulty": "hard",
         "title": "The Average Faker",
-        "functionCode": "def average(nums:list[int]):\n    if not nums: return 0\n    total = 0\n    for num in nums:\n        total += num\n    return total / len(nums)",
+        "functionCode": "def average(nums:list[int]) -> float | int:\n    if not nums: return 0\n    total = 0\n    for num in nums:\n        total += num\n    return total / (len(nums) - 1)",
         "description": "I calculate the average of all numbers in a list.",
         "evidenceSlots": 2,
-        "correctVerdict": "not guilty",
-        "requiredBranches": ["correct-aggregation", "empty-safety"],
+        "correctVerdict": "guilty",
+        "requiredBranches": [
+            "wrong-denominator",
+            "empty-safety"
+        ],
         "evidencePool": [
             {
                 "id": "c24-t1",
                 "label": "assert(average([2, 4, 6]), 4.0)",
                 "input": "[2, 4, 6]",
                 "expectedOutput": "4.0",
-                "actualOutput": "4.0",
-                "passes": true,
+                "actualOutput": "6.0",
+                "passes": false,
                 "showResult": true,
-                "pieces": ["average([2, 4, 6])", "4.0"]
+                "pieces": [
+                    "average([2, 4, 6])",
+                    "4.0"
+                ]
             },
             {
                 "id": "c24-t2",
@@ -331,34 +397,43 @@
                 "actualOutput": "0",
                 "passes": true,
                 "showResult": true,
-                "pieces": ["average([])", "0"]
+                "pieces": [
+                    "average([])",
+                    "0"
+                ]
             },
             {
                 "id": "c24-t3",
                 "label": "assert(average([10, 20]), 15.0)",
                 "input": "[10, 20]",
                 "expectedOutput": "15.0",
-                "actualOutput": "15.0",
-                "passes": true,
+                "actualOutput": "30.0",
+                "passes": false,
                 "showResult": true,
-                "pieces": ["average([10, 20])", "15.0"]
+                "pieces": [
+                    "average([10, 20])",
+                    "15.0"
+                ]
             },
             {
                 "id": "c24-t4",
                 "label": "assert(average([5]), 5.0)",
                 "input": "[5]",
                 "expectedOutput": "5.0",
-                "actualOutput": "5.0",
-                "passes": true,
+                "actualOutput": "ZeroDivisionError",
+                "passes": false,
                 "showResult": true,
-                "pieces": ["average([5])", "5.0"]
+                "pieces": [
+                    "average([5])",
+                    "5.0"
+                ]
             }
         ],
         "testFeedback": [
             {
                 "testId": "c24-t1",
-                "logicBranch": "correct-aggregation",
-                "feedback": "The function correctly sums every element in the list before performing division."
+                "logicBranch": "wrong-denominator",
+                "feedback": "CRITICAL! The sum is right, but dividing by len(nums)-1 inflates the result."
             },
             {
                 "testId": "c24-t2",
@@ -367,16 +442,16 @@
             },
             {
                 "testId": "c24-t3",
-                "logicBranch": "correct-aggregation",
-                "feedback": "Standard average calculation confirms math is solid."
+                "logicBranch": "wrong-denominator",
+                "feedback": "A two-item list exposes the denominator bug immediately by returning the full sum."
             },
             {
                 "testId": "c24-t4",
-                "logicBranch": "correct-aggregation",
-                "feedback": "Single element lists return the element as the average correctly."
+                "logicBranch": "wrong-denominator",
+                "feedback": "Single-element input causes division by zero because len(nums)-1 becomes 0."
             }
         ],
-        "missedEvidenceExplanation": "The return statement is placed outside the loop, allowing the accumulation of 'total' to finish for all elements.",
-        "closingStatement": "Not Guilty! The defendant patiently waited for all data to be processed before rendering a final result."
+        "missedEvidenceExplanation": "The bug is in the denominator: averages must divide by len(nums), not len(nums)-1.",
+        "closingStatement": "Guilty! The math looked polished, but the denominator was tampered with, skewing every non-empty result."
     }
 ]

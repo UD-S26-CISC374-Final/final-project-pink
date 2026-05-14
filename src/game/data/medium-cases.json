@@ -3,15 +3,17 @@
         "id": "case-1",
         "difficulty": "medium",
         "title": "The Spacey Security",
-        "functionCode": "def check_passwords(pass1:str, pass2:str):\n   if pass1 == \" \" or pass2 == \" \":\n      return \"Passwords cannot be empty!\"\n   elif pass1 != pass2:\n\treturn \"Passwords do not match!\"\n   else:\n\treturn \"Passwords match!\"",
+        "functionCode": "def check_passwords(pass1:str, pass2:str) -> str:\n   if pass1 == \" \" or pass2 == \" \":\n      return \"Passwords cannot be empty!\"\n   elif pass1 != pass2:\n\treturn \"Passwords do not match!\"\n   else:\n\treturn \"Passwords match!\"",
         "description": "I ensure security by checking if two passwords match and are not empty!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["empty-string-fail"],
+        "requiredBranches": [
+            "empty-string-fail"
+        ],
         "evidencePool": [
             {
                 "id": "c1-t1",
-                "label": "check('', '')",
+                "label": "assert(check('', ''), 'Passwords cannot be empty!')",
                 "input": "'', ''",
                 "expectedOutput": "Passwords cannot be empty!",
                 "actualOutput": "Passwords match!",
@@ -20,7 +22,7 @@
             },
             {
                 "id": "c1-t2",
-                "label": "check('secret', '')",
+                "label": "assert(check('secret', ''), 'Passwords cannot be empty!')",
                 "input": "'secret', ''",
                 "expectedOutput": "Passwords cannot be empty!",
                 "actualOutput": "Passwords do not match!",
@@ -29,7 +31,7 @@
             },
             {
                 "id": "c1-t3",
-                "label": "check('pass', 'pass')",
+                "label": "assert(check('pass', 'pass'), 'Passwords match!')",
                 "input": "'pass', 'pass'",
                 "expectedOutput": "Passwords match!",
                 "actualOutput": "Passwords match!",
@@ -38,7 +40,7 @@
             },
             {
                 "id": "c1-t4",
-                "label": "check(' ', 'any')",
+                "label": "assert(check(' ', 'any'), 'Passwords cannot be empty!')",
                 "input": "' ', 'any'",
                 "expectedOutput": "Passwords cannot be empty!",
                 "actualOutput": "Passwords cannot be empty!",
@@ -76,15 +78,17 @@
         "id": "case-2",
         "difficulty": "medium",
         "title": "The Divisible Outlaw",
-        "functionCode": "def get_divisible_by_five(nums:list[int]):\n    res = []\n    for n in nums:\n        if n % 5: res.append(n)\n    return res",
+        "functionCode": "def get_divisible_by_five(nums:list[int]) -> list[int]:\n    res = []\n    for n in nums:\n        if n % 5: res.append(n)\n    return res",
         "description": "I return ONLY the ones perfectly divisible by 5.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["inverted-logic"],
+        "requiredBranches": [
+            "inverted-logic"
+        ],
         "evidencePool": [
             {
                 "id": "c2-t1",
-                "label": "filter([5, 10, 3]) -> [5, 10]",
+                "label": "assert(filter([5, 10, 3]), [5, 10])",
                 "input": "[5, 10, 3]",
                 "expectedOutput": "[5, 10]",
                 "actualOutput": "[3]",
@@ -93,7 +97,7 @@
             },
             {
                 "id": "c2-t2",
-                "label": "filter([1, 2]) -> []",
+                "label": "assert(filter([1, 2]), [])",
                 "input": "[1, 2]",
                 "expectedOutput": "[]",
                 "actualOutput": "[1, 2]",
@@ -102,7 +106,7 @@
             },
             {
                 "id": "c2-t3",
-                "label": "filter([15, 20]) -> [15, 20]",
+                "label": "assert(filter([15, 20]), [15, 20])",
                 "input": "[15, 20]",
                 "expectedOutput": "[15, 20]",
                 "actualOutput": "[]",
@@ -111,7 +115,7 @@
             },
             {
                 "id": "c2-t4",
-                "label": "filter([0]) -> [0]",
+                "label": "assert(filter([0]), [0])",
                 "input": "[0]",
                 "expectedOutput": "[0]",
                 "actualOutput": "[]",
@@ -148,15 +152,18 @@
         "id": "case-3",
         "difficulty": "medium",
         "title": "List Merger",
-        "functionCode": "def list_merger(list1:list[int], list2:list[int]):\n    list1_len = len(list1)\n    merged_list = []\n    if list1_len == 0 or len(list2) == 0: return merged_list\n    for i in range(list1_len): merged_list.append(list1[i])\n    for i in range(list1_len): merged_list.append(list2[i])\n    return merged_list",
+        "functionCode": "def list_merger(list1:list[int], list2:list[int]) -> list[int]:\n    list1_len = len(list1)\n    merged_list = []\n    if list1_len == 0 or len(list2) == 0: return merged_list\n    for i in range(list1_len): merged_list.append(list1[i])\n    for i in range(list1_len): merged_list.append(list2[i])\n    return merged_list",
         "description": "I merge two lists correctly while removing duplicates.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["length-mismatch", "duplicate-fail"],
+        "requiredBranches": [
+            "length-mismatch",
+            "duplicate-fail"
+        ],
         "evidencePool": [
             {
                 "id": "c3-t1",
-                "label": "merge([1], [2, 3])",
+                "label": "assert(merge([1], [2, 3]), [1, 2, 3])",
                 "input": "[1], [2, 3]",
                 "expectedOutput": "[1, 2, 3]",
                 "actualOutput": "[1, 2]",
@@ -165,7 +172,7 @@
             },
             {
                 "id": "c3-t2",
-                "label": "merge([1, 2], [3])",
+                "label": "assert(merge([1, 2], [3]), [1, 2, 3])",
                 "input": "[1, 2], [3]",
                 "expectedOutput": "[1, 2, 3]",
                 "actualOutput": "IndexError",
@@ -174,7 +181,7 @@
             },
             {
                 "id": "c3-t3",
-                "label": "merge([1], [])",
+                "label": "assert(merge([1], []), [1])",
                 "input": "[1], []",
                 "expectedOutput": "[1]",
                 "actualOutput": "[]",
@@ -183,7 +190,7 @@
             },
             {
                 "id": "c3-t4",
-                "label": "merge([1], [1])",
+                "label": "assert(merge([1], [1]), [1])",
                 "input": "[1], [1]",
                 "expectedOutput": "[1]",
                 "actualOutput": "[1, 1]",
@@ -220,15 +227,18 @@
         "id": "case-4",
         "difficulty": "medium",
         "title": "The Even-Handed Arbiter",
-        "functionCode": "def odd_even_sorter(nums:list[int]):\n    even = []; odd = []\n    if len(nums) == 0: return []\n    for num in nums:\n        if num % 2 == 0: even.append(num)\n        else: odd.append(num)\n    return f\"Even: {even} \\n Odd: {odd}\"",
+        "functionCode": "def odd_even_sorter(nums:list[int]) -> str | list[int]:\n    even = []; odd = []\n    if len(nums) == 0: return []\n    for num in nums:\n        if num % 2 == 0: even.append(num)\n        else: odd.append(num)\n    return f\"Even: {even} \\n Odd: {odd}\"",
         "description": "Sort numbers into Even and Odd groups.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["mixed-data", "zero-logic"],
+        "requiredBranches": [
+            "mixed-data",
+            "zero-logic"
+        ],
         "evidencePool": [
             {
                 "id": "c4-t1",
-                "label": "sort([1, 2, 0])",
+                "label": "assert(sort([1, 2, 0]), 'Even: [2, 0] \\\\n Odd: [1]')",
                 "input": "[1, 2, 0]",
                 "expectedOutput": "Even: [2, 0] \\n Odd: [1]",
                 "actualOutput": "Even: [2, 0] \\n Odd: [1]",
@@ -237,7 +247,7 @@
             },
             {
                 "id": "c4-t2",
-                "label": "sort([0, 0])",
+                "label": "assert(sort([0, 0]), 'Even: [0, 0] \\\\n Odd: []')",
                 "input": "[0, 0]",
                 "expectedOutput": "Even: [0, 0] \\n Odd: []",
                 "actualOutput": "Even: [0, 0] \\n Odd: []",
@@ -246,7 +256,7 @@
             },
             {
                 "id": "c4-t3",
-                "label": "sort([]) -> []",
+                "label": "assert(sort([]), [])",
                 "input": "[]",
                 "expectedOutput": "[]",
                 "actualOutput": "[]",
@@ -255,7 +265,7 @@
             },
             {
                 "id": "c4-t4",
-                "label": "sort([2, 4, 6])",
+                "label": "assert(sort([2, 4, 6]), 'Even: [2, 4, 6] \\\\n Odd: []')",
                 "input": "[2, 4, 6]",
                 "expectedOutput": "Even: [2, 4, 6] \\n Odd: []",
                 "actualOutput": "Even: [2, 4, 6] \\n Odd: []",
@@ -292,15 +302,17 @@
         "id": "case-5",
         "difficulty": "medium",
         "title": "The Mission Control",
-        "functionCode": "def rocket_launch(starting:int):\n    countdown = starting\n    while countdown:\n        countdown -= 1\n    return \"Launched\"",
+        "functionCode": "def rocket_launch(starting:int) -> str:\n    countdown = starting\n    while countdown:\n        countdown -= 1\n    return \"Launched\"",
         "description": "I count down to zero and launch the rocket reliably!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["negative-infinite-loop"],
+        "requiredBranches": [
+            "negative-infinite-loop"
+        ],
         "evidencePool": [
             {
                 "id": "c5-t1",
-                "label": "launch(3) -> Launched",
+                "label": "assert(launch(3), Launched)",
                 "input": "3",
                 "expectedOutput": "Launched",
                 "actualOutput": "Launched",
@@ -309,7 +321,7 @@
             },
             {
                 "id": "c5-t2",
-                "label": "launch(-1) -> Launched",
+                "label": "assert(launch(-1), Launched)",
                 "input": "-1",
                 "expectedOutput": "Launched",
                 "actualOutput": "Infinite Loop",
@@ -318,7 +330,7 @@
             },
             {
                 "id": "c5-t3",
-                "label": "launch(0) -> Launched",
+                "label": "assert(launch(0), Launched)",
                 "input": "0",
                 "expectedOutput": "Launched",
                 "actualOutput": "Launched",
@@ -327,7 +339,7 @@
             },
             {
                 "id": "c5-t4",
-                "label": "launch(-10) -> Launched",
+                "label": "assert(launch(-10), Launched)",
                 "input": "-10",
                 "expectedOutput": "Launched",
                 "actualOutput": "Infinite Loop",
@@ -365,15 +377,18 @@
         "id": "case-6",
         "difficulty": "medium",
         "title": "The Factorial Factory",
-        "functionCode": "def get_factorial(num:int):\n    starting = num\n    factorial = 1\n    while starting > 0:\n        factorial = factorial * starting\n        starting -= 1\n    return factorial",
+        "functionCode": "def get_factorial(num:int) -> int:\n    starting = num\n    factorial = 1\n    while starting > 0:\n        factorial = factorial * starting\n        starting -= 1\n    return factorial",
         "description": "I calculate factorials with mathematical precision.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["base-case", "loop-logic"],
+        "requiredBranches": [
+            "base-case",
+            "loop-logic"
+        ],
         "evidencePool": [
             {
                 "id": "c6-t1",
-                "label": "fact(0) -> 1",
+                "label": "assert(fact(0), 1)",
                 "input": "0",
                 "expectedOutput": "1",
                 "actualOutput": "1",
@@ -382,7 +397,7 @@
             },
             {
                 "id": "c6-t2",
-                "label": "fact(5) -> 120",
+                "label": "assert(fact(5), 120)",
                 "input": "5",
                 "expectedOutput": "120",
                 "actualOutput": "120",
@@ -391,7 +406,7 @@
             },
             {
                 "id": "c6-t3",
-                "label": "fact(1) -> 1",
+                "label": "assert(fact(1), 1)",
                 "input": "1",
                 "expectedOutput": "1",
                 "actualOutput": "1",
@@ -400,7 +415,7 @@
             },
             {
                 "id": "c6-t4",
-                "label": "fact(3) -> 6",
+                "label": "assert(fact(3), 6)",
                 "input": "3",
                 "expectedOutput": "6",
                 "actualOutput": "6",
@@ -437,15 +452,18 @@
         "id": "case-7",
         "difficulty": "medium",
         "title": "Package Sorter",
-        "functionCode": "def sort_package(weight:int):\n    if weight % 3 == 0 and weight % 5 == 0: print(\"Priority\")\n    if weight % 3 == 0: print(\"Air\")\n    if weight % 5 == 0: print(\"Ground\")\n    else: print(\"Standard\")",
+        "functionCode": "def sort_package(weight:int) -> None:\n    if weight % 3 == 0 and weight % 5 == 0: print(\"Priority\")\n    if weight % 3 == 0: print(\"Air\")\n    if weight % 5 == 0: print(\"Ground\")\n    else: print(\"Standard\")",
         "description": "Categorizes packages by weight; exactly one label per package!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["multi-label-leak", "overlap-standard"],
+        "requiredBranches": [
+            "multi-label-leak",
+            "overlap-standard"
+        ],
         "evidencePool": [
             {
                 "id": "c7-t1",
-                "label": "sort(15)",
+                "label": "assert(sort(15), 'Priority')",
                 "input": "15",
                 "expectedOutput": "Priority",
                 "actualOutput": "Priority\\nAir\\nGround",
@@ -454,7 +472,7 @@
             },
             {
                 "id": "c7-t2",
-                "label": "sort(3)",
+                "label": "assert(sort(3), 'Air')",
                 "input": "3",
                 "expectedOutput": "Air",
                 "actualOutput": "Air\\nStandard",
@@ -463,7 +481,7 @@
             },
             {
                 "id": "c7-t3",
-                "label": "sort(5)",
+                "label": "assert(sort(5), 'Ground')",
                 "input": "5",
                 "expectedOutput": "Ground",
                 "actualOutput": "Ground",
@@ -472,7 +490,7 @@
             },
             {
                 "id": "c7-t4",
-                "label": "sort(7)",
+                "label": "assert(sort(7), 'Standard')",
                 "input": "7",
                 "expectedOutput": "Standard",
                 "actualOutput": "Standard",
@@ -510,15 +528,17 @@
         "id": "case-10",
         "difficulty": "medium",
         "title": "Inclusion Illusion",
-        "functionCode": "def generate_nums_list(size:int, include_zero:bool):\n    nums = []\n    if size <= 100:\n        for i in range(size + 1):\n            if not include_zero:\n                nums.append(i) \n            else:\n                nums.append(i)\n    return nums",
+        "functionCode": "def generate_nums_list(size:int, include_zero:bool) -> list[int]:\n    nums = []\n    if size <= 100:\n        for i in range(size + 1):\n            if not include_zero:\n                nums.append(i) \n            else:\n                nums.append(i)\n    return nums",
         "description": "Only includes 0 if requested; size must be 100 or less.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["zero-toggle-bug"],
+        "requiredBranches": [
+            "zero-toggle-bug"
+        ],
         "evidencePool": [
             {
                 "id": "c10-t1",
-                "label": "gen(5, False)",
+                "label": "assert(gen(5, False), [1, 2, 3, 4, 5])",
                 "input": "5, False",
                 "expectedOutput": "[1, 2, 3, 4, 5]",
                 "actualOutput": "[0, 1, 2, 3, 4, 5]",
@@ -527,7 +547,7 @@
             },
             {
                 "id": "c10-t2",
-                "label": "gen(5, True)",
+                "label": "assert(gen(5, True), [0, 1, 2, 3, 4, 5])",
                 "input": "5, True",
                 "expectedOutput": "[0, 1, 2, 3, 4, 5]",
                 "actualOutput": "[0, 1, 2, 3, 4, 5]",
@@ -536,7 +556,7 @@
             },
             {
                 "id": "c10-t3",
-                "label": "gen(101, True)",
+                "label": "assert(gen(101, True), [])",
                 "input": "101, True",
                 "expectedOutput": "[]",
                 "actualOutput": "[]",
@@ -545,7 +565,7 @@
             },
             {
                 "id": "c10-t4",
-                "label": "gen(3, False)",
+                "label": "assert(gen(3, False), [1, 2, 3])",
                 "input": "3, False",
                 "expectedOutput": "[1, 2, 3]",
                 "actualOutput": "[0, 1, 2, 3]",
@@ -583,15 +603,17 @@
         "id": "case-13",
         "difficulty": "medium",
         "title": "Traffic Light",
-        "functionCode": "def traffic_light(cycles):\n    current_light = 'red'\n    current_cycle = cycles\n    while current_cycle <= cycles:\n        if current_light == 'red': current_light = 'green'\n        elif current_light == 'green': current_light = 'yellow'\n        else: current_light = 'red'\n        current_cycle -= 1",
+        "functionCode": "def traffic_light(cycles:int) -> None:\n    current_light = 'red'\n    current_cycle = cycles\n    while current_cycle <= cycles:\n        if current_light == 'red': current_light = 'green'\n        elif current_light == 'green': current_light = 'yellow'\n        else: current_light = 'red'\n        current_cycle -= 1",
         "description": "Rotate lights from Red to Green to Yellow safely.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["infinite-cycle-bug"],
+        "requiredBranches": [
+            "infinite-cycle-bug"
+        ],
         "evidencePool": [
             {
                 "id": "c13-t1",
-                "label": "light(3) -> Done",
+                "label": "assert(light(3), Done)",
                 "input": "3",
                 "expectedOutput": "Done",
                 "actualOutput": "Infinite Loop",
@@ -600,7 +622,7 @@
             },
             {
                 "id": "c13-t2",
-                "label": "light(0) -> Done",
+                "label": "assert(light(0), Done)",
                 "input": "0",
                 "expectedOutput": "Done",
                 "actualOutput": "Infinite Loop",
@@ -609,7 +631,7 @@
             },
             {
                 "id": "c13-t3",
-                "label": "light(-1) -> Done",
+                "label": "assert(light(-1), Done)",
                 "input": "-1",
                 "expectedOutput": "Done",
                 "actualOutput": "Done",
@@ -618,7 +640,7 @@
             },
             {
                 "id": "c13-t4",
-                "label": "light(1) -> Done",
+                "label": "assert(light(1), Done)",
                 "input": "1",
                 "expectedOutput": "Done",
                 "actualOutput": "Infinite Loop",
@@ -656,15 +678,17 @@
         "id": "case-18",
         "difficulty": "medium",
         "title": "Bracket Checker",
-        "functionCode": "def bracket_pair_checker(formula:str):\n    have_parens = '(' in formula or ')' in formula\n    have_brackets = '[' in formula or ']' in formula\n    if have_parens:\n        if formula.count(\"(\") != formula.count(\")\"): return \"check your parenthesis\"\n    elif have_brackets:\n        if formula.count(\"[\") != formula.count(\"]\"): return \"check your brackets\"\n    return \"all good\"",
+        "functionCode": "def bracket_pair_checker(formula:str) -> str:\n    have_parens = '(' in formula or ')' in formula\n    have_brackets = '[' in formula or ']' in formula\n    if have_parens:\n        if formula.count(\"(\") != formula.count(\")\"): return \"check your parenthesis\"\n    elif have_brackets:\n        if formula.count(\"[\") != formula.count(\"]\"): return \"check your brackets\"\n    return \"all good\"",
         "description": "I check EVERY single parenthesis and bracket in a formula.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["hidden-bracket-bug"],
+        "requiredBranches": [
+            "hidden-bracket-bug"
+        ],
         "evidencePool": [
             {
                 "id": "c18-t1",
-                "label": "check('(1+1) + [2')",
+                "label": "assert(check('(1+1) + [2'), 'check your brackets')",
                 "input": "'(1+1) + [2'",
                 "expectedOutput": "check your brackets",
                 "actualOutput": "all good",
@@ -673,7 +697,7 @@
             },
             {
                 "id": "c18-t2",
-                "label": "check('(1+2')",
+                "label": "assert(check('(1+2'), 'check your parenthesis')",
                 "input": "'(1+2'",
                 "expectedOutput": "check your parenthesis",
                 "actualOutput": "check your parenthesis",
@@ -682,7 +706,7 @@
             },
             {
                 "id": "c18-t3",
-                "label": "check('([ ])')",
+                "label": "assert(check('([ ])'), 'all good')",
                 "input": "'([ ])'",
                 "expectedOutput": "all good",
                 "actualOutput": "all good",
@@ -691,7 +715,7 @@
             },
             {
                 "id": "c18-t4",
-                "label": "check('( ) [ ] { ]')",
+                "label": "assert(check('( ) [ ] { ]'), 'check your braces')",
                 "input": "'( ) [ ] { ]'",
                 "expectedOutput": "check your braces",
                 "actualOutput": "all good",
