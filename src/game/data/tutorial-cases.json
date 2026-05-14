@@ -133,7 +133,7 @@
             },
             {
                 "id": "c2-t3",
-                "label": "assert(greet(''), 'Hello ')",
+                "label": "assert(greet(''), 'Hello')",
                 "input": "''",
                 "expectedOutput": "Hello ",
                 "actualOutput": "Hello",

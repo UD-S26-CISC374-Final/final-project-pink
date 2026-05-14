@@ -312,7 +312,7 @@
         "evidencePool": [
             {
                 "id": "c5-t1",
-                "label": "assert(launch(3), Launched)",
+                "label": "assert(launch(3), 'Launched')",
                 "input": "3",
                 "expectedOutput": "Launched",
                 "actualOutput": "Launched",
@@ -321,7 +321,7 @@
             },
             {
                 "id": "c5-t2",
-                "label": "assert(launch(-1), Launched)",
+                "label": "assert(launch(-1), 'Launched')",
                 "input": "-1",
                 "expectedOutput": "Launched",
                 "actualOutput": "Infinite Loop",
@@ -330,7 +330,7 @@
             },
             {
                 "id": "c5-t3",
-                "label": "assert(launch(0), Launched)",
+                "label": "assert(launch(0), 'Launched')",
                 "input": "0",
                 "expectedOutput": "Launched",
                 "actualOutput": "Launched",
@@ -339,7 +339,7 @@
             },
             {
                 "id": "c5-t4",
-                "label": "assert(launch(-10), Launched)",
+                "label": "assert(launch(-10), 'Launched')",
                 "input": "-10",
                 "expectedOutput": "Launched",
                 "actualOutput": "Infinite Loop",
@@ -613,7 +613,7 @@
         "evidencePool": [
             {
                 "id": "c13-t1",
-                "label": "assert(light(3), Done)",
+                "label": "assert(light(3), 'Done')",
                 "input": "3",
                 "expectedOutput": "Done",
                 "actualOutput": "Infinite Loop",
@@ -622,7 +622,7 @@
             },
             {
                 "id": "c13-t2",
-                "label": "assert(light(0), Done)",
+                "label": "assert(light(0), 'Done')",
                 "input": "0",
                 "expectedOutput": "Done",
                 "actualOutput": "Infinite Loop",
@@ -631,7 +631,7 @@
             },
             {
                 "id": "c13-t3",
-                "label": "assert(light(-1), Done)",
+                "label": "assert(light(-1), 'Done')",
                 "input": "-1",
                 "expectedOutput": "Done",
                 "actualOutput": "Done",
@@ -640,7 +640,7 @@
             },
             {
                 "id": "c13-t4",
-                "label": "assert(light(1), Done)",
+                "label": "assert(light(1), 'Done')",
                 "input": "1",
                 "expectedOutput": "Done",
                 "actualOutput": "Infinite Loop",
