@@ -1,12 +1,11 @@
 import { Boot } from "./scenes/boot";
-import { GameOver } from "./scenes/game-over";
 import { AUTO, Game } from "phaser";
 import { Preloader } from "./scenes/preloader";
 import { Tutorial } from "./scenes/tutorial";
 import { Case } from "./scenes/case";
 import { Verdict } from "./scenes/verdict";
 import { Pause } from "./scenes/pause";
-import { SummaryScene } from "./scenes/summary-scene";
+import { SummaryScene } from "./scenes/summary";
 import { MainMenu } from "./scenes/main-menu";
 
 //  Find out more information about the Game Config at:
@@ -21,7 +20,6 @@ const config: Phaser.Types.Core.GameConfig = {
         Boot,
         Preloader,
         MainMenu,
-        GameOver,
         Tutorial,
         Case,
         Verdict,
