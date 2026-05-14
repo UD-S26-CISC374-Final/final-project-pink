@@ -39,7 +39,6 @@ class CaseManager {
 
     private caseResults: CaseResult[] = [];
     private totalScore: number = 0;
-    private isTutorialMode: boolean = false;
     private constructor() {}
 
     static getInstance(): CaseManager {
