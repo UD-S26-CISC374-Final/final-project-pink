@@ -14,6 +14,7 @@ const POINTS_MISLEADING_EVIDENCE = -5;
 
 export interface CaseResult {
     caseId: string;
+    caseDifficulty: Difficulty;
     playerVerdict: Verdict;
     verdictCorrect: boolean;
     selectedEvidenceIds: string[];
@@ -32,13 +33,13 @@ class CaseManager {
     private static instance: CaseManager | null = null;
 
     private cases: Case[] = [];
-    private currentCaseIndex: number = 0;
+    currentCaseIndex: number = 0;
 
     selectedEvidenceIds: string[] = [];
 
     private caseResults: CaseResult[] = [];
     private totalScore: number = 0;
-
+    private isTutorialMode: boolean = false;
     private constructor() {}
 
     static getInstance(): CaseManager {
@@ -83,6 +84,45 @@ class CaseManager {
     }
 
     /**
+     * Load the randomized 15-case set for non-tutorial mode.
+     * Reads from localStorage if already generated, otherwise creates and saves a new set.
+     */
+    loadNonTutorialCases(): void {
+        const saved = localStorage.getItem("randomizedCases");
+        if (saved) {
+            this.cases = JSON.parse(saved) as Case[];
+        } else {
+            const difficulties: Array<"easy" | "medium" | "hard"> = [
+                "easy",
+                "medium",
+                "hard",
+            ];
+            const allCasePools = {
+                easy: easyCases as Case[],
+                medium: mediumCases as Case[],
+                hard: hardCases as Case[],
+            };
+            const randomized: Case[] = [];
+            for (const diff of difficulties) {
+                const pool = allCasePools[diff];
+                const picked: Case[] = [];
+                const indices = new Set<number>();
+                while (picked.length < 5 && picked.length < pool.length) {
+                    const idx = Math.floor(Math.random() * pool.length);
+                    if (!indices.has(idx)) {
+                        indices.add(idx);
+                        picked.push(pool[idx]);
+                    }
+                }
+                randomized.push(...picked);
+            }
+            localStorage.setItem("randomizedCases", JSON.stringify(randomized));
+            this.cases = randomized;
+        }
+        this.reset();
+    }
+
+    /**
      * Pick a single random easy case and load it as the active case list.
      * Used when the player clicks Start after completing the tutorial.
      */
@@ -107,8 +147,23 @@ class CaseManager {
         return this.cases[this.currentCaseIndex];
     }
 
-    getCaseById(id: string): Case | undefined {
-        return this.cases.find((c) => c.id === id);
+    getCaseById(id: string, difficulty?: Difficulty): Case | undefined {
+        const matchesCase = (c: Case) =>
+            c.id === id && (!difficulty || c.difficulty === difficulty);
+
+        const fromLoaded = this.cases.find(matchesCase);
+        if (fromLoaded) return fromLoaded;
+
+        // Fallback: search localStorage randomized cases (non-tutorial mode)
+        const saved = localStorage.getItem("randomizedCases");
+        if (saved) {
+            const savedCases = JSON.parse(saved) as Case[];
+            const fromStorage = savedCases.find(matchesCase);
+            if (fromStorage) return fromStorage;
+        }
+
+        // Final fallback: search tutorial cases
+        return (tutorialCases as Case[]).find(matchesCase);
     }
 
     getCurrentCaseIndex(): number {
@@ -153,9 +208,29 @@ class CaseManager {
 
     // Scoring
 
+    /**
+     * Submit a verdict for the current case using the internal case reference.
+     * Note: Prefer submitVerdictWithCase() if you have the case object directly.
+     */
     submitVerdict(playerVerdict: Verdict): CaseResult {
         const currentCase = this.getCurrentCase();
-        const verdictCorrect = playerVerdict === currentCase.correctVerdict;
+        if (!currentCase) {
+            throw new Error(
+                "Cannot submit verdict: no case loaded in CaseManager",
+            );
+        }
+        return this.submitVerdictWithCase(currentCase, playerVerdict);
+    }
+
+    /**
+     * Submit a verdict with an explicit case object.
+     * Use this when the case object is already available (e.g., from getCaseData).
+     */
+    submitVerdictWithCase(
+        caseObject: Case,
+        playerVerdict: Verdict,
+    ): CaseResult {
+        const verdictCorrect = playerVerdict === caseObject.correctVerdict;
 
         let points = 0;
 
@@ -164,29 +239,44 @@ class CaseManager {
         }
 
         const letters = ["A", "B", "C", "D"];
-        const letterToIndex: Partial<Record<string, number>> = { A: 0, B: 1, C: 2, D: 3 };
+        const letterToIndex: Partial<Record<string, number>> = {
+            A: 0,
+            B: 1,
+            C: 2,
+            D: 3,
+        };
 
-        if (currentCase.requiredBranches) {
+        if (caseObject.requiredBranches) {
             for (const letter of this.selectedEvidenceIds) {
                 const index = letterToIndex[letter];
                 if (index === undefined) continue;
-                const fb = currentCase.testFeedback[index] as { logicBranch?: string; misleading?: boolean };
+                const fb = caseObject.testFeedback[index] as {
+                    logicBranch?: string;
+                    misleading?: boolean;
+                };
                 if (!fb.logicBranch) continue;
                 if (fb.misleading) {
                     points += POINTS_MISLEADING_EVIDENCE;
                 } else {
-                    const branchCoveredByOther = currentCase.testFeedback.some((f, j) => {
-                        const tf = f as { logicBranch?: string };
-                        return j !== index && tf.logicBranch === fb.logicBranch && this.selectedEvidenceIds.includes(letters[j]);
-                    });
-                    if (!branchCoveredByOther) points += POINTS_ESSENTIAL_EVIDENCE;
+                    const branchCoveredByOther = caseObject.testFeedback.some(
+                        (f, j) => {
+                            const tf = f as { logicBranch?: string };
+                            return (
+                                j !== index &&
+                                tf.logicBranch === fb.logicBranch &&
+                                this.selectedEvidenceIds.includes(letters[j])
+                            );
+                        },
+                    );
+                    if (!branchCoveredByOther)
+                        points += POINTS_ESSENTIAL_EVIDENCE;
                 }
             }
         } else {
             for (const letter of this.selectedEvidenceIds) {
                 const index = letterToIndex[letter];
                 if (index === undefined) continue;
-                const feedback = currentCase.testFeedback[index];
+                const feedback = caseObject.testFeedback[index];
                 if (feedback.quality === "essential") {
                     points += POINTS_ESSENTIAL_EVIDENCE;
                 } else if (feedback.quality === "misleading") {
@@ -196,14 +286,27 @@ class CaseManager {
         }
 
         const result: CaseResult = {
-            caseId: currentCase.id,
+            caseId: caseObject.id,
+            caseDifficulty: caseObject.difficulty,
             playerVerdict,
             verdictCorrect,
             selectedEvidenceIds: [...this.selectedEvidenceIds],
             pointsEarned: points,
         };
 
-        this.caseResults.push(result);
+        const existingIdx = this.caseResults.findIndex(
+            (r) =>
+                r.caseId === caseObject.id &&
+                r.caseDifficulty === caseObject.difficulty,
+        );
+
+        if (existingIdx !== -1) {
+            this.totalScore -= this.caseResults[existingIdx].pointsEarned;
+            this.caseResults[existingIdx] = result;
+        } else {
+            this.caseResults.push(result);
+        }
+
         this.totalScore += points;
 
         return result;
@@ -216,17 +319,45 @@ class CaseManager {
     }
 
     getCaseResults(): CaseResult[] {
-        return [...this.caseResults];
+        const byCaseKey = new Map<string, CaseResult>();
+        for (const result of this.caseResults) {
+            const key = `${result.caseId}|${result.caseDifficulty}`;
+            byCaseKey.set(key, result);
+        }
+        return Array.from(byCaseKey.values());
     }
 
     getMaxPossibleScore(): number {
         return this.caseResults.reduce((total, result) => {
-            const c = this.cases.find((cas) => cas.id === result.caseId);
+            const matchesResult = (cas: Case) =>
+                cas.id === result.caseId &&
+                cas.difficulty === result.caseDifficulty;
+
+            let c = this.cases.find(matchesResult);
+            if (!c) {
+                const saved = localStorage.getItem("randomizedCases");
+                if (saved) {
+                    const savedCases = JSON.parse(saved) as Case[];
+                    c = savedCases.find(matchesResult);
+                }
+            }
+            if (!c) {
+                c = (tutorialCases as Case[]).find(matchesResult);
+            }
             if (!c) return total;
-            const maxEssential = c.requiredBranches ?
-                Math.min(c.requiredBranches.length, c.evidenceSlots)
-            :   Math.min(c.testFeedback.filter((f) => f.quality === "essential").length, c.evidenceSlots);
-            return total + POINTS_CORRECT_VERDICT + maxEssential * POINTS_ESSENTIAL_EVIDENCE;
+            const maxEssential =
+                c.requiredBranches ?
+                    Math.min(c.requiredBranches.length, c.evidenceSlots)
+                :   Math.min(
+                        c.testFeedback.filter((f) => f.quality === "essential")
+                            .length,
+                        c.evidenceSlots,
+                    );
+            return (
+                total +
+                POINTS_CORRECT_VERDICT +
+                maxEssential * POINTS_ESSENTIAL_EVIDENCE
+            );
         }, 0);
     }
 

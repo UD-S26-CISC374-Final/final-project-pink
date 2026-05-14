@@ -14,6 +14,7 @@ export class SummaryScene extends Scene {
     private bubbleBg!: Phaser.GameObjects.Graphics;
     private bubbleText!: Phaser.GameObjects.Text;
     private stamp!: Phaser.GameObjects.Image;
+    private gameOverMusic?: Phaser.Sound.BaseSound;
 
     constructor() {
         super("Summary");
@@ -74,9 +75,12 @@ export class SummaryScene extends Scene {
 
         const rowsHTML = results
             .map((result) => {
-                const caseData = manager.getCaseById(result.caseId);
+                const caseData = manager.getCaseById(
+                    result.caseId,
+                    result.caseDifficulty,
+                );
                 const title = caseData?.title ?? result.caseId;
-                const isGuilty = result.playerVerdict === "guilty";
+                const isGuilty = caseData?.correctVerdict === "guilty";
                 const verdictBadge =
                     isGuilty ?
                         `<img src="assets/guilty_no_frame.png" class="verdict-img">`
@@ -305,6 +309,20 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
         this.cameras.main.setBackgroundColor("#1a1a1a");
 
+        this.gameOverMusic = this.sound.add("game-over-music", {
+            volume: 0.4,
+            loop: true,
+        });
+        this.gameOverMusic.play();
+
+        this.events.once("shutdown", () => {
+            if (this.gameOverMusic?.isPlaying) {
+                this.gameOverMusic.stop();
+            }
+            this.gameOverMusic?.destroy();
+            this.gameOverMusic = undefined;
+        });
+
         const panelDiv = document.createElement("div");
         panelDiv.innerHTML = this.buildPanel(manager);
         this.add.dom(SCREEN_W / 2, SCREEN_H / 2, panelDiv);
@@ -341,6 +359,9 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
             localStorage.removeItem("caseByCase_lastResults");
             localStorage.removeItem("caseByCase_tutorialCompleted");
             localStorage.removeItem("savedProgress");
+            localStorage.removeItem("randomizedCases");
+            localStorage.removeItem("savedProgressMainGame");
+
             this.sound
                 .add("button-click", {
                     volume: 1,
@@ -352,7 +373,11 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
                     "background-music",
                 ) as Phaser.Sound.BaseSound | null
             )?.stop();
-            
+
+            if (this.gameOverMusic?.isPlaying) {
+                this.gameOverMusic.stop();
+            }
+
             this.scene.start("MainMenu");
         });
 

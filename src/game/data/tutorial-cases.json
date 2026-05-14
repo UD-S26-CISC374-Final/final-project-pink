@@ -4,11 +4,14 @@
         "difficulty": "easy",
         "title": "The Case of Absolute Value",
         "tutorialText": "Welcome to the tutorial! I'm The Honorable Judge Compiler, and I'll be your guide as you learn the basics of being a lawyer at the Syntax Criminal Court! Let's begin.",
-        "functionCode": "def absolute_value(n):\n if n < 0:\n  return -n\n return n",
+        "functionCode": "def absolute_value(n:int) -> int:\n if n < 0:\n  return -n\n return n",
         "description": "I return the non-negative absolute value of any number.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["positive", "negative"],
+        "requiredBranches": [
+            "positive",
+            "negative"
+        ],
         "evidencePool": [
             {
                 "id": "c1-t1",
@@ -101,11 +104,14 @@
         "difficulty": "easy",
         "tutorialText": "Great job getting through your first case! Let's move on to the next one!",
         "title": "The False Start",
-        "functionCode": "def greet(name):\n   return \"Hello\" + name",
+        "functionCode": "def greet(name:str) -> str:\n   return \"Hello\" + name",
         "description": "I greet a user by name. I return a string that starts with 'Hello ' followed by the name.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["normal-name", "empty-name"],
+        "requiredBranches": [
+            "normal-name",
+            "empty-name"
+        ],
         "evidencePool": [
             {
                 "id": "c2-t1",
@@ -127,7 +133,7 @@
             },
             {
                 "id": "c2-t3",
-                "label": "assert(greet(''), 'Hello ')",
+                "label": "assert(greet(''), 'Hello')",
                 "input": "''",
                 "expectedOutput": "Hello ",
                 "actualOutput": "Hello",
@@ -200,11 +206,14 @@
         "tutorialText": "You're gaining confidence in the courtroom! Let's see how you handle a function with a more subtle logic gap.",
         "descTutorialText": "This function claims to handle both even and odd numbers. Review the evidence carefully to see if it actually delivers on that promise.",
         "title": "The One-Track Mind",
-        "functionCode": "def is_even(n):\n    if n % 2 == 0:\n        return True\n  return\n",
+        "functionCode": "def is_even(n:int) -> bool | None:\n    if n % 2 == 0:\n        return True\n  return\n",
         "description": "I check if a number is even. I return True for evens and False for odds.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["even", "odd"],
+        "requiredBranches": [
+            "even",
+            "odd"
+        ],
         "evidencePool": [
             {
                 "id": "c3-t1",
@@ -273,11 +282,14 @@
         "difficulty": "easy",
         "tutorialText": "You're doing fantastic work! Let's see how you handle a function that claims to work on lists.",
         "title": "The Listless Guardian",
-        "functionCode": "def get_first_item(items):\n     return items[0]",
+        "functionCode": "def get_first_item(items:list[object]) -> str:\n     return items[0]",
         "description": "I return the first item in any list. If the list is empty, I return 'None'.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["non-empty", "empty"],
+        "requiredBranches": [
+            "non-empty",
+            "empty"
+        ],
         "evidencePool": [
             {
                 "id": "c5-t1",
@@ -347,11 +359,15 @@
         "tutorialText": "Excellent work so far. You've moved into 'Medium' difficulty cases now. Each case will now be timed and the bugs here are a bit more specific, so pay close attention to the requirements!",
         "descTutorialText": "This function has a specific requirement for how to handle invalid inputs. Compare the expected output to the actual output very carefully.",
         "title": "The Overzealous Adder",
-        "functionCode": "def add_positive_only(a, b):\n    if a > 0 and b > 0:\n        return a + b\n    return \"Error\"",
+        "functionCode": "def add_positive_only(a:int, b:int) -> int | str:\n    if a > 0 and b > 0:\n        return a + b\n    return \"Error\"",
         "description": "I take two numbers and return their sum. If either input is zero or less, I return 'Error' instead.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["both-positive", "negative-input", "zero-input"],
+        "requiredBranches": [
+            "both-positive",
+            "negative-input",
+            "zero-input"
+        ],
         "evidencePool": [
             {
                 "id": "c4-t1",
@@ -420,11 +436,14 @@
         "difficulty": "medium",
         "tutorialText": "You're doing great! Let's see how you do with this one!",
         "title": "The Capital Crime",
-        "functionCode": "def check_password(pw):\n    if len(pw) >= 8:\n        return True\n    return False",
+        "functionCode": "def check_password(pw:str) -> bool:\n    if len(pw) >= 8:\n        return True\n    return False",
         "description": "I ensure passwords are secure. They must be 8 characters long AND contain at least one uppercase letter.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["long-no-uppercase", "short-any"],
+        "requiredBranches": [
+            "long-no-uppercase",
+            "short-any"
+        ],
         "evidencePool": [
             {
                 "id": "c6-t1",
@@ -495,11 +514,14 @@
         "title": "The Mirror Dimension",
         "tutorialText": "Final inspection time! This function claims to perfectly reverse any string. It looks simple, but simple code can hide deep flaws. Be the investigator the Syntax Court needs!",
         "descTutorialText": "Verify if the string reversal handles all cases, including empty inputs and single letters. Don't let the simplicity fool you into a 'guilty' verdict without proof!",
-        "functionCode": "def reverse_string(s):\n    if s == \"\":\n        return \"\"\n    \n    result = \"\"\n    for char in s:\n        result = char + result\n    return result",
+        "functionCode": "def reverse_string(s:str) -> str:\n    if s == \"\":\n        return \"\"\n    \n    result = \"\"\n    for char in s:\n        result = char + result\n    return result",
         "description": "I take a string and return it in reverse order. If given an empty string, I return an empty string.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["empty-string", "normal-string"],
+        "requiredBranches": [
+            "empty-string",
+            "normal-string"
+        ],
         "evidencePool": [
             {
                 "id": "c8-t1",

@@ -4,11 +4,6 @@ import createTextButton from "../utils/createTextButton";
 import showDraggableTestCases from "../utils/dragging-logic";
 import { codeToHtml } from "shiki";
 import getCaseData from "../utils/getCaseData";
-import tutorialCases from "../data/tutorial-cases.json";
-
-// TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
-// TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
-// TODO - change it so that if you select a test case and then de-select, instead of the text animation playing again, it just shows the text again without the animation
 
 export class Case extends Scene {
     constructor() {
@@ -33,6 +28,7 @@ export class Case extends Scene {
         0: "A",
         1: "B",
         2: "C",
+        3: "D",
     };
     showSkipMessageTip = true;
     dragDom: Phaser.GameObjects.DOMElement | undefined;
@@ -47,19 +43,43 @@ export class Case extends Scene {
     clickDragSound: Phaser.Sound.BaseSound;
     backgroundMusic: Phaser.Sound.BaseSound | null;
     dropSound: Phaser.Sound.BaseSound;
+    caseProgressText: Phaser.GameObjects.Text | undefined;
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
+
+    private showCaseProgressText() {
+        if (this.isTutorial || this.caseProgressText) return;
+
+        let totalCases = 0;
+        const savedCases = localStorage.getItem("randomizedCases");
+        if (savedCases) {
+            try {
+                const parsed = JSON.parse(savedCases) as object[];
+                if (Array.isArray(parsed)) totalCases = parsed.length;
+            } catch {
+                totalCases = 0;
+            }
+        }
+
+        const currentCaseNumber = this.currentTutorialCaseIndex + 1;
+        const displayTotal = totalCases > 0 ? totalCases : currentCaseNumber;
+
+        this.caseProgressText = this.add
+            .text(980, 80, `Case ${currentCaseNumber} / ${displayTotal}`, {
+                fontFamily: "Google Sans Code",
+                fontSize: 20,
+                color: "#01ff34",
+            })
+            .setOrigin(1, 0.5)
+            .setDepth(101);
+    }
 
     private async goBack() {
         if (this.typingInProgress) return;
         if (this.dragDom) this.dragDom.destroy();
         if (this.evidenceDom) this.evidenceDom.destroy();
 
-        getCaseData(
-            this.isTutorial,
-            this.levelDifficulty,
-            this.currentTutorialCaseIndex,
-        );
+        getCaseData(this.isTutorial, this.currentTutorialCaseIndex);
 
         if (this.caseFileTestCases.length)
             this.caseFileTestCases.forEach((testCase) => testCase.destroy());
@@ -82,6 +102,7 @@ export class Case extends Scene {
         }
 
         this.addTabLabels();
+        this.showCaseProgressText();
         this.textObject.setText("");
         const codeAlreadyShown = this.tabDialogueShown.has("code");
         await this.addAnimatedTypingText(
@@ -95,7 +116,6 @@ export class Case extends Scene {
     async generateStyledCodeSnippet(
         caseData: string = getCaseData(
             this.isTutorial,
-            this.levelDifficulty,
             this.currentTutorialCaseIndex,
         ).case,
     ) {
@@ -115,10 +135,11 @@ export class Case extends Scene {
             borderRadius: "8px",
             border: "1px solid #30363d",
             boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
-            width: "fit-content",
-            maxWidth: "90%",
+            width: "95%",
+            maxWidth: "95%",
             maxHeight: "90%",
-            overflow: "auto",
+            overflowY: "auto",
+            overflowX: "hidden",
         });
 
         // 2. Generate the HTML from Shiki
@@ -137,6 +158,9 @@ export class Case extends Scene {
             preTag.style.padding = "18px";
             preTag.style.lineHeight = "1.6";
             preTag.style.backgroundColor = "transparent";
+            preTag.style.whiteSpace = "pre-wrap";
+            preTag.style.wordBreak = "break-word";
+            preTag.style.overflowWrap = "anywhere";
         }
 
         // 5. Add to Phaser's DOM parent
@@ -210,9 +234,8 @@ export class Case extends Scene {
     }
 
     private async addTestCases() {
-        const { feedback: testFeedback } = getCaseData(
+        const { evidencePool: testFeedback } = getCaseData(
             this.isTutorial,
-            this.levelDifficulty,
             this.currentTutorialCaseIndex,
         );
 
@@ -346,9 +369,8 @@ export class Case extends Scene {
     }
 
     private clickableTestCases() {
-        const { feedback: testFeedback } = getCaseData(
+        const { evidencePool: testFeedback } = getCaseData(
             this.isTutorial,
-            this.levelDifficulty,
             this.currentTutorialCaseIndex,
         );
 
@@ -505,12 +527,14 @@ export class Case extends Scene {
                 this.programDescTextReference.destroy();
 
             const thirdIntro =
-                (
-                    this.levelDifficulty === "easy" ||
-                    this.levelDifficulty === "medium"
-                ) ?
-                    "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button."
-                :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
+                this.isTutorial ?
+                    (
+                        this.levelDifficulty === "easy" ||
+                        this.levelDifficulty === "medium"
+                    ) ?
+                        "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button."
+                    :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button."
+                :   "Program's test cases:";
 
             if (this.levelDifficulty !== "hard") await this.addTestCases();
             if (this.levelDifficulty === "hard") {
@@ -576,19 +600,27 @@ export class Case extends Scene {
             this.textObject.setText("");
 
             this.programDescTextReference = this.add
-                .text(512, 350, this.currTutorialCaseDesc, {
-                    fontFamily: "Google Sans Code",
-                    fontSize: 23,
-                    color: "#ffffff",
-                    wordWrap: {
-                        width: 600,
-                        useAdvancedWrap: true,
+                .text(
+                    512,
+                    350,
+                    getCaseData(this.isTutorial, this.currentTutorialCaseIndex)
+                        .description,
+                    {
+                        fontFamily: "Google Sans Code",
+                        fontSize: 23,
+                        color: "#ffffff",
+                        wordWrap: {
+                            width: 600,
+                            useAdvancedWrap: true,
+                        },
                     },
-                })
+                )
                 .setOrigin(0.5);
 
             const fourthIntro =
-                "Here is the program's statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases.";
+                this.isTutorial ?
+                    "Here is the program's statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases."
+                :   "Program purpose:";
             const explanationAlreadyShown =
                 this.tabDialogueShown.has("explanation");
             this.tabDialogueShown.add("explanation");
@@ -610,6 +642,11 @@ export class Case extends Scene {
         instant?: boolean,
     ) {
         this.typingInProgress = true;
+
+        if (this.caseProgressText && text && text.trim().length > 0) {
+            this.caseProgressText.destroy();
+            this.caseProgressText = undefined;
+        }
 
         this.textObject = this.add.text(100, 30, "", {
             fontSize: `${fontSize}px`,
@@ -644,8 +681,12 @@ export class Case extends Scene {
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
         this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
-        this.currTutorialCaseDesc =
-            tutorialCases[this.currentTutorialCaseIndex].description;
+        this.showCaseProgressText();
+
+        this.currTutorialCaseDesc = getCaseData(
+            data.isTutorial,
+            this.currentTutorialCaseIndex,
+        ).description;
         this.selectedTestCases = [];
         this.currentTab = "code";
         this.levelDifficulty = data.difficulty;

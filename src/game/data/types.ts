@@ -9,6 +9,7 @@ export interface UnitTest {
     actualOutput: string;
     passes: boolean;
     showResult: boolean; // If we want to show the result of the test or have the player figure it out
+    pieces?: string[];
 }
 
 export interface TestFeedback {

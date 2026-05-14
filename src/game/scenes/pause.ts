@@ -1,7 +1,7 @@
 import { Scene } from "phaser";
 import createTextButton from "../utils/createTextButton";
 import { typewriterEffect } from "../utils/typeWriterAnimation";
-import tutorialCases from "../data/tutorial-cases.json";
+import getCaseData from "../utils/getCaseData";
 
 export class Pause extends Scene {
     isTutorial: boolean;
@@ -12,6 +12,7 @@ export class Pause extends Scene {
     typingInProgress: boolean = false;
     judge: Phaser.GameObjects.Sprite | undefined;
     saveProgressButton: Phaser.GameObjects.Container;
+    clickSound: Phaser.Sound.BaseSound;
 
     constructor() {
         super("Pause");
@@ -111,6 +112,8 @@ export class Pause extends Scene {
             .on("pointerdown", () => {
                 if (this.typingInProgress) return;
 
+                this.clickSound.play();
+
                 const confirmation = confirm(
                     "Are you sure you want to return to the main menu? Make sure to save your progress before exiting!",
                 );
@@ -123,6 +126,10 @@ export class Pause extends Scene {
     }
 
     create() {
+        this.clickSound = this.sound.add("button-click", {
+            volume: 1,
+        });
+
         this.add
             .text(512, 384, "Courtroom In Recess!", {
                 fontFamily: "Google Sans Code",
@@ -176,13 +183,25 @@ export class Pause extends Scene {
         this.saveProgressButton.on("pointerdown", async () => {
             if (this.typingInProgress) return;
 
-            localStorage.setItem(
-                "savedProgress",
-                JSON.stringify({
-                    currentTutorialCaseIndex: this.currentTutorialCaseIndex,
-                    difficulty: this.difficulty,
-                }),
-            );
+            this.clickSound.play();
+
+            if (this.isTutorial) {
+                localStorage.setItem(
+                    "savedProgress",
+                    JSON.stringify({
+                        currentTutorialCaseIndex: this.currentTutorialCaseIndex,
+                        difficulty: this.difficulty,
+                    }),
+                );
+            } else {
+                localStorage.setItem(
+                    "savedProgressMainGame",
+                    JSON.stringify({
+                        currentCaseIndex: this.currentTutorialCaseIndex,
+                        difficulty: this.difficulty,
+                    }),
+                );
+            }
 
             this.textObject.setText("");
 
@@ -196,10 +215,14 @@ export class Pause extends Scene {
         });
 
         continueButton.on("pointerdown", () => {
+            this.clickSound.play();
+
             this.scene.start("Case", {
                 isTutorial: this.isTutorial,
-                nextTutorialText:
-                    tutorialCases[this.currentTutorialCaseIndex].tutorialText,
+                nextTutorialText: getCaseData(
+                    this.isTutorial,
+                    this.currentTutorialCaseIndex,
+                ).caseDataWhole.tutorialText,
                 difficulty: this.difficulty,
                 currentTutorialCaseIndex: this.currentTutorialCaseIndex,
             });

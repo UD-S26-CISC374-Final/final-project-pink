@@ -15,6 +15,7 @@ export class Verdict extends Scene {
 
     currTutorialCaseIndex: number;
     selectedTestCases: string[] = [];
+    evidenceSelectionSuccess: boolean = false;
     answerMapping: Record<string, number> = {
         A: 0,
         B: 1,
@@ -33,6 +34,7 @@ export class Verdict extends Scene {
     dimmer: Phaser.GameObjects.DOMElement | undefined;
     clickSound: Phaser.Sound.BaseSound;
     revealButton: Phaser.GameObjects.Container | undefined;
+    happySound: Phaser.Sound.BaseSound | undefined;
 
     init(data: {
         selectedTestCasesIndices: string[];
@@ -49,8 +51,12 @@ export class Verdict extends Scene {
         this.isTutorial = data.isTutorial;
         this.currentDifficulty = data.difficulty;
         this.currTutorialCaseIndex = data.tutorialCaseIndex;
-        this.totalEvidenceCases =
-            tutorialCases[this.currTutorialCaseIndex].testFeedback.length;
+        this.evidenceSelectionSuccess = false;
+        this.totalEvidenceCases = getCaseData(
+            this.isTutorial,
+            this.currTutorialCaseIndex,
+        ).caseDataWhole.testFeedback.length;
+
         this.currReviewedEvidence = [];
     }
 
@@ -130,11 +136,23 @@ export class Verdict extends Scene {
 
         this.revealButton?.on("pointerdown", async () => {
             this.clickSound.play();
+
+            // Stop innocent-happy audio if playing
+            if (
+                typeof this.happySound !== "undefined" &&
+                this.happySound.isPlaying
+            ) {
+                this.happySound.stop();
+            }
+
             if (this.revealButton) this.revealButton.destroy();
 
             if (this.typingInProgress) return;
 
-            const currentCase = tutorialCases[this.currTutorialCaseIndex];
+            const currentCase = getCaseData(
+                this.isTutorial,
+                this.currTutorialCaseIndex,
+            ).caseDataWhole;
             const verdict = currentCase.correctVerdict; // "guilty" or "not guilty"
 
             this.textObject?.setText("");
@@ -154,6 +172,13 @@ export class Verdict extends Scene {
 
                 if (isInnocent) {
                     playConfettiEffect.call(this);
+                    if (this.happySound && this.happySound.isPlaying) {
+                        this.happySound.stop();
+                    }
+                    this.happySound = this.sound.add("innocent-happy", {
+                        volume: 0.4,
+                    });
+                    this.happySound.play();
                 }
 
                 // Inject bounce keyframes once
@@ -212,6 +237,9 @@ export class Verdict extends Scene {
                     .setOrigin(0, 0)
                     .setDepth(100);
 
+                // Play the verdict-stamp sound when the stamp appears
+                this.sound.play("verdict-stamp", { volume: 1 });
+
                 this.typingInProgress = false;
 
                 // 3. Play the closing statement
@@ -229,7 +257,15 @@ export class Verdict extends Scene {
 
     private createNewNextButton() {
         const isLastCase =
-            this.currTutorialCaseIndex >= tutorialCases.length - 1;
+            this.isTutorial ?
+                this.currTutorialCaseIndex >= tutorialCases.length - 1
+            :   this.currTutorialCaseIndex >=
+                (
+                    JSON.parse(
+                        localStorage.getItem("randomizedCases") || "[]",
+                    ) as Case[]
+                ).length -
+                    1;
 
         const nextButton = createTextButton.call(
             this,
@@ -248,28 +284,48 @@ export class Verdict extends Scene {
         nextButton.on("pointerdown", () => {
             this.clickSound.play();
 
-            const manager = CaseManager.getInstance();
-            const currentCase = tutorialCases[this.currTutorialCaseIndex];
-
-            // Sync manager state
-            while (manager.getCurrentCaseIndex() < this.currTutorialCaseIndex) {
-                manager.advanceCase();
+            // Stop innocent-happy audio if playing
+            if (
+                typeof this.happySound !== "undefined" &&
+                this.happySound.isPlaying
+            ) {
+                this.happySound.stop();
             }
 
+            const manager = CaseManager.getInstance();
+            const currentCase = getCaseData(
+                this.isTutorial,
+                this.currTutorialCaseIndex,
+            ).caseDataWhole;
+
             manager.selectedEvidenceIds = [...this.selectedTestCases];
-            manager.submitVerdict(
-                currentCase.correctVerdict as "guilty" | "not guilty",
-            );
+            // Submit verdict based on evidence quality - correct verdict if evidence was good, opposite if bad
+            const submittedVerdict: "guilty" | "not guilty" =
+                this.evidenceSelectionSuccess ? currentCase.correctVerdict
+                : currentCase.correctVerdict === "guilty" ? "not guilty"
+                : "guilty";
+            manager.submitVerdictWithCase(currentCase, submittedVerdict);
 
             this.scene.stop("Verdict");
 
             if (isLastCase) {
                 manager.markTutorialCompleted();
+                // Stop innocent-happy audio again before summary scene
+                if (
+                    typeof this.happySound !== "undefined" &&
+                    this.happySound.isPlaying
+                ) {
+                    this.happySound.stop();
+                }
                 this.scene.start("Summary");
             } else {
                 manager.advanceCase();
-                const nextCase = tutorialCases[this.currTutorialCaseIndex + 1];
-                const nextCaseDifficulty = (nextCase as Case).difficulty;
+                const nextCase = getCaseData(
+                    this.isTutorial,
+                    this.currTutorialCaseIndex + 1,
+                ).caseDataWhole;
+
+                const nextCaseDifficulty = nextCase.difficulty;
 
                 if (
                     this.currentDifficulty !== "medium" &&
@@ -314,37 +370,63 @@ export class Verdict extends Scene {
         requiredBranches: string[],
     ): "essential" | "redundant" | "misleading" | "missed" | "neutral" {
         const fb = testFeedback[idx];
-        const wasSelected = selectedLetters.includes(letters[idx]);
+        const letter = letters[idx];
+        const wasSelected = selectedLetters.includes(letter);
 
+        // 1. If it's misleading and selected, it's always negative
         if (fb.misleading) return wasSelected ? "misleading" : "neutral";
 
-        const branchCoveredByOther = testFeedback.some(
-            (f, j) =>
-                j !== idx &&
-                f.logicBranch === fb.logicBranch &&
-                selectedLetters.includes(letters[j]),
+        const coversRequiredBranch = requiredBranches.includes(
+            fb.logicBranch || "",
         );
 
-        if (wasSelected)
-            return branchCoveredByOther ? "redundant" : "essential";
+        if (wasSelected) {
+            if (coversRequiredBranch) {
+                // Check if there is another selected test for this branch
+                // that appears EARLIER in the evidence pool.
+                const isFirstOccurrence = !testFeedback.some(
+                    (f, j) =>
+                        j < idx &&
+                        f.logicBranch === fb.logicBranch &&
+                        selectedLetters.includes(letters[j]),
+                );
 
-        return (
-                requiredBranches.includes(fb.logicBranch || "") &&
-                    !branchCoveredByOther
-            ) ?
-                "missed"
-            :   "neutral";
+                // If it's the first one we encounter in the list covering this branch,
+                // it's essential. Otherwise, it's redundant.
+                return isFirstOccurrence ? "essential" : "redundant";
+            }
+            // Selected but doesn't cover a required branch
+            return "redundant";
+        }
+
+        // 2. If it wasn't selected, check if we missed this branch entirely
+        if (coversRequiredBranch) {
+            const branchIsCoveredByOthers = testFeedback.some(
+                (f, j) =>
+                    j !== idx &&
+                    f.logicBranch === fb.logicBranch &&
+                    selectedLetters.includes(letters[j]),
+            );
+
+            if (!branchIsCoveredByOthers) {
+                return "missed";
+            }
+        }
+
+        return "neutral";
     }
 
     async showTestCaseReasonings(mood: "happy" | "sad") {
-        const { feedback, currCaseData } = getCaseData(
+        const { evidencePool, currCaseData } = getCaseData(
             this.isTutorial,
-            this.currentDifficulty,
             this.currTutorialCaseIndex,
         );
-        const currentCase = tutorialCases[this.currTutorialCaseIndex];
+        const currentCase = getCaseData(
+            this.isTutorial,
+            this.currTutorialCaseIndex,
+        ).caseDataWhole;
         const tutorialTestFeedback = currCaseData;
-        const requiredBranches = (currentCase as Case).requiredBranches ?? [];
+        const requiredBranches = currentCase.requiredBranches ?? [];
         const LETTERS = ["A", "B", "C", "D"];
 
         const container = document.createElement("div");
@@ -369,7 +451,7 @@ export class Verdict extends Scene {
             pointerEvents: "auto",
         });
 
-        for (let i = 0; i < feedback.length; i++) {
+        for (let i = 0; i < evidencePool.length; i++) {
             const letter = LETTERS[i];
             const wasSelected = this.selectedTestCases.includes(letter);
             const quality = this.computeTestQuality(
@@ -418,7 +500,7 @@ export class Verdict extends Scene {
                 boxSizing: "border-box",
             });
 
-            const codeHTML = await codeToHtml(feedback[i].label, {
+            const codeHTML = await codeToHtml(evidencePool[i].label, {
                 lang: "python",
                 theme: "github-dark",
             });
@@ -584,8 +666,8 @@ export class Verdict extends Scene {
             await this.showTestCaseReasonings("sad");
 
             await this.addAnimatedTypingText(
-                tutorialCases[this.currTutorialCaseIndex]
-                    .missedEvidenceExplanation,
+                getCaseData(this.isTutorial, this.currTutorialCaseIndex)
+                    .caseDataWhole.missedEvidenceExplanation,
                 18,
             );
             this.judge.anims.pause();
@@ -594,33 +676,55 @@ export class Verdict extends Scene {
     }
 
     private async checkUserSelections() {
-        const currentTestCase = tutorialCases[this.currTutorialCaseIndex];
-        const letters = ["A", "B", "C", "D"];
-        const testFeedback = currentTestCase.testFeedback as Array<{
-            logicBranch: string;
-            misleading?: boolean;
-        }>;
-        const requiredBranches =
-            (currentTestCase as Case).requiredBranches ?? [];
+        const { currCaseData: testFeedback } = getCaseData(
+            this.isTutorial,
+            this.currTutorialCaseIndex,
+        );
 
+        const currentCaseWhole = getCaseData(
+            this.isTutorial,
+            this.currTutorialCaseIndex,
+        ).caseDataWhole;
+
+        const letters = ["A", "B", "C", "D"];
+        const requiredBranches = currentCaseWhole.requiredBranches ?? [];
+
+        // 1. track which branches are covered by VALID (non-misleading) selections
         const coveredBranches = new Set<string>();
+        let selectedMisleading = false;
+
         for (let i = 0; i < testFeedback.length; i++) {
             const fb = testFeedback[i];
-            if (!fb.misleading && this.selectedTestCases.includes(letters[i])) {
-                coveredBranches.add(fb.logicBranch);
+            const letter = letters[i];
+
+            if (this.selectedTestCases.includes(letter)) {
+                if (fb.misleading) {
+                    // If they picked a misleading case, we flag it
+                    selectedMisleading = true;
+                } else if (fb.logicBranch) {
+                    // Only add the branch if the test case is not misleading
+                    coveredBranches.add(fb.logicBranch.trim());
+                }
             }
         }
 
-        const allCovered = requiredBranches.every((b) =>
-            coveredBranches.has(b),
+        // 2. Check if every required branch is present in our covered set
+        const allBranchesCovered = requiredBranches.every((branch) =>
+            coveredBranches.has(branch.trim()),
         );
-        await this.showJudgeAnimation(allCovered ? "happy" : "sad");
+
+        // 3. The "Happy" path only triggers if ALL branches are covered
+        // AND no misleading cases were selected (optional, depending on your game design)
+        // If you only care about coverage:
+        const isSuccess = allBranchesCovered && !selectedMisleading;
+        this.evidenceSelectionSuccess = isSuccess;
+
+        await this.showJudgeAnimation(isSuccess ? "happy" : "sad");
     }
 
     private async drawFunctionTab() {
         const { case: functionCode } = getCaseData(
             this.isTutorial,
-            this.currentDifficulty,
             this.currTutorialCaseIndex,
         );
 
