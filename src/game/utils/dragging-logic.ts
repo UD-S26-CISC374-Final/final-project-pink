@@ -1,5 +1,4 @@
 import createTextButton from "./createTextButton";
-import tutorialCases from "../data/tutorial-cases.json";
 import type { UnitTest } from "../data/types";
 import getCaseData from "./getCaseData";
 
