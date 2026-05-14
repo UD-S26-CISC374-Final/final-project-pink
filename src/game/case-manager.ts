@@ -214,11 +214,6 @@ class CaseManager {
      */
     submitVerdict(playerVerdict: Verdict): CaseResult {
         const currentCase = this.getCurrentCase();
-        if (!currentCase) {
-            throw new Error(
-                "Cannot submit verdict: no case loaded in CaseManager",
-            );
-        }
         return this.submitVerdictWithCase(currentCase, playerVerdict);
     }
 
