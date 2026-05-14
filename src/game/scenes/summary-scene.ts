@@ -14,6 +14,7 @@ export class SummaryScene extends Scene {
     private bubbleBg!: Phaser.GameObjects.Graphics;
     private bubbleText!: Phaser.GameObjects.Text;
     private stamp!: Phaser.GameObjects.Image;
+    private gameOverMusic?: Phaser.Sound.BaseSound;
 
     constructor() {
         super("Summary");
@@ -308,6 +309,20 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
         this.cameras.main.setBackgroundColor("#1a1a1a");
 
+        this.gameOverMusic = this.sound.add("game-over-music", {
+            volume: 0.4,
+            loop: true,
+        });
+        this.gameOverMusic.play();
+
+        this.events.once("shutdown", () => {
+            if (this.gameOverMusic?.isPlaying) {
+                this.gameOverMusic.stop();
+            }
+            this.gameOverMusic?.destroy();
+            this.gameOverMusic = undefined;
+        });
+
         const panelDiv = document.createElement("div");
         panelDiv.innerHTML = this.buildPanel(manager);
         this.add.dom(SCREEN_W / 2, SCREEN_H / 2, panelDiv);
@@ -358,6 +373,10 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
                     "background-music",
                 ) as Phaser.Sound.BaseSound | null
             )?.stop();
+
+            if (this.gameOverMusic?.isPlaying) {
+                this.gameOverMusic.stop();
+            }
 
             this.scene.start("MainMenu");
         });
