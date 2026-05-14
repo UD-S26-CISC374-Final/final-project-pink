@@ -15,6 +15,7 @@ export class Verdict extends Scene {
 
     currTutorialCaseIndex: number;
     selectedTestCases: string[] = [];
+    evidenceSelectionSuccess: boolean = false;
     answerMapping: Record<string, number> = {
         A: 0,
         B: 1,
@@ -49,6 +50,7 @@ export class Verdict extends Scene {
         this.isTutorial = data.isTutorial;
         this.currentDifficulty = data.difficulty;
         this.currTutorialCaseIndex = data.tutorialCaseIndex;
+        this.evidenceSelectionSuccess = false;
         this.totalEvidenceCases = getCaseData(
             this.isTutorial,
             this.currTutorialCaseIndex,
@@ -268,15 +270,13 @@ export class Verdict extends Scene {
                 this.currTutorialCaseIndex,
             ).caseDataWhole;
 
-            // Sync manager state
-            while (manager.getCurrentCaseIndex() < this.currTutorialCaseIndex) {
-                manager.advanceCase();
-            }
-
             manager.selectedEvidenceIds = [...this.selectedTestCases];
-            manager.submitVerdict(
-                currentCase.correctVerdict as "guilty" | "not guilty",
-            );
+            // Submit verdict based on evidence quality - correct verdict if evidence was good, opposite if bad
+            const submittedVerdict: "guilty" | "not guilty" =
+                this.evidenceSelectionSuccess ? currentCase.correctVerdict
+                : currentCase.correctVerdict === "guilty" ? "not guilty"
+                : "guilty";
+            manager.submitVerdictWithCase(currentCase, submittedVerdict);
 
             this.scene.stop("Verdict");
 
@@ -335,30 +335,54 @@ export class Verdict extends Scene {
         requiredBranches: string[],
     ): "essential" | "redundant" | "misleading" | "missed" | "neutral" {
         const fb = testFeedback[idx];
-        const wasSelected = selectedLetters.includes(letters[idx]);
+        const letter = letters[idx];
+        const wasSelected = selectedLetters.includes(letter);
 
+        // 1. If it's misleading and selected, it's always negative
         if (fb.misleading) return wasSelected ? "misleading" : "neutral";
 
-        const branchCoveredByOther = testFeedback.some(
-            (f, j) =>
-                j !== idx &&
-                f.logicBranch === fb.logicBranch &&
-                selectedLetters.includes(letters[j]),
+        const coversRequiredBranch = requiredBranches.includes(
+            fb.logicBranch || "",
         );
 
-        if (wasSelected)
-            return branchCoveredByOther ? "redundant" : "essential";
+        if (wasSelected) {
+            if (coversRequiredBranch) {
+                // Check if there is another selected test for this branch
+                // that appears EARLIER in the evidence pool.
+                const isFirstOccurrence = !testFeedback.some(
+                    (f, j) =>
+                        j < idx &&
+                        f.logicBranch === fb.logicBranch &&
+                        selectedLetters.includes(letters[j]),
+                );
 
-        return (
-                requiredBranches.includes(fb.logicBranch || "") &&
-                    !branchCoveredByOther
-            ) ?
-                "missed"
-            :   "neutral";
+                // If it's the first one we encounter in the list covering this branch,
+                // it's essential. Otherwise, it's redundant.
+                return isFirstOccurrence ? "essential" : "redundant";
+            }
+            // Selected but doesn't cover a required branch
+            return "redundant";
+        }
+
+        // 2. If it wasn't selected, check if we missed this branch entirely
+        if (coversRequiredBranch) {
+            const branchIsCoveredByOthers = testFeedback.some(
+                (f, j) =>
+                    j !== idx &&
+                    f.logicBranch === fb.logicBranch &&
+                    selectedLetters.includes(letters[j]),
+            );
+
+            if (!branchIsCoveredByOthers) {
+                return "missed";
+            }
+        }
+
+        return "neutral";
     }
 
     async showTestCaseReasonings(mood: "happy" | "sad") {
-        const { feedback, currCaseData } = getCaseData(
+        const { evidencePool, currCaseData } = getCaseData(
             this.isTutorial,
             this.currTutorialCaseIndex,
         );
@@ -392,7 +416,7 @@ export class Verdict extends Scene {
             pointerEvents: "auto",
         });
 
-        for (let i = 0; i < feedback.length; i++) {
+        for (let i = 0; i < evidencePool.length; i++) {
             const letter = LETTERS[i];
             const wasSelected = this.selectedTestCases.includes(letter);
             const quality = this.computeTestQuality(
@@ -441,7 +465,7 @@ export class Verdict extends Scene {
                 boxSizing: "border-box",
             });
 
-            const codeHTML = await codeToHtml(feedback[i].label, {
+            const codeHTML = await codeToHtml(evidencePool[i].label, {
                 lang: "python",
                 theme: "github-dark",
             });
@@ -617,29 +641,50 @@ export class Verdict extends Scene {
     }
 
     private async checkUserSelections() {
-        const currentTestCase = getCaseData(
+        const { currCaseData: testFeedback } = getCaseData(
+            this.isTutorial,
+            this.currTutorialCaseIndex,
+        );
+
+        const currentCaseWhole = getCaseData(
             this.isTutorial,
             this.currTutorialCaseIndex,
         ).caseDataWhole;
-        const letters = ["A", "B", "C", "D"];
-        const testFeedback = currentTestCase.testFeedback as Array<{
-            logicBranch: string;
-            misleading?: boolean;
-        }>;
-        const requiredBranches = currentTestCase.requiredBranches ?? [];
 
+        const letters = ["A", "B", "C", "D"];
+        const requiredBranches = currentCaseWhole.requiredBranches ?? [];
+
+        // 1. track which branches are covered by VALID (non-misleading) selections
         const coveredBranches = new Set<string>();
+        let selectedMisleading = false;
+
         for (let i = 0; i < testFeedback.length; i++) {
             const fb = testFeedback[i];
-            if (!fb.misleading && this.selectedTestCases.includes(letters[i])) {
-                coveredBranches.add(fb.logicBranch);
+            const letter = letters[i];
+
+            if (this.selectedTestCases.includes(letter)) {
+                if (fb.misleading) {
+                    // If they picked a misleading case, we flag it
+                    selectedMisleading = true;
+                } else if (fb.logicBranch) {
+                    // Only add the branch if the test case is not misleading
+                    coveredBranches.add(fb.logicBranch.trim());
+                }
             }
         }
 
-        const allCovered = requiredBranches.every((b) =>
-            coveredBranches.has(b),
+        // 2. Check if every required branch is present in our covered set
+        const allBranchesCovered = requiredBranches.every((branch) =>
+            coveredBranches.has(branch.trim()),
         );
-        await this.showJudgeAnimation(allCovered ? "happy" : "sad");
+
+        // 3. The "Happy" path only triggers if ALL branches are covered
+        // AND no misleading cases were selected (optional, depending on your game design)
+        // If you only care about coverage:
+        const isSuccess = allBranchesCovered && !selectedMisleading;
+        this.evidenceSelectionSuccess = isSuccess;
+
+        await this.showJudgeAnimation(isSuccess ? "happy" : "sad");
     }
 
     private async drawFunctionTab() {

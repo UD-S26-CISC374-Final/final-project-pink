@@ -74,9 +74,12 @@ export class SummaryScene extends Scene {
 
         const rowsHTML = results
             .map((result) => {
-                const caseData = manager.getCaseById(result.caseId);
+                const caseData = manager.getCaseById(
+                    result.caseId,
+                    result.caseDifficulty,
+                );
                 const title = caseData?.title ?? result.caseId;
-                const isGuilty = result.playerVerdict === "guilty";
+                const isGuilty = caseData?.correctVerdict === "guilty";
                 const verdictBadge =
                     isGuilty ?
                         `<img src="assets/guilty_no_frame.png" class="verdict-img">`
@@ -301,7 +304,7 @@ code{display:block;font-family:'Google Sans Code',monospace;font-size:12px;color
 
     create() {
         const manager = CaseManager.getInstance();
-        // manager.saveResults();
+        manager.saveResults();
 
         this.cameras.main.setBackgroundColor("#1a1a1a");
 
