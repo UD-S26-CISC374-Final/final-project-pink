@@ -186,7 +186,7 @@ export class MainMenu extends Scene implements ChangeableScene {
             .setDepth(2);
 
         this.drawButton("START", 540, () => {
-            CaseManager.getInstance().loadTutorial();
+            CaseManager.getInstance().loadNonTutorialCases();
             this.gamemode = "Level";
             this.clickSound.play();
 
