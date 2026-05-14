@@ -531,12 +531,14 @@ export class Case extends Scene {
                 this.programDescTextReference.destroy();
 
             const thirdIntro =
-                (
-                    this.levelDifficulty === "easy" ||
-                    this.levelDifficulty === "medium"
-                ) ?
-                    "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button."
-                :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button.";
+                this.isTutorial ?
+                    (
+                        this.levelDifficulty === "easy" ||
+                        this.levelDifficulty === "medium"
+                    ) ?
+                        "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them. When you're ready, press the 'Present Evidence to Judge Compiler' button."
+                    :   "Now that you've got a good idea on how unit tests are structured, your job is to now to construct 2 test cases as evidence that either prove or disprove the program's innocence. When you're ready, press the 'Present Evidence to Judge Compiler' button."
+                :   "Program's test cases:";
 
             if (this.levelDifficulty !== "hard") await this.addTestCases();
             if (this.levelDifficulty === "hard") {
@@ -620,7 +622,9 @@ export class Case extends Scene {
                 .setOrigin(0.5);
 
             const fourthIntro =
-                "Here is the program's statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases.";
+                this.isTutorial ?
+                    "Here is the program's statement of purpose, which gives a brief overview of what the program is supposed to do. This can help guide your analysis of the program and its test cases."
+                :   "Program purpose:";
             const explanationAlreadyShown =
                 this.tabDialogueShown.has("explanation");
             this.tabDialogueShown.add("explanation");
