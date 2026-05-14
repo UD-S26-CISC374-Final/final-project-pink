@@ -47,8 +47,36 @@ export class Case extends Scene {
     clickDragSound: Phaser.Sound.BaseSound;
     backgroundMusic: Phaser.Sound.BaseSound | null;
     dropSound: Phaser.Sound.BaseSound;
+    caseProgressText: Phaser.GameObjects.Text | undefined;
     thirdIntro =
         "These are the program's test cases. Use them as evidence. Some tests may be redundant, so choose the two that provide the strongest evidence by clicking on them.";
+
+    private showCaseProgressText() {
+        if (this.isTutorial || this.caseProgressText) return;
+
+        let totalCases = 0;
+        const savedCases = localStorage.getItem("randomizedCases");
+        if (savedCases) {
+            try {
+                const parsed = JSON.parse(savedCases) as object[];
+                if (Array.isArray(parsed)) totalCases = parsed.length;
+            } catch {
+                totalCases = 0;
+            }
+        }
+
+        const currentCaseNumber = this.currentTutorialCaseIndex + 1;
+        const displayTotal = totalCases > 0 ? totalCases : currentCaseNumber;
+
+        this.caseProgressText = this.add
+            .text(980, 80, `Case ${currentCaseNumber} / ${displayTotal}`, {
+                fontFamily: "Google Sans Code",
+                fontSize: 20,
+                color: "#01ff34",
+            })
+            .setOrigin(1, 0.5)
+            .setDepth(101);
+    }
 
     private async goBack() {
         if (this.typingInProgress) return;
@@ -78,6 +106,7 @@ export class Case extends Scene {
         }
 
         this.addTabLabels();
+        this.showCaseProgressText();
         this.textObject.setText("");
         const codeAlreadyShown = this.tabDialogueShown.has("code");
         await this.addAnimatedTypingText(
@@ -614,6 +643,11 @@ export class Case extends Scene {
     ) {
         this.typingInProgress = true;
 
+        if (this.caseProgressText && text && text.trim().length > 0) {
+            this.caseProgressText.destroy();
+            this.caseProgressText = undefined;
+        }
+
         this.textObject = this.add.text(100, 30, "", {
             fontSize: `${fontSize}px`,
             color: "#01ff34",
@@ -647,6 +681,8 @@ export class Case extends Scene {
         this.isTutorial = data.isTutorial;
         this.nextTutorialText = data.nextTutorialText;
         this.currentTutorialCaseIndex = data.currentTutorialCaseIndex;
+        this.showCaseProgressText();
+
         this.currTutorialCaseDesc = getCaseData(
             data.isTutorial,
             this.currentTutorialCaseIndex,
