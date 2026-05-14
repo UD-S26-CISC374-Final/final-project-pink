@@ -220,6 +220,9 @@ export class Verdict extends Scene {
                     .setOrigin(0, 0)
                     .setDepth(100);
 
+                // Play the verdict-stamp sound when the stamp appears
+                this.sound.play("verdict-stamp", { volume: 1 });
+
                 this.typingInProgress = false;
 
                 // 3. Play the closing statement
