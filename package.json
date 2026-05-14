@@ -3,7 +3,7 @@
     "version": "5.0.0",
     "type": "module",
     "description": "A courtroom-themed educational game where you evaluate unit tests as evidence to determine if a function is guilty of bugs.",
-    "homepage": "https://github.com/UD-S26-CISC374-Final/final-project-pink#readme",
+    "homepage": "https://ud-s26-cisc374-final.github.io/final-project-pink/",
     "scripts": {
         "dev": "vite --config vite/config.dev.mjs",
         "build": "tsc -b && vite build --config vite/config.prod.mjs",
