@@ -34,6 +34,7 @@ export class Verdict extends Scene {
     dimmer: Phaser.GameObjects.DOMElement | undefined;
     clickSound: Phaser.Sound.BaseSound;
     revealButton: Phaser.GameObjects.Container | undefined;
+    happySound: Phaser.Sound.BaseSound | undefined;
 
     init(data: {
         selectedTestCasesIndices: string[];
@@ -135,6 +136,15 @@ export class Verdict extends Scene {
 
         this.revealButton?.on("pointerdown", async () => {
             this.clickSound.play();
+
+            // Stop innocent-happy audio if playing
+            if (
+                typeof this.happySound !== "undefined" &&
+                this.happySound.isPlaying
+            ) {
+                this.happySound.stop();
+            }
+
             if (this.revealButton) this.revealButton.destroy();
 
             if (this.typingInProgress) return;
@@ -162,6 +172,13 @@ export class Verdict extends Scene {
 
                 if (isInnocent) {
                     playConfettiEffect.call(this);
+                    if (this.happySound && this.happySound.isPlaying) {
+                        this.happySound.stop();
+                    }
+                    this.happySound = this.sound.add("innocent-happy", {
+                        volume: 0.4,
+                    });
+                    this.happySound.play();
                 }
 
                 // Inject bounce keyframes once
@@ -267,6 +284,14 @@ export class Verdict extends Scene {
         nextButton.on("pointerdown", () => {
             this.clickSound.play();
 
+            // Stop innocent-happy audio if playing
+            if (
+                typeof this.happySound !== "undefined" &&
+                this.happySound.isPlaying
+            ) {
+                this.happySound.stop();
+            }
+
             const manager = CaseManager.getInstance();
             const currentCase = getCaseData(
                 this.isTutorial,
@@ -285,6 +310,13 @@ export class Verdict extends Scene {
 
             if (isLastCase) {
                 manager.markTutorialCompleted();
+                // Stop innocent-happy audio again before summary scene
+                if (
+                    typeof this.happySound !== "undefined" &&
+                    this.happySound.isPlaying
+                ) {
+                    this.happySound.stop();
+                }
                 this.scene.start("Summary");
             } else {
                 manager.advanceCase();
