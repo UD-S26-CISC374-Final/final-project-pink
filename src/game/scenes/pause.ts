@@ -12,6 +12,7 @@ export class Pause extends Scene {
     typingInProgress: boolean = false;
     judge: Phaser.GameObjects.Sprite | undefined;
     saveProgressButton: Phaser.GameObjects.Container;
+    clickSound: Phaser.Sound.BaseSound;
 
     constructor() {
         super("Pause");
@@ -111,6 +112,8 @@ export class Pause extends Scene {
             .on("pointerdown", () => {
                 if (this.typingInProgress) return;
 
+                this.clickSound.play();
+
                 const confirmation = confirm(
                     "Are you sure you want to return to the main menu? Make sure to save your progress before exiting!",
                 );
@@ -123,6 +126,10 @@ export class Pause extends Scene {
     }
 
     create() {
+        this.clickSound = this.sound.add("button-click", {
+            volume: 1,
+        });
+
         this.add
             .text(512, 384, "Courtroom In Recess!", {
                 fontFamily: "Google Sans Code",
@@ -176,6 +183,8 @@ export class Pause extends Scene {
         this.saveProgressButton.on("pointerdown", async () => {
             if (this.typingInProgress) return;
 
+            this.clickSound.play();
+
             if (this.isTutorial) {
                 localStorage.setItem(
                     "savedProgress",
@@ -206,6 +215,8 @@ export class Pause extends Scene {
         });
 
         continueButton.on("pointerdown", () => {
+            this.clickSound.play();
+
             this.scene.start("Case", {
                 isTutorial: this.isTutorial,
                 nextTutorialText: getCaseData(
