@@ -69,25 +69,25 @@
             {
                 "testId": "c16-t1",
                 "logicBranch": "early-exit-success",
-                "feedback": "Confirms the function returns immediately upon finding the first even number."
+                "feedback": "Confirms the function returns immediately upon finding the first even number. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c16-t2",
                 "logicBranch": "proper-loop-completion",
-                "feedback": "Verifies the function searches the entire list before returning -1."
+                "feedback": "Verifies the function searches the entire list before returning -1. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c16-t3",
                 "logicBranch": "proper-loop-completion",
-                "feedback": "This confirms the function correctly skips odd numbers and continues searching."
+                "feedback": "This confirms the function correctly skips odd numbers and continues searching. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c16-t4",
                 "logicBranch": "empty-list-handling",
-                "feedback": "Correctly handles empty input by skipping the loop and hitting the default return."
+                "feedback": "Correctly handles empty input by skipping the loop and hitting the default return. This is strong supporting evidence for boundary behavior and edge-condition reliability."
             }
         ],
-        "missedEvidenceExplanation": "The return -1 is correctly placed outside the loop, ensuring the entire list is checked before giving up.",
+        "missedEvidenceExplanation": "The return -1 is correctly placed outside the loop, ensuring the entire list is checked before giving up. Build your verdict by combining branch coverage with at least one meaningful edge case.",
         "closingStatement": "Not Guilty! The defendant followed the search protocol perfectly, checking every item until a match was found or the list was exhausted."
     },
     {
@@ -160,25 +160,25 @@
             {
                 "testId": "c18-t1",
                 "logicBranch": "non-target-retention",
-                "feedback": "Ensures that items not matching the target are kept intact."
+                "feedback": "Ensures that items not matching the target are kept intact. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c18-t2",
                 "logicBranch": "empty-result-path",
-                "feedback": "Correctly handles cases where the entire list consists of the target value."
+                "feedback": "Correctly handles cases where the entire list consists of the target value. This is strong supporting evidence for boundary behavior and edge-condition reliability."
             },
             {
                 "testId": "c18-t3",
                 "logicBranch": "list-comprehension-safety",
-                "feedback": "By using a list comprehension, the function creates a new list instead of mutating the one it is reading."
+                "feedback": "By using a list comprehension, the function creates a new list instead of mutating the one it is reading. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c18-t4",
                 "logicBranch": "empty-input-handling",
-                "feedback": "Cleanly handles empty input lists without error."
+                "feedback": "Cleanly handles empty input lists without error. This is strong supporting evidence for boundary behavior and edge-condition reliability."
             }
         ],
-        "missedEvidenceExplanation": "The function avoids the common 'mutation during iteration' trap by filtering the list into a new result.",
+        "missedEvidenceExplanation": "The function avoids the common 'mutation during iteration' trap by filtering the list into a new result. Build your verdict by combining branch coverage with at least one meaningful edge case.",
         "closingStatement": "Not Guilty! This is a textbook example of clean, functional programming. No indices were harmed in the making of this list."
     },
     {
@@ -251,25 +251,25 @@
             {
                 "testId": "c20-t1",
                 "logicBranch": "overwrite-bug",
-                "feedback": "CRITICAL! The first assignment overwrites data, so both ends end up identical instead of swapping."
+                "feedback": "The first assignment overwrites data, so both ends end up identical instead of swapping. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c20-t2",
                 "logicBranch": "short-list-safety",
-                "feedback": "Verifies that single-element lists are returned unchanged as per the safety check."
+                "feedback": "Verifies that single-element lists are returned unchanged as per the safety check. This is strong supporting evidence for boundary behavior and edge-condition reliability."
             },
             {
                 "testId": "c20-t3",
                 "logicBranch": "overwrite-bug",
-                "feedback": "Further proof that manual two-step assignment duplicates one value and loses the original first element."
+                "feedback": "Further proof that manual two-step assignment duplicates one value and loses the original first element. This is crucial evidence because it directly challenges a decisive logic path."
             },
             {
                 "testId": "c20-t4",
                 "logicBranch": "short-list-safety",
-                "feedback": "Confirms empty lists are handled safely."
+                "feedback": "Confirms empty lists are handled safely. This is strong supporting evidence for boundary behavior and edge-condition reliability."
             }
         ],
-        "missedEvidenceExplanation": "Without tuple unpacking or a temporary variable, the first assignment destroys information before the second assignment runs.",
+        "missedEvidenceExplanation": "Without tuple unpacking or a temporary variable, the first assignment destroys information before the second assignment runs. Build your verdict by combining branch coverage with at least one meaningful edge case.",
         "closingStatement": "Guilty! The defendant overwrote key evidence mid-swap, producing mirrored ends instead of a true exchange."
     },
     {
@@ -342,25 +342,25 @@
             {
                 "testId": "c23-t1",
                 "logicBranch": "equality-success",
-                "feedback": "Confirms the function works for strings as well as numbers."
+                "feedback": "Confirms the function works for strings as well as numbers. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c23-t2",
                 "logicBranch": "equality-success",
-                "feedback": "By using '==', the function correctly compares values rather than memory addresses (avoiding the 'is' trap)."
+                "feedback": "By using '==', the function correctly compares values rather than memory addresses (avoiding the 'is' trap). This evidence can appear convincing in isolation, but it is weak on its own and should be paired with a contrasting branch."
             },
             {
                 "testId": "c23-t3",
                 "logicBranch": "miss-case",
-                "feedback": "Properly returns 0 when no matches are found."
+                "feedback": "Properly returns 0 when no matches are found. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c23-t4",
                 "logicBranch": "equality-success",
-                "feedback": "Reinforces that value equality is consistently applied."
+                "feedback": "Reinforces that value equality is consistently applied. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             }
         ],
-        "missedEvidenceExplanation": "The use of the equality operator (==) ensures that the function works for all objects, regardless of Python's internal memory management or integer caching.",
+        "missedEvidenceExplanation": "The use of the equality operator (==) ensures that the function works for all objects, regardless of Python's internal memory management or integer caching. Build your verdict by combining branch coverage with at least one meaningful edge case.",
         "closingStatement": "Not Guilty! This counter knows the difference between 'identity' and 'value'. A perfect score."
     },
     {
@@ -433,25 +433,25 @@
             {
                 "testId": "c24-t1",
                 "logicBranch": "wrong-denominator",
-                "feedback": "CRITICAL! The sum is right, but dividing by len(nums)-1 inflates the result."
+                "feedback": "The sum is right, but dividing by len(nums)-1 inflates the result. This is useful supporting evidence, and it is strongest when combined with coverage from another branch."
             },
             {
                 "testId": "c24-t2",
                 "logicBranch": "empty-safety",
-                "feedback": "Verifies that the function prevents a division-by-zero error on empty lists."
+                "feedback": "Verifies that the function prevents a division-by-zero error on empty lists. This is strong supporting evidence for boundary behavior and edge-condition reliability."
             },
             {
                 "testId": "c24-t3",
                 "logicBranch": "wrong-denominator",
-                "feedback": "A two-item list exposes the denominator bug immediately by returning the full sum."
+                "feedback": "A two-item list exposes the denominator bug immediately by returning the full sum. This is crucial evidence because it directly challenges a decisive logic path."
             },
             {
                 "testId": "c24-t4",
                 "logicBranch": "wrong-denominator",
-                "feedback": "Single-element input causes division by zero because len(nums)-1 becomes 0."
+                "feedback": "Single-element input causes division by zero because len(nums)-1 becomes 0. This is strong supporting evidence for boundary behavior and edge-condition reliability."
             }
         ],
-        "missedEvidenceExplanation": "The bug is in the denominator: averages must divide by len(nums), not len(nums)-1.",
+        "missedEvidenceExplanation": "The bug is in the denominator: averages must divide by len(nums), not len(nums)-1. Build your verdict by combining branch coverage with at least one meaningful edge case.",
         "closingStatement": "Guilty! The math looked polished, but the denominator was tampered with, skewing every non-empty result."
     }
 ]

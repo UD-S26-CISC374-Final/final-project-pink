@@ -6,8 +6,7 @@
         "functionCode": "def find_sum(num1:int, num2:int) -> int:\n    return abs(num1 + num2)",
         "description": "I can sum any two integers together correctly!",
         "evidenceSlots": 2,
-        "correctVerdict": "not guilty",
-        "requiredBranches": ["negative-sum"],
+        "correctVerdict": "guilty",
         "evidencePool": [
             {
                 "id": "c1-t1",
@@ -32,8 +31,8 @@
                 "label": "assert(find_sum(-20, -4), -24)",
                 "input": "-20, -4",
                 "expectedOutput": "-24",
-                "actualOutput": "-24",
-                "passes": true,
+                "actualOutput": "24",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -49,27 +48,23 @@
         "testFeedback": [
             {
                 "testId": "c1-t1",
-                "logicBranch": "positive-sum",
-                "feedback": "This shows normal positive behavior."
+                "feedback": "This test confirms standard addition works when the results are positive. It serves as a solid baseline for expected behavior."
             },
             {
                 "testId": "c1-t2",
-                "logicBranch": "positive-sum",
-                "feedback": "The result is positive, as expected."
+                "feedback": "This is a useful verification that mixing positive and negative inputs still results in the correct sum when the total remains positive."
             },
             {
                 "testId": "c1-t3",
-                "logicBranch": "negative-sum",
-                "feedback": "Handles negative sums correctly."
+                "feedback": "This is critical evidence. It interrogates the 'negative spectrum' to ensure the sum isn't accidentally forced into a positive value by the abs() function."
             },
             {
                 "testId": "c1-t4",
-                "logicBranch": "zero-case",
-                "feedback": "Boundary case handled correctly."
+                "feedback": "A necessary check of the zero-boundary. It ensures the function handles the neutral center of the number line without error."
             }
         ],
-        "missedEvidenceExplanation": "All test cases, including negative numbers, are handled correctly.",
-        "closingStatement": "Innocent! The adder handles both positive and negative sums as expected."
+        "missedEvidenceExplanation": "Every case is a chance to sharpen your skills. In this trial, the bug was hidden by the 'abs()' function, which forced negative sums to become positive. To catch this, you need evidence that expects a negative result. Please review the details below to see how these choices influenced the final verdict.",
+        "closingStatement": "Guilty! The defendant was caught using absolute value to hide negative results, making the math incorrect for any sum below zero."
     },
     {
         "id": "case-2",
@@ -78,8 +73,7 @@
         "functionCode": "def is_old_enough(age:int) -> bool:\n  if age > 21:\n      return True\n  else:\n      return False",
         "description": "I check if a user is old enough to enter the club. If you're 21 or older, you're in!",
         "evidenceSlots": 2,
-        "correctVerdict": "not guilty",
-        "requiredBranches": ["exact-boundary"],
+        "correctVerdict": "guilty",
         "evidencePool": [
             {
                 "id": "c2-t1",
@@ -121,27 +115,23 @@
         "testFeedback": [
             {
                 "testId": "c2-t1",
-                "logicBranch": "under-age",
-                "feedback": "Testing significantly below the limit makes the function appear correct."
+                "feedback": "While this test passes, it only checks a value far from the limit. It doesn't reveal if the boundary logic is slightly off."
             },
             {
                 "testId": "c2-t2",
-                "logicBranch": "exact-boundary",
-                "feedback": "CRITICAL EVIDENCE! This exposes that the function bars exactly 21-year-olds incorrectly."
+                "feedback": "This is the 'smoking gun.' It exposes that the function incorrectly bars someone who is exactly 21, revealing a strict inequality bug."
             },
             {
                 "testId": "c2-t3",
-                "logicBranch": "over-age",
-                "feedback": "Standard pass case that doesn't test the edge boundary."
+                "feedback": "This is a standard 'happy path' test. It confirms the function works for older adults but fails to challenge the actual threshold logic."
             },
             {
                 "testId": "c2-t4",
-                "logicBranch": "under-age",
-                "feedback": "Another standard fail case that obscures the off-by-one bug."
+                "feedback": "Testing another underage value is redundant. It confirms the 'else' path works but hides the specific error at the cutoff point."
             }
         ],
-        "missedEvidenceExplanation": "Without testing the exact boundary (21), you cannot see if the code uses > or >=.",
-        "closingStatement": "Busted! The second assertion shows the defendant incorrectly barring a 21-year-old by using strictly greater than."
+        "missedEvidenceExplanation": "Identifying bugs often requires looking at the exact point where a decision is made. In this trial, the 'off-by-one' error only appears when we test the exact boundary of 21. Even if your evidence wasn't a perfect fit, remember to always challenge the threshold. Please review the details below.",
+        "closingStatement": "Busted! The second assertion shows the defendant incorrectly barring a 21-year-old by using strictly greater than instead of greater than or equal to."
     },
     {
         "id": "case-3",
@@ -151,7 +141,6 @@
         "description": "I correctly add up all the numbers in a list!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["value-mismatch"],
         "evidencePool": [
             {
                 "id": "c3-t1",
@@ -193,28 +182,23 @@
         "testFeedback": [
             {
                 "testId": "c3-t1",
-                "logicBranch": "empty-list",
-                "misleading": true,
-                "feedback": "The loop never runs, so the bug remains hidden."
+                "feedback": "This is misleading evidence. Because an empty list skips the loop entirely, the bug remains hidden and the function appears innocent by accident."
             },
             {
                 "testId": "c3-t2",
-                "logicBranch": "value-mismatch",
-                "feedback": "CRITICAL! Proves the code adds the indices (0+1+2) instead of the values."
+                "feedback": "Critical evidence. It reveals the function is adding the index positions (0, 1, 2) rather than the actual values (1, 5, 9) contained in the list."
             },
             {
                 "testId": "c3-t3",
-                "logicBranch": "index-match",
-                "feedback": "The values match the indices, so the math works by accident."
+                "feedback": "A misleading coincidence. Since the indices in this list (0, 1) match the values, the math accidentally produces the correct result, masking the error."
             },
             {
                 "testId": "c3-t4",
-                "logicBranch": "value-mismatch",
-                "feedback": "Exposes that indices are always positive, revealing the value vs index bug."
+                "feedback": "This is powerful evidence. Since indices are always positive, using negative values in the list immediately exposes that the function is looking at the wrong data."
             }
         ],
-        "missedEvidenceExplanation": "Testing with lists where values don't match the indices is required to find the bug.",
-        "closingStatement": "Order in the court! This function was adding positions instead of values. Identity theft confirmed!"
+        "missedEvidenceExplanation": "A good investigator looks for data that doesn't 'match' the surroundings. Here, the bug was hidden whenever the list indices looked like the list values. To catch this imposter, we needed evidence where the values and positions were different. Please review the details below.",
+        "closingStatement": "Order in the court! This function was caught adding up the 'where' (indices) instead of the 'what' (values). Identity theft confirmed!"
     },
     {
         "id": "case-4",
@@ -224,7 +208,6 @@
         "description": "I correctly concatenate a given first and last name!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["raw-concat"],
         "evidencePool": [
             {
                 "id": "c4-t1",
@@ -266,30 +249,23 @@
         "testFeedback": [
             {
                 "testId": "c4-t1",
-                "logicBranch": "manual-space",
-                "misleading": true,
-                "feedback": "Hides the bug because the input manually includes a space."
+                "feedback": "This test is misleading. Because the input itself contains a space ('John '), it does the work the function should be doing, hiding the bug."
             },
             {
                 "testId": "c4-t2",
-                "logicBranch": "manual-space",
-                "misleading": true,
-                "feedback": "Again, the input ' Doe' has a space that the function should provide."
+                "feedback": "Another misleading case. By providing a space in the last name input (' Doe'), the test makes the code look functional when it is actually broken."
             },
             {
                 "testId": "c4-t3",
-                "logicBranch": "raw-concat",
-                "feedback": "Exposes that the function does not add a space between names."
+                "feedback": "This is essential evidence. It reveals that the function fails to provide its own spacing, resulting in names being smashed together."
             },
             {
                 "testId": "c4-t4",
-                "logicBranch": "manual-space",
-                "misleading": true,
-                "feedback": "Correct behavior only because the input is formatted to hide the error."
+                "feedback": "This is redundant. It repeats the same misleading pattern seen in the other tests, proving nothing about the function's own logic."
             }
         ],
-        "missedEvidenceExplanation": "Test with strings that don't have built-in spaces to see the concatenation error.",
-        "closingStatement": "Guilty! A name needs a space to breathe, and this function was just smashing them together."
+        "missedEvidenceExplanation": "Even if your evidence wasn't a perfect fit, you are learning to spot 'sneaky' data. In this trial, the bug was hidden because the inputs already had spaces. To find the truth, we needed 'clean' names to see if the function added the space itself. Please review the details below.",
+        "closingStatement": "Guilty! A name needs a space to breathe, and this function was just smashing them together without a care for formatting."
     },
     {
         "id": "case-5",
@@ -299,7 +275,6 @@
         "description": "Returns the average grade accurately.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["standard-avg", "safety-check"],
         "evidencePool": [
             {
                 "id": "c5-t1",
@@ -341,27 +316,23 @@
         "testFeedback": [
             {
                 "testId": "c5-t1",
-                "logicBranch": "standard-avg",
-                "feedback": "Shows the math is correct for standard inputs."
+                "feedback": "This test confirms the primary math works. It shows the function can correctly sum a list and divide by its length for standard inputs."
             },
             {
                 "testId": "c5-t2",
-                "logicBranch": "safety-check",
-                "feedback": "Verifies the safety check for empty lists works correctly."
+                "feedback": "This is a critical boundary test. It verifies that the function has a safety check to handle empty lists without crashing."
             },
             {
                 "testId": "c5-t3",
-                "logicBranch": "standard-avg",
-                "feedback": "Simple case that reinforces the basic math."
+                "feedback": "A useful baseline test. It ensures the logic holds up even when the list only contains a single grade."
             },
             {
                 "testId": "c5-t4",
-                "logicBranch": "standard-avg",
-                "feedback": "Boundary case (all zeros) that the function handles fine."
+                "feedback": "This test checks how the function handles zeros. It proves the math is consistent even when the grades themselves provide no value."
             }
         ],
-        "missedEvidenceExplanation": "Testing both the empty list and a valid list confirms the safety check and logic are both sound.",
-        "closingStatement": "The defendant is a model citizen. It handles empty lists and performs division accurately."
+        "missedEvidenceExplanation": "Every trial is a lesson in coverage. To truly clear this function's name, we needed to see both the standard math and the safety check for empty lists. Combined, they prove the code is robust. Please review the details below to see how these choices influenced the final verdict.",
+        "closingStatement": "The defendant is a model citizen. It handles empty lists safely and performs its calculations with total accuracy. Case dismissed!"
     },
     {
         "id": "case-6",
@@ -371,15 +342,14 @@
         "description": "I take a list of people and pair them each up with the first person.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["leader-pick"],
         "evidencePool": [
             {
                 "id": "c6-t1",
                 "label": "assert(pair(['A', 'B', 'C']), ['A & B', 'A & C'])",
                 "input": "['A', 'B', 'C']",
                 "expectedOutput": "['A & B', 'A & C']",
-                "actualOutput": "['A & B', 'A & C']",
-                "passes": true,
+                "actualOutput": "['B & A', 'B & C']",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -387,8 +357,8 @@
                 "label": "assert(pair(['Leader', 'X']), ['Leader & X'])",
                 "input": "['Leader', 'X']",
                 "expectedOutput": "['Leader & X']",
-                "actualOutput": "['Leader & X']",
-                "passes": true,
+                "actualOutput": "['X & Leader']",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -396,8 +366,8 @@
                 "label": "assert(pair(['X', 'Y', 'Z']), ['X & Y', 'X & Z'])",
                 "input": "['X', 'Y', 'Z']",
                 "expectedOutput": "['X & Y', 'X & Z']",
-                "actualOutput": "['X & Y', 'X & Z']",
-                "passes": true,
+                "actualOutput": "['Y & X', 'Y & Z']",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -405,35 +375,31 @@
                 "label": "assert(pair(['First', 'Second']), ['First & Second'])",
                 "input": "['First', 'Second']",
                 "expectedOutput": "['First & Second']",
-                "actualOutput": "['First & Second']",
-                "passes": true,
+                "actualOutput": "['Second & First']",
+                "passes": false,
                 "showResult": true
             }
         ],
         "testFeedback": [
             {
                 "testId": "c6-t1",
-                "logicBranch": "leader-pick",
-                "feedback": "Pairs are created with the correct leader."
+                "feedback": "This is essential evidence. It reveals that the function is actually picking the person at index 1 ('B') to be the leader instead of index 0 ('A')."
             },
             {
                 "testId": "c6-t2",
-                "logicBranch": "leader-pick",
-                "feedback": "Correct leader is paired in all cases."
+                "feedback": "This confirms the off-by-one bug. It proves the function is looking past the first name in the list and designating the second person as the leader."
             },
             {
                 "testId": "c6-t3",
-                "logicBranch": "leader-pick",
-                "feedback": "No off-by-one error; leader is correct."
+                "feedback": "Another clear demonstration of the error. Testing with different names shows the function consistently ignores the first slot in favor of the second."
             },
             {
                 "testId": "c6-t4",
-                "logicBranch": "leader-pick",
-                "feedback": "All pairs are as expected."
+                "feedback": "This is redundant but accurate evidence. It reinforces the fact that the second person is always being treated as the leader."
             }
         ],
-        "missedEvidenceExplanation": "All pairs are created with the correct leader.",
-        "closingStatement": "Innocent! The socialite pairs everyone with the true leader."
+        "missedEvidenceExplanation": "In this trial, we saw how a single digit can change everything. By setting the leader index to 1 instead of 0, the function ignored the 'first' person entirely. Reviewing these logic paths helps you spot these small but critical errors. Please review the details below.",
+        "closingStatement": "Guilty! The socialite was caught snubbing the actual leaders and giving all the attention to whoever happened to be standing in the second spot."
     },
     {
         "id": "case-7",
@@ -443,7 +409,6 @@
         "description": "I count how many actual digits are in any integer.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["negative-check", "boundary-check"],
         "evidencePool": [
             {
                 "id": "c7-t1",
@@ -485,27 +450,23 @@
         "testFeedback": [
             {
                 "testId": "c7-t1",
-                "logicBranch": "negative-check",
-                "feedback": "Verifies that negative signs are ignored correctly."
+                "feedback": "This is strong evidence. It verifies that the code is smart enough to ignore the negative sign character and only count the numeric digits."
             },
             {
                 "testId": "c7-t2",
-                "logicBranch": "standard-count",
-                "feedback": "Standard case that works as expected."
+                "feedback": "A solid baseline test. It confirms the function can handle standard positive integers of varying lengths."
             },
             {
                 "testId": "c7-t3",
-                "logicBranch": "boundary-check",
-                "feedback": "Checks boundary case of a single digit zero."
+                "feedback": "An important boundary test. Even with a value of zero, the function correctly identifies that there is one digit present."
             },
             {
                 "testId": "c7-t4",
-                "logicBranch": "negative-check",
-                "feedback": "Similar to the other negative test."
+                "feedback": "This is redundant with the other negative test, but it confirms the logic is consistent across different negative values."
             }
         ],
-        "missedEvidenceExplanation": "Testing negative numbers shows the function correctly filters out non-digit characters.",
-        "closingStatement": "The accountant is efficient. It correctly tallies digits while ignoring formatting marks."
+        "missedEvidenceExplanation": "Every case is a chance to learn about 'clean' logic. By testing both negative numbers and zeros, we proved that this function ignores formatting marks like '-' and focuses only on the numbers. Reviewing these branches ensures total confidence in the code. Please review the details below.",
+        "closingStatement": "The accountant is efficient and honest. It correctly tallies every digit while ignoring the distraction of negative signs. Case dismissed."
     },
     {
         "id": "case-8",
@@ -515,7 +476,6 @@
         "description": "I convert miles to kilometers and vice-versa!",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["km-path", "mi-path"],
         "evidencePool": [
             {
                 "id": "c8-t1",
@@ -557,27 +517,23 @@
         "testFeedback": [
             {
                 "testId": "c8-t1",
-                "logicBranch": "km-path",
-                "feedback": "Confirms km conversion logic is sound."
+                "feedback": "This verifies the 'kilometers' path. It confirms the multiplication logic is correct for converting miles into metric distance."
             },
             {
                 "testId": "c8-t2",
-                "logicBranch": "mi-path",
-                "feedback": "Confirms miles conversion logic is sound."
+                "feedback": "This verifies the 'miles' path. It ensures the division logic correctly reverses the conversion back into imperial units."
             },
             {
                 "testId": "c8-t3",
-                "logicBranch": "km-path",
-                "feedback": "Boundary case handled correctly."
+                "feedback": "A standard boundary test. It proves that converting zero distance remains zero, showing the math is stable."
             },
             {
                 "testId": "c8-t4",
-                "logicBranch": "mi-path",
-                "feedback": "Another boundary case handled correctly."
+                "feedback": "This is redundant with the previous zero test, but it confirms the logic holds up regardless of which direction you are converting."
             }
         ],
-        "missedEvidenceExplanation": "Testing both km and mi branches confirms the whole function works.",
-        "closingStatement": "This function is innocent. Both miles and kilometers are handled with mathematical precision."
+        "missedEvidenceExplanation": "In this trial, the key was checking both directions of the conversion. By verifying both the multiplication and division branches, we see the function is completely sound. Reviewing these insights helps you ensure no path is left unexamined. Please review the details below.",
+        "closingStatement": "This function is innocent! Both miles and kilometers are handled with mathematical precision. You are free to go."
     },
     {
         "id": "case-9",
@@ -587,7 +543,6 @@
         "description": "I will find the largest number in any list of integers!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["negative-list"],
         "evidencePool": [
             {
                 "id": "c9-t1",
@@ -629,28 +584,23 @@
         "testFeedback": [
             {
                 "testId": "c9-t1",
-                "logicBranch": "positive-list",
-                "misleading": true,
-                "feedback": "Since 5 is greater than the initial 0, the bug remains hidden."
+                "feedback": "This test is misleading. Because the list contains a positive number (5), the bug is hidden because 5 is already greater than the function's starting 'largest' value of 0."
             },
             {
                 "testId": "c9-t2",
-                "logicBranch": "negative-list",
-                "feedback": "Exposes that it can't find a max when all numbers are less than 0."
+                "feedback": "This is critical evidence. It reveals that when all numbers are negative, the function incorrectly sticks with its initial '0', failing to find the true maximum."
             },
             {
                 "testId": "c9-t3",
-                "logicBranch": "mixed-list",
-                "feedback": "The math works by accident when 0 is in the list."
+                "feedback": "A misleading coincidence. The result is only correct because zero happens to be in the list, making it look like the initialization is fine when it isn't."
             },
             {
                 "testId": "c9-t4",
-                "logicBranch": "negative-list",
-                "feedback": "Another proof that negative lists are the function's weakness."
+                "feedback": "This is powerful evidence. It confirms the function's weakness: it is completely unable to find the largest number in a list of negative values."
             }
         ],
-        "missedEvidenceExplanation": "When negative numbers are involved, the initial 'largest = 0' prevents the actual max from being found.",
-        "closingStatement": "Guilty! By assuming the largest number must be at least zero, you ignored the entire negative spectrum."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about initialization. By starting the 'largest' value at 0, the function ignored the entire negative spectrum. To catch this, we needed a test with only negative numbers to see the logic fail. Please review the details below.",
+        "closingStatement": "Guilty! By assuming the largest number must be at least zero, you ignored every negative possibility. To the Debugging Ward with you!"
     },
     {
         "id": "case-10",
@@ -660,7 +610,6 @@
         "description": "I count every vowel in a word (A, E, I, O, U)!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["uppercase-vowels"],
         "evidencePool": [
             {
                 "id": "c10-t1",
@@ -702,27 +651,23 @@
         "testFeedback": [
             {
                 "testId": "c10-t1",
-                "logicBranch": "lowercase-vowels",
-                "feedback": "Works correctly for lowercase, masking the bug."
+                "feedback": "This is a misleading test. While it passes for lowercase letters, it fails to check if the function can handle uppercase vowels."
             },
             {
                 "testId": "c10-t2",
-                "logicBranch": "uppercase-vowels",
-                "feedback": "Exposes that uppercase vowels are being skipped."
+                "feedback": "Critical evidence. It reveals that the function is 'case-sensitive,' incorrectly skipping over the capital 'A' while only counting the lowercase 'e'."
             },
             {
                 "testId": "c10-t3",
-                "logicBranch": "uppercase-vowels",
-                "feedback": "A complete failure for uppercase input."
+                "feedback": "A complete failure. This test proves that the function is blind to uppercase vowels entirely, returning a count of zero for a word made of capitals."
             },
             {
                 "testId": "c10-t4",
-                "logicBranch": "no-vowels",
-                "feedback": "Normal behavior for words without vowels."
+                "feedback": "This test is redundant. While it shows the function doesn't find vowels in 'sky', it doesn't help us identify the case-sensitivity bug."
             }
         ],
-        "missedEvidenceExplanation": "Testing with capital letters reveals the function's inability to handle case sensitivity.",
-        "closingStatement": "The defendant is guilty of excluding capital vowels. Vowels are vowels, regardless of their case!"
+        "missedEvidenceExplanation": "Every trial is a chance to learn about input variety. In this case, the bug was hiding in 'Case Sensitivity.' By only checking for lowercase vowels, the function ignored half the alphabet. Please review the details below to see how these choices influenced the final verdict.",
+        "closingStatement": "Guilty! The defendant is guilty of excluding capital vowels. A vowel is a vowel, regardless of its size!"
     },
     {
         "id": "case-11",
@@ -732,11 +677,6 @@
         "description": "I scan any list of numbers and find the highest and lowest values.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": [
-            "positive-range",
-            "negative-range",
-            "empty-safety"
-        ],
         "evidencePool": [
             {
                 "id": "c11-t1",
@@ -778,27 +718,23 @@
         "testFeedback": [
             {
                 "testId": "c11-t1",
-                "logicBranch": "positive-range",
-                "feedback": "Confirms positive range logic."
+                "feedback": "This verifies the primary logic. It shows the function correctly identifies both the minimum and maximum values in a standard list."
             },
             {
                 "testId": "c11-t2",
-                "logicBranch": "negative-range",
-                "feedback": "Confirms it handles negative ranges correctly by using the first element as start."
+                "feedback": "This is strong evidence. It confirms the function handles negative numbers correctly because it initializes its search using the first element of the list."
             },
             {
                 "testId": "c11-t3",
-                "logicBranch": "empty-safety",
-                "feedback": "Checks safety behavior."
+                "feedback": "A critical boundary test. It proves the function has a safety check for empty lists, preventing a crash when there is no data to scan."
             },
             {
                 "testId": "c11-t4",
-                "logicBranch": "single-element",
-                "feedback": "Single element case works fine."
+                "feedback": "A useful edge case check. It shows the function correctly identifies that in a list of one, that single number is both the min and the max."
             }
         ],
-        "missedEvidenceExplanation": "Testing negative numbers and empty lists shows the initialization and safety logic are correct.",
-        "closingStatement": "This function is innocent. It maintains its orientation even in the cold negative depths."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about initialization and safety. By testing negative numbers and empty lists, we proved that the starting values and safety logic are both sound. Reviewing these branches ensures the code is truly innocent. Please review the details below.",
+        "closingStatement": "This function is innocent! It maintains its orientation even in the cold negative depths and handles empty data with grace. Case dismissed."
     },
     {
         "id": "case-12",
@@ -808,7 +744,6 @@
         "description": "I return a version where every number appears only once.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["duplicate-filter", "empty-handle"],
         "evidencePool": [
             {
                 "id": "c12-t1",
@@ -850,27 +785,23 @@
         "testFeedback": [
             {
                 "testId": "c12-t1",
-                "logicBranch": "duplicate-filter",
-                "feedback": "Verifies that duplicates are properly filtered."
+                "feedback": "This verifies the primary filtering logic. It confirms that when a duplicate appears, the function correctly chooses to skip it."
             },
             {
                 "testId": "c12-t2",
-                "logicBranch": "duplicate-filter",
-                "feedback": "Confirms the logic on extreme duplicates."
+                "feedback": "This test pushes the logic to the extreme. It shows that even in a list of identical numbers, only one unique copy remains."
             },
             {
                 "testId": "c12-t3",
-                "logicBranch": "empty-handle",
-                "feedback": "Shows it handles empty input."
+                "feedback": "An important boundary test. It ensures the function handles empty input without error, returning an empty list as expected."
             },
             {
                 "testId": "c12-t4",
-                "logicBranch": "unique-list",
-                "feedback": "Correctly preserves unique lists."
+                "feedback": "A useful baseline test. It ensures that if a list is already 'clean' and unique, the function returns it exactly as it was."
             }
         ],
-        "missedEvidenceExplanation": "The function correctly checks the existence of elements before adding them.",
-        "closingStatement": "Innocent! The Minimalist effectively removes clutter while keeping unique data safe."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about accumulation. The function correctly checks for the existence of an element before adding it to the new list, ensuring no duplicates slip through. Reviewing these insights confirms the logic is sound. Please review the details below.",
+        "closingStatement": "Innocent! The Minimalist effectively removes clutter while keeping unique data safe. You are free to return to the server."
     },
     {
         "id": "case-13",
@@ -880,7 +811,6 @@
         "description": "I check if the first and last numbers in a list are the same.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["populated-crash"],
         "evidencePool": [
             {
                 "id": "c13-t1",
@@ -922,28 +852,23 @@
         "testFeedback": [
             {
                 "testId": "c13-t1",
-                "logicBranch": "populated-crash",
-                "feedback": "Exposes the off-by-one index error immediately."
+                "feedback": "Critical evidence. It reveals a fatal crash—an IndexError—because the function is trying to look at a position that doesn't exist in the list."
             },
             {
                 "testId": "c13-t2",
-                "logicBranch": "empty-safety",
-                "misleading": true,
-                "feedback": "Safety check passes, hiding the crash in the main logic."
+                "feedback": "This test is misleading. Because it triggers the safety check for empty lists, it hides the fact that the main logic is completely broken."
             },
             {
                 "testId": "c13-t3",
-                "logicBranch": "populated-crash",
-                "feedback": "Shows any populated list will trigger an IndexError."
+                "feedback": "Strong evidence. It confirms that any list with data will cause the function to crash because it doesn't know how to correctly find the 'last' element."
             },
             {
                 "testId": "c13-t4",
-                "logicBranch": "populated-crash",
-                "feedback": "Even a single element list crashes due to indexing error."
+                "feedback": "This exposes the error even in a single-item list. The function reaches past the end of the data, resulting in an immediate failure."
             }
         ],
-        "missedEvidenceExplanation": "Index length is always out of bounds. The last element is at length - 1.",
-        "closingStatement": "Guilty! You reached for the end of the list and slipped right off the edge."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about off-by-one errors. In this case, the function tried to access an index equal to the list length, which is always out of bounds. To catch this, we needed any populated list. Please review the details below to see how these choices influenced the verdict.",
+        "closingStatement": "Guilty! You reached for the end of the list and slipped right off the edge into an IndexError. Sentence: Two weeks of reading documentation!"
     },
     {
         "id": "case-14",
@@ -953,7 +878,6 @@
         "description": "I take a list of numbers and return their total sum.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["addition-path", "negative-path", "empty-path"],
         "evidencePool": [
             {
                 "id": "c14-t1",
@@ -995,27 +919,23 @@
         "testFeedback": [
             {
                 "testId": "c14-t1",
-                "logicBranch": "addition-path",
-                "feedback": "Confirms basic addition."
+                "feedback": "This verifies the primary addition logic. It confirms that the function correctly accumulates multiple positive values into a total."
             },
             {
                 "testId": "c14-t2",
-                "logicBranch": "negative-path",
-                "feedback": "Confirms handling of negative cancellation."
+                "feedback": "Strong evidence. It confirms the function handles negative numbers correctly, allowing them to subtract from the total as expected."
             },
             {
                 "testId": "c14-t3",
-                "logicBranch": "empty-path",
-                "feedback": "Empty list correctly yields 0."
+                "feedback": "An important boundary test. It ensures that an empty list correctly results in a zero, showing the starting value is set correctly."
             },
             {
                 "testId": "c14-t4",
-                "logicBranch": "single-path",
-                "feedback": "Single item case confirmed."
+                "feedback": "A useful baseline. It proves that a list with a single item simply returns that item, showing the loop works even for one iteration."
             }
         ],
-        "missedEvidenceExplanation": "Correctly implements the accumulator pattern for all integer types.",
-        "closingStatement": "The Accumulator is honest. Simple addition, perfectly executed. Case dismissed."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about accumulation patterns. This function correctly implements a sum by starting at zero and adding every element in the list. Reviewing these branches confirms the code is sound. Please review the details below to see how these choices influenced the verdict.",
+        "closingStatement": "The Accumulator is honest. Simple addition, perfectly executed across all types of input. Case dismissed."
     },
     {
         "id": "case-15",
@@ -1025,7 +945,6 @@
         "description": "I calculate the total product of any list of numbers.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["zero-init-bug"],
         "evidencePool": [
             {
                 "id": "c15-t1",
@@ -1067,27 +986,22 @@
         "testFeedback": [
             {
                 "testId": "c15-t1",
-                "logicBranch": "zero-init-bug",
-                "feedback": "Exposes that starting at 0 kills any product."
+                "feedback": "Critical evidence. It reveals that because the function starts with a product of 0, every multiplication result becomes 0, regardless of the input."
             },
             {
                 "testId": "c15-t2",
-                "logicBranch": "zero-init-bug",
-                "feedback": "Further proof of the 0-initialization bug."
+                "feedback": "This further confirms the fatal logic error. No matter how large the numbers are, the initial zero kills the entire calculation."
             },
             {
                 "testId": "c15-t3",
-                "logicBranch": "zero-input",
-                "misleading": true,
-                "feedback": "Accidentally works because 0 is in the input."
+                "feedback": "This test is misleading. It only passes because zero was included in the input, which masks the fact that the code is actually broken."
             },
             {
                 "testId": "c15-t4",
-                "logicBranch": "zero-init-bug",
-                "feedback": "Shows empty products fail math standards."
+                "feedback": "Powerful evidence. It shows the function returns 0 for an empty list when mathematical standards suggest it should return the 'identity' value of 1."
             }
         ],
-        "missedEvidenceExplanation": "Initializing a product at 0 makes every multiplication zero. It should start at 1.",
-        "closingStatement": "Guilty! You've turned every math problem into nothingness with your zero-initialization."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about 'Neutral Elements.' In addition, you start at 0, but in multiplication, you must start at 1. By starting at zero, the function turned everything into nothingness. Please review the details below to see how these choices influenced the final verdict.",
+        "closingStatement": "Guilty! You've turned every math problem into nothingness with your zero-initialization. The jury finds this behavior mathematically unacceptable!"
     }
 ]

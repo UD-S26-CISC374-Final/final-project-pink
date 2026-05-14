@@ -6,8 +6,7 @@
         "functionCode": "def check_passwords(pass1:str, pass2:str) -> str:\n   if pass1 == \" \" or pass2 == \" \":\n      return \"Passwords cannot be empty!\"\n   elif pass1 != pass2:\n\treturn \"Passwords do not match!\"\n   else:\n\treturn \"Passwords match!\"",
         "description": "I ensure security by checking if two passwords match and are not empty!",
         "evidenceSlots": 2,
-        "correctVerdict": "not guilty",
-        "requiredBranches": ["empty-string-fail"],
+        "correctVerdict": "guilty",
         "evidencePool": [
             {
                 "id": "c1-t1",
@@ -49,28 +48,23 @@
         "testFeedback": [
             {
                 "testId": "c1-t1",
-                "logicBranch": "empty-string-fail",
-                "feedback": "Exposes that the function incorrectly matches two empty strings as valid."
+                "feedback": "This is essential evidence. It reveals that the function incorrectly treats two empty strings as a 'match' because its empty-check logic only looks for a single space character."
             },
             {
                 "testId": "c1-t2",
-                "logicBranch": "empty-string-fail",
-                "feedback": "Shows the empty check is broken for the second parameter."
+                "feedback": "This is a high-quality test. It proves that the security check fails to flag the second password as empty if it is a truly empty string, simply reporting that they 'do not match'."
             },
             {
                 "testId": "c1-t3",
-                "logicBranch": "standard-match",
-                "misleading": true,
-                "feedback": "Makes the function look innocent by testing a standard match."
+                "feedback": "This test is misleading. While it passes for standard passwords, it fails to interrogate how the function handles security risks like empty inputs."
             },
             {
                 "testId": "c1-t4",
-                "logicBranch": "space-check",
-                "feedback": "This tests the only specific case the bug doesn't hit (a space string)."
+                "feedback": "This is a redundant test. It only checks a single space character (' '), which is the only specific case the function's broken logic actually catches."
             }
         ],
-        "missedEvidenceExplanation": "You need to test an empty string ('') rather than a space (' ') to see the validation failure.",
-        "closingStatement": "Justice is served! You proved the defendant doesn't know the difference between a space and an empty string."
+        "missedEvidenceExplanation": "Every case is a chance to sharpen your eye for detail. In this trial, the bug was a confusion between a 'space' and a truly 'empty' string. To expose this flaw, we needed evidence using empty quotes ('') to prove the safety check was hollow. Please review the details below to see how these choices influenced the verdict.",
+        "closingStatement": "Guilty! Justice is served. You proved the defendant doesn't know the difference between a physical space character and a truly empty string, leaving a massive hole in security."
     },
     {
         "id": "case-2",
@@ -80,15 +74,14 @@
         "description": "I return ONLY the ones perfectly divisible by 5.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["inverted-logic"],
         "evidencePool": [
             {
                 "id": "c2-t1",
                 "label": "assert(filter([5, 10, 3]), [5, 10])",
                 "input": "[5, 10, 3]",
                 "expectedOutput": "[5, 10]",
-                "actualOutput": "[5, 10]",
-                "passes": true,
+                "actualOutput": "[3]",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -96,8 +89,8 @@
                 "label": "assert(filter([1, 2]), [])",
                 "input": "[1, 2]",
                 "expectedOutput": "[]",
-                "actualOutput": "[]",
-                "passes": true,
+                "actualOutput": "[1, 2]",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -105,8 +98,8 @@
                 "label": "assert(filter([15, 20]), [15, 20])",
                 "input": "[15, 20]",
                 "expectedOutput": "[15, 20]",
-                "actualOutput": "[15, 20]",
-                "passes": true,
+                "actualOutput": "[]",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -114,35 +107,31 @@
                 "label": "assert(filter([0]), [0])",
                 "input": "[0]",
                 "expectedOutput": "[0]",
-                "actualOutput": "[0]",
-                "passes": true,
+                "actualOutput": "[]",
+                "passes": false,
                 "showResult": true
             }
         ],
         "testFeedback": [
             {
                 "testId": "c2-t1",
-                "logicBranch": "divisible-logic",
-                "feedback": "Correctly returns numbers divisible by 5."
+                "feedback": "This is critical evidence. It reveals that the function is doing the exact opposite of its job—returning the '3' and ignoring the multiples of 5."
             },
             {
                 "testId": "c2-t2",
-                "logicBranch": "divisible-logic",
-                "feedback": "Handles non-divisible numbers as expected."
+                "feedback": "This is high-quality evidence. It exposes the 'inverted logic' bug where non-divisible numbers are kept while the divisible ones are discarded."
             },
             {
                 "testId": "c2-t3",
-                "logicBranch": "divisible-logic",
-                "feedback": "Correctly includes all multiples of 5."
+                "feedback": "This is a strong test case. It proves that the function is completely broken for its primary task, returning an empty list when it should have returned all items."
             },
             {
                 "testId": "c2-t4",
-                "logicBranch": "divisible-logic",
-                "feedback": "Zero is handled as a valid multiple of 5."
+                "feedback": "This is a useful boundary test. Since zero divided by five has no remainder, it correctly identifies that the function fails to include zero as a multiple of 5."
             }
         ],
-        "missedEvidenceExplanation": "All test cases for divisibility by 5 are handled correctly.",
-        "closingStatement": "Innocent! The function returns only numbers divisible by 5 as promised."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about boolean logic. In this case, the function treated 'remainders' as 'True', meaning it kept everything that *wasn't* divisible by five. To catch this outlaw, we needed to show that the output was the inverted mirror of the truth. Please review the details below.",
+        "closingStatement": "Guilty! The defendant turned the law upside down, keeping the outlaws and exiling the multiples of five. Refactoring is required!"
     },
     {
         "id": "case-3",
@@ -151,8 +140,7 @@
         "functionCode": "def list_merger(list1:list[int], list2:list[int]) -> list[int]:\n    list1_len = len(list1)\n    merged_list = []\n    if list1_len == 0 or len(list2) == 0: return merged_list\n    for i in range(list1_len): merged_list.append(list1[i])\n    for i in range(list1_len): merged_list.append(list2[i])\n    return merged_list",
         "description": "I merge two lists correctly while removing duplicates.",
         "evidenceSlots": 2,
-        "correctVerdict": "not guilty",
-        "requiredBranches": ["length-mismatch", "duplicate-fail"],
+        "correctVerdict": "guilty",
         "evidencePool": [
             {
                 "id": "c3-t1",
@@ -194,27 +182,23 @@
         "testFeedback": [
             {
                 "testId": "c3-t1",
-                "logicBranch": "length-mismatch",
-                "feedback": "Exposes that it skips items in list 2 if list 1 is shorter."
+                "feedback": "This is critical evidence. It reveals that the function incorrectly uses the length of the first list to scan the second, causing it to 'forget' items if the first list is too short."
             },
             {
                 "testId": "c3-t2",
-                "logicBranch": "length-mismatch",
-                "feedback": "Causes an index crash because it tries to use list 1's length on a shorter list 2."
+                "feedback": "This is the smoking gun. It causes a fatal IndexError because the function tries to look for items in the second list using a count that is only valid for the first, larger list."
             },
             {
                 "testId": "c3-t3",
-                "logicBranch": "early-exit-bug",
-                "feedback": "Shows the safety check returns an empty list even if one has data."
+                "feedback": "This is excellent boundary evidence. It reveals that the function's 'safety check' is actually a bug—it clears both lists if even one is empty."
             },
             {
                 "testId": "c3-t4",
-                "logicBranch": "duplicate-fail",
-                "feedback": "Proves the 'removing duplicates' claim was a lie."
+                "feedback": "This proves the 'removing duplicates' claim was a complete fabrication. The function simply smashes lists together without any check for repeating values."
             }
         ],
-        "missedEvidenceExplanation": "The code uses list1_len to iterate through list2 and lacks any duplicate checking logic.",
-        "closingStatement": "Guilty! Using one list's length to measure another is a fundamental violation of list law."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about list management. In this trial, the defendant made the fatal error of using one list's 'ruler' to measure a completely different list. To solve this case, we needed to show how mismatched lengths lead to data loss and crashes. Please review the details below.",
+        "closingStatement": "Guilty! Using one list's length to measure another is a fundamental violation of list law. The defendant is sentenced to the Refactoring Ward!"
     },
     {
         "id": "case-4",
@@ -224,7 +208,6 @@
         "description": "Sort numbers into Even and Odd groups.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["mixed-data", "zero-logic"],
         "evidencePool": [
             {
                 "id": "c4-t1",
@@ -266,27 +249,23 @@
         "testFeedback": [
             {
                 "testId": "c4-t1",
-                "logicBranch": "mixed-data",
-                "feedback": "Confirms both branches work correctly."
+                "feedback": "This confirms the primary sorting logic is sound. It proves the function can accurately separate mixed data into the correct even and odd buckets."
             },
             {
                 "testId": "c4-t2",
-                "logicBranch": "zero-logic",
-                "feedback": "Verifies that zero is correctly identified as even."
+                "feedback": "This is a high-quality boundary test. It verifies that zero is correctly identified as even, showing the mathematical logic is consistent."
             },
             {
                 "testId": "c4-t3",
-                "logicBranch": "empty-behavior",
-                "feedback": "Correct empty list behavior."
+                "feedback": "This is an important safety check. It proves the function can handle an empty list gracefully, returning the expected empty result."
             },
             {
                 "testId": "c4-t4",
-                "logicBranch": "mixed-data",
-                "feedback": "Reinforces even logic."
+                "feedback": "This is a useful baseline test. It reinforces that the even-number branch works perfectly even when no odd numbers are present to distract it."
             }
         ],
-        "missedEvidenceExplanation": "Testing mixed types, zeros, and empty lists shows the sorting logic is robust.",
-        "closingStatement": "The Arbiter is fair. It sorts exactly as promised. Not guilty."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about robust logic. By testing mixed types, zeros, and empty lists, we proved the defendant's sorting logic is unbreakable. Combining branch coverage with edge cases is the only way to ensure a function's total innocence. Please review the details below.",
+        "closingStatement": "Innocent! The Arbiter is fair and accurate. It sorts exactly as promised and follows the laws of mathematics without fail. Case dismissed!"
     },
     {
         "id": "case-5",
@@ -296,7 +275,6 @@
         "description": "I count down to zero and launch the rocket reliably!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["negative-infinite-loop"],
         "evidencePool": [
             {
                 "id": "c5-t1",
@@ -338,28 +316,23 @@
         "testFeedback": [
             {
                 "testId": "c5-t1",
-                "logicBranch": "positive-path",
-                "misleading": true,
-                "feedback": "Hides the bug because positive numbers eventually hit 0."
+                "feedback": "This is a misleading test. While it passes for positive numbers, it fails to show what happens when the countdown begins on the wrong side of zero."
             },
             {
                 "testId": "c5-t2",
-                "logicBranch": "negative-infinite-loop",
-                "feedback": "CRITICAL! Exposes the infinite loop for negative numbers."
+                "feedback": "Critical evidence! It reveals a fatal infinite loop. Since the code only stops at exactly zero, starting with a negative number and subtracting keeps it running forever."
             },
             {
                 "testId": "c5-t3",
-                "logicBranch": "zero-skip",
-                "feedback": "0 is falsy, so it skips the loop and launches instantly."
+                "feedback": "This is an important boundary test. It shows that zero is treated as 'False', allowing the loop to be skipped entirely for an immediate launch."
             },
             {
                 "testId": "c5-t4",
-                "logicBranch": "negative-infinite-loop",
-                "feedback": "Further proof that negative starts never terminate."
+                "feedback": "This further proves the logic flaw. It demonstrates that any negative starting point dooms the rocket to count into the void for eternity."
             }
         ],
-        "missedEvidenceExplanation": "In Python, while x runs as long as x is not zero. If you start negative and subtract, you never reach zero.",
-        "closingStatement": "Guilty! You've doomed the astronauts to an eternity of counting into the negative void."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about loop termination. In this trial, we saw that 'not zero' isn't the same as 'greater than zero.' By starting negative and moving away from zero, the loop never found its exit. To win this case, we needed to challenge the starting direction. Please review the details below.",
+        "closingStatement": "Guilty! You've doomed the astronauts to an eternity of counting into the negative void. The defendant is found guilty of poor loop safety!"
     },
     {
         "id": "case-6",
@@ -369,7 +342,6 @@
         "description": "I calculate factorials with mathematical precision.",
         "evidenceSlots": 2,
         "correctVerdict": "not guilty",
-        "requiredBranches": ["base-case", "loop-logic"],
         "evidencePool": [
             {
                 "id": "c6-t1",
@@ -411,27 +383,23 @@
         "testFeedback": [
             {
                 "testId": "c6-t1",
-                "logicBranch": "base-case",
-                "feedback": "Confirms the mathematical identity 0! = 1."
+                "feedback": "This is a critical boundary test. It confirms that the function respects the mathematical identity 0! = 1, showing the initial state is perfect."
             },
             {
                 "testId": "c6-t2",
-                "logicBranch": "loop-logic",
-                "feedback": "Confirms correctly handled loop for larger numbers."
+                "feedback": "This confirms the loop logic is sound for larger integers. It proves the function can accurately accumulate a factorial product without error."
             },
             {
                 "testId": "c6-t3",
-                "logicBranch": "loop-logic",
-                "feedback": "Simple case."
+                "feedback": "A simple but useful baseline. It confirms the function handles the transition from 1 to 0 correctly without affecting the final product."
             },
             {
                 "testId": "c6-t4",
-                "logicBranch": "loop-logic",
-                "feedback": "Standard pass."
+                "feedback": "A standard pass case. It reinforces that the multiplication and subtraction steps within the loop are functioning as intended."
             }
         ],
-        "missedEvidenceExplanation": "Handles both the base case and recursive logic perfectly.",
-        "closingStatement": "The Factory is robust. It respects math and logic. Not guilty."
+        "missedEvidenceExplanation": "Every case is a chance to learn about mathematical contracts. By testing both the specific base case (0!) and standard loop logic, we proved the defendant is a reliable calculator. Combining these different branches is the only way to build a solid defense. Please review the details below.",
+        "closingStatement": "Innocent! The Factory is robust and mathematically accurate. It respects the laws of factorials and logic alike. Case dismissed!"
     },
     {
         "id": "case-7",
@@ -441,14 +409,13 @@
         "description": "Categorizes packages by weight; exactly one label per package!",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["multi-label-leak", "overlap-standard"],
         "evidencePool": [
             {
                 "id": "c7-t1",
                 "label": "assert(sort(15), 'Priority')",
                 "input": "15",
                 "expectedOutput": "Priority",
-                "actualOutput": "Priority\\nAir\\nGround",
+                "actualOutput": "Priority\nAir\nGround",
                 "passes": false,
                 "showResult": true
             },
@@ -457,7 +424,7 @@
                 "label": "assert(sort(3), 'Air')",
                 "input": "3",
                 "expectedOutput": "Air",
-                "actualOutput": "Air\\nStandard",
+                "actualOutput": "Air\nStandard",
                 "passes": false,
                 "showResult": true
             },
@@ -483,28 +450,23 @@
         "testFeedback": [
             {
                 "testId": "c7-t1",
-                "logicBranch": "multi-label-leak",
-                "feedback": "Exposes the fall-through bug where multiple labels are printed."
+                "feedback": "Essential evidence! It exposes the fall-through bug where every matching 'if' statement prints a label, resulting in three labels instead of just 'Priority'."
             },
             {
                 "testId": "c7-t2",
-                "logicBranch": "overlap-standard",
-                "feedback": "Shows that even a simple 'Air' package gets a 'Standard' label too."
+                "feedback": "This is powerful evidence. It reveals that because the code doesn't use 'elif', a package labeled 'Air' incorrectly gets a 'Standard' label as well."
             },
             {
                 "testId": "c7-t3",
-                "logicBranch": "final-check-hide",
-                "misleading": true,
-                "feedback": "The bug is hidden here because 'Ground' is the final check before the 'else'."
+                "feedback": "This is a misleading test. The bug is hidden here simply because 'Ground' happens to be the last check before the 'else' block, making it look functional by chance."
             },
             {
                 "testId": "c7-t4",
-                "logicBranch": "standard-path",
-                "feedback": "Standard case that works only because no other conditions match."
+                "feedback": "A useful baseline but doesn't help find the bug. It only works because no other conditions match, so it falls into the 'else' block correctly."
             }
         ],
-        "missedEvidenceExplanation": "Without 'elif', every 'if' statement is checked independently, leading to overlapping results.",
-        "closingStatement": "Guilty! Your lack of 'elif' has created a labeling chaos. To the refactoring bin!"
+        "missedEvidenceExplanation": "Every trial is a chance to learn about conditional flow. In this case, the lack of 'elif' meant the function didn't know how to stop once it found a match. To win this trial, we needed to show how labels 'leaked' through multiple conditions. Please review the details below.",
+        "closingStatement": "Guilty! Your lack of 'elif' has created labeling chaos, wasting ink and confusing the couriers. Refactoring is ordered immediately!"
     },
     {
         "id": "case-10",
@@ -514,7 +476,6 @@
         "description": "Only includes 0 if requested; size must be 100 or less.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["zero-toggle-bug"],
         "evidencePool": [
             {
                 "id": "c10-t1",
@@ -556,28 +517,23 @@
         "testFeedback": [
             {
                 "testId": "c10-t1",
-                "logicBranch": "zero-toggle-bug",
-                "feedback": "Exposes that zero is included even when the toggle is False."
+                "feedback": "Critical evidence! It reveals that zero is included even when explicitly requested not to be, proving the 'include_zero' toggle is completely non-functional."
             },
             {
                 "testId": "c10-t2",
-                "logicBranch": "valid-path",
-                "misleading": true,
-                "feedback": "Accidentally works when the user wants zero."
+                "feedback": "This test is misleading. Because the user wants zero in this case, the function's broken logic accidentally produces the correct result."
             },
             {
                 "testId": "c10-t3",
-                "logicBranch": "size-limit",
-                "feedback": "Safety check works but hides the main logic bug."
+                "feedback": "This is useful boundary evidence. While it proves the size-limit safety check works, it doesn't reveal the logical bug inside the loop."
             },
             {
                 "testId": "c10-t4",
-                "logicBranch": "zero-toggle-bug",
-                "feedback": "Further proof that the toggle is ignored."
+                "feedback": "This reinforces the evidence against the defendant. It shows that no matter the size, zero is always forced into the list, ignoring the user's preference."
             }
         ],
-        "missedEvidenceExplanation": "The if/else does exactly the same thing. range(size+1) always starts at 0.",
-        "closingStatement": "Guilty! Your inclusion toggle is a lie; you've forced zero on every list regardless of preference."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about loop ranges. In this trial, the bug was that the 'range' always started at zero regardless of the 'if' condition. To catch this illusion, we needed to show that requesting a list *without* zero was impossible. Please review the details below.",
+        "closingStatement": "Guilty! Your inclusion toggle is a complete lie. You've forced zero on every list regardless of user preference. To the refactoring ward!"
     },
     {
         "id": "case-13",
@@ -587,15 +543,14 @@
         "description": "Rotate lights from Red to Green to Yellow safely.",
         "evidenceSlots": 2,
         "correctVerdict": "guilty",
-        "requiredBranches": ["infinite-cycle-bug"],
         "evidencePool": [
             {
                 "id": "c13-t1",
                 "label": "assert(light(3), 'Done')",
                 "input": "3",
                 "expectedOutput": "Done",
-                "actualOutput": "Done",
-                "passes": true,
+                "actualOutput": "Infinite Loop",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -603,8 +558,8 @@
                 "label": "assert(light(0), 'Done')",
                 "input": "0",
                 "expectedOutput": "Done",
-                "actualOutput": "Done",
-                "passes": true,
+                "actualOutput": "Infinite Loop",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -612,8 +567,8 @@
                 "label": "assert(light(-1), 'Done')",
                 "input": "-1",
                 "expectedOutput": "Done",
-                "actualOutput": "Done",
-                "passes": true,
+                "actualOutput": "Infinite Loop",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -621,35 +576,31 @@
                 "label": "assert(light(1), 'Done')",
                 "input": "1",
                 "expectedOutput": "Done",
-                "actualOutput": "Done",
-                "passes": true,
+                "actualOutput": "Infinite Loop",
+                "passes": false,
                 "showResult": true
             }
         ],
         "testFeedback": [
             {
                 "testId": "c13-t1",
-                "logicBranch": "cycle-logic",
-                "feedback": "Cycles through lights and completes as expected."
+                "feedback": "Critical evidence! It reveals a fatal infinite loop. Because the counter decreases while checking if it is 'less than or equal to' the start, it will always be True."
             },
             {
                 "testId": "c13-t2",
-                "logicBranch": "cycle-logic",
-                "feedback": "Handles zero cycles correctly."
+                "feedback": "Powerful boundary evidence. Even starting at zero leads to an infinite loop, proving that the loop condition itself is logically upside down."
             },
             {
                 "testId": "c13-t3",
-                "logicBranch": "cycle-logic",
-                "feedback": "Negative cycles are handled as a skip."
+                "feedback": "Further proof of the logic failure. Negative inputs don't stop the loop; they just start the infinite cycle from a different number."
             },
             {
                 "testId": "c13-t4",
-                "logicBranch": "cycle-logic",
-                "feedback": "All cycles complete as expected."
+                "feedback": "This reinforces the verdict. Any positive cycle count triggers the same endless rotation, proving the function is completely unsafe."
             }
         ],
-        "missedEvidenceExplanation": "All light cycles complete as expected for any input.",
-        "closingStatement": "Innocent! The traffic light cycles safely through all states."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about loop safety. In this case, the condition 'current_cycle <= cycles' was doomed because decreasing a number only makes it *more* less than the original. To win this trial, we needed to show that no input could ever escape the loop. Please review the details below.",
+        "closingStatement": "Guilty! The traffic light is trapped in an endless loop, creating a digital gridlock. The defendant is found guilty of reckless logic!"
     },
     {
         "id": "case-18",
@@ -658,16 +609,15 @@
         "functionCode": "def bracket_pair_checker(formula:str) -> str:\n    have_parens = '(' in formula or ')' in formula\n    have_brackets = '[' in formula or ']' in formula\n    if have_parens:\n        if formula.count(\"(\") != formula.count(\")\"): return \"check your parenthesis\"\n    elif have_brackets:\n        if formula.count(\"[\") != formula.count(\"]\"): return \"check your brackets\"\n    return \"all good\"",
         "description": "I check EVERY single parenthesis and bracket in a formula.",
         "evidenceSlots": 2,
-        "correctVerdict": "not guilty",
-        "requiredBranches": ["hidden-bracket-bug"],
+        "correctVerdict": "guilty",
         "evidencePool": [
             {
                 "id": "c18-t1",
                 "label": "assert(check('(1+1) + [2'), 'check your brackets')",
                 "input": "'(1+1) + [2'",
                 "expectedOutput": "check your brackets",
-                "actualOutput": "check your brackets",
-                "passes": true,
+                "actualOutput": "all good",
+                "passes": false,
                 "showResult": true
             },
             {
@@ -690,10 +640,10 @@
             },
             {
                 "id": "c18-t4",
-                "label": "assert(check('( ) [ ] { ]'), 'check your braces')",
-                "input": "'( ) [ ] { ]'",
-                "expectedOutput": "check your braces",
-                "actualOutput": "check your braces",
+                "label": "assert(check('[1 + 2'), 'check your brackets')",
+                "input": "'[1 + 2'",
+                "expectedOutput": "check your brackets",
+                "actualOutput": "check your brackets",
                 "passes": true,
                 "showResult": true
             }
@@ -701,26 +651,22 @@
         "testFeedback": [
             {
                 "testId": "c18-t1",
-                "logicBranch": "bracket-check",
-                "feedback": "Correctly checks for both parentheses and brackets."
+                "feedback": "Critical evidence! It reveals that because the function uses 'elif', it stops checking as soon as it finds parentheses, completely ignoring the broken brackets."
             },
             {
                 "testId": "c18-t2",
-                "logicBranch": "paren-path",
-                "feedback": "Parentheses are checked and reported as needed."
+                "feedback": "This test is misleading. It makes the function look functional because it only contains parentheses, which the code is able to check correctly."
             },
             {
                 "testId": "c18-t3",
-                "logicBranch": "valid-path",
-                "feedback": "All brackets and parentheses are matched."
+                "feedback": "Another misleading baseline. Since everything is balanced, the function correctly reports 'all good', hiding the fact that it isn't actually checking both symbols."
             },
             {
                 "testId": "c18-t4",
-                "logicBranch": "brace-check",
-                "feedback": "Handles braces and other symbols as expected."
+                "feedback": "This is a redundant check. While it shows the bracket path works when no parentheses are present, it fails to interrogate the 'elif' collision bug."
             }
         ],
-        "missedEvidenceExplanation": "All bracket and parenthesis checks are performed as expected.",
-        "closingStatement": "Innocent! The bracket checker validates all symbols as promised."
+        "missedEvidenceExplanation": "Every trial is a chance to learn about exclusive conditions. In this case, 'elif' turned the bracket check into an 'optional' step that was skipped whenever parentheses appeared. To win this case, we needed a formula containing both symbols. Please review the details below.",
+        "closingStatement": "Guilty! Your checker has 'one-track mind' syndrome. By using elif, you've allowed brackets to go unchecked whenever a parenthesis is present. Case closed!"
     }
 ]
