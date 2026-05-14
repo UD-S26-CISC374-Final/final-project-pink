@@ -5,10 +5,6 @@ import showDraggableTestCases from "../utils/dragging-logic";
 import { codeToHtml } from "shiki";
 import getCaseData from "../utils/getCaseData";
 
-// TODO - will need to add guardrails around tutorial-related code to only have it work if this.tutorial is true
-// TODO - for test case 2 (and any other cases that involve redundant test cases), figure out how to determine whether a test case is redundant or not because if the first test case is set to 'redundant' and the second test is set to 'good' but the player chose that over the second, it'll come off as them picking a redundant test.
-// TODO - change it so that if you select a test case and then de-select, instead of the text animation playing again, it just shows the text again without the animation
-
 export class Case extends Scene {
     constructor() {
         super("Case");
