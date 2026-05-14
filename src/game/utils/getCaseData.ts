@@ -97,9 +97,9 @@ export default function getCaseData(
             return {
                 case: parsedRandomizedCases[currentCaseIndex]?.functionCode,
                 currCaseData:
-                    parsedRandomizedCases[currentCaseIndex].testFeedback,
+                    parsedRandomizedCases[currentCaseIndex]?.testFeedback,
                 description:
-                    parsedRandomizedCases[currentCaseIndex].description,
+                    parsedRandomizedCases[currentCaseIndex]?.description,
                 evidencePool:
                     parsedRandomizedCases[currentCaseIndex]?.evidencePool || [],
                 caseDataWhole: parsedRandomizedCases[currentCaseIndex],
